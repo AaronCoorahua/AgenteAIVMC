@@ -156,6 +156,13 @@ WHATSAPP_BUSINESS_ACCOUNT_ID = os.getenv("WHATSAPP_BUSINESS_ACCOUNT_ID", "")
 WEBHOOK_VERIFY_TOKEN = os.getenv("WEBHOOK_VERIFY_TOKEN", "")
 WHATSAPP_API_BASE = "https://graph.facebook.com/v20.0"
 
+# ---------------------------------------------------------------------------
+# Intercom API
+# ---------------------------------------------------------------------------
+INTERCOM_ACCESS_TOKEN = os.getenv("INTERCOM_ACCESS_TOKEN", "")
+INTERCOM_ADMIN_ID = os.getenv("INTERCOM_ADMIN_ID", "")  # ID del bot o admin para responder
+INTERCOM_API_BASE = "https://api.intercom.io"
+
 
 def _get_redis():
     """Devuelve cliente Upstash Redis si está configurado, None si no."""
@@ -257,6 +264,75 @@ def send_whatsapp_text(to_number: str, text: str) -> None:
             )
     except Exception as e:
         log_error("whatsapp_send_exception", message=str(e))
+
+
+def create_intercom_ticket(from_number: str, last_message: str, history: list) -> None:
+    """
+    Crea una conversación en el INBOX de Intercom para que el equipo humano la tome.
+    Solo se llama cuando la intención es 'soporte_humano'.
+    """
+    if not INTERCOM_ACCESS_TOKEN:
+        log_error("intercom_not_configured", message="Para escalar a Intercom se necesita INTERCOM_ACCESS_TOKEN.")
+        return
+
+    headers = {
+        "Authorization": f"Bearer {INTERCOM_ACCESS_TOKEN}",
+        "Content-Type": "application/json",
+        "Accept": "application/json",
+        "Intercom-Version": "2.11"
+    }
+
+    try:
+        # 1. Buscar o crear el contacto (usuario) por su número
+        contact_id = None
+        search_payload = {
+            "query": {
+                "field": "phone",
+                "operator": "=",
+                "value": from_number
+            }
+        }
+        res_search = requests.post(f"{INTERCOM_API_BASE}/contacts/search", headers=headers, json=search_payload, timeout=5)
+        if res_search.ok and res_search.json().get("data"):
+            contact_id = res_search.json()["data"][0]["id"]
+        else:
+            # Crear lead si no existe
+            create_payload = {"role": "lead", "phone": from_number, "name": f"WhatsApp {from_number}"}
+            res_create = requests.post(f"{INTERCOM_API_BASE}/contacts", headers=headers, json=create_payload, timeout=5)
+            if res_create.ok:
+                contact_id = res_create.json().get("id")
+
+        if not contact_id:
+            log_error("intercom_contact_error", message="No se pudo crear/buscar el contacto en Intercom")
+            return
+
+        # 2. Formatear el historial para que el asesor entienda el contexto
+        context = f"<b>Nuevo caso escalado desde WhatsApp ({from_number})</b><br><br>"
+        context += "<b>Últimos mensajes:</b><br>"
+        # Mostrar los últimos 4 mensajes del historial para contexto
+        for msg in history[-4:]:
+            role = "Usuario" if msg.get("role") == "user" else "Bot"
+            context += f"• <i>{role}</i>: {msg.get('content')}<br>"
+            
+        context += f"<br><b>Razón de escalación (último mensaje):</b><br>{last_message}"
+
+        # 3. Crear la conversación en el Inbox
+        conv_payload = {
+            "from": {
+                "type": "contact",
+                "id": contact_id
+            },
+            "body": context
+        }
+        res_conv = requests.post(f"{INTERCOM_API_BASE}/conversations", headers=headers, json=conv_payload, timeout=5)
+        
+        if res_conv.ok:
+            log_event("intercom_ticket_created", phone=from_number, ticket_id=res_conv.json().get("id"))
+        else:
+            log_error("intercom_conv_error", message=f"HTTP {res_conv.status_code}: {res_conv.text[:200]}")
+
+    except Exception as e:
+        log_error("intercom_escalation_exception", message=str(e))
 
 
 # ---------------------------------------------------------------------------
@@ -455,6 +531,8 @@ async def whatsapp_webhook(request: Request, background_tasks: BackgroundTasks):
                 from_number=from_number,
                 user_message=text,
             )
+            # Crear el ticket en Intercom para el inbox de los agentes de soporte
+            background_tasks.add_task(create_intercom_ticket, from_number, text, history)
     except FatalAPIError as e:
         reply = _mensaje_sin_creditos(history)
         intent = "error"
