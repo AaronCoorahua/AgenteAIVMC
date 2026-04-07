@@ -253,7 +253,7 @@ def answer_with_claude_with_debug(
         t0  = time.perf_counter()
         msg = call_claude_with_retry(
             client=client,
-            model="claude-3-5-sonnet-20241022",
+            model="claude-sonnet-4-5-20250929",
             max_tokens=300,  # PASO 4: reducido de 500 → 300 (respuestas WhatsApp deben ser concisas)
             system=system_blocks,  # PASO 5: lista de bloques en vez de string plano
             messages=messages,
@@ -267,11 +267,11 @@ def answer_with_claude_with_debug(
         text   = trim_response_to_safe_length(text)
 
         log_cost(
-            model="claude-3-5-sonnet-20241022",
+            model="claude-sonnet-4-5-20250929",
             tokens_in=tokens.get("input", 0),
             tokens_out=tokens.get("output", 0),
         )
-        log_rag_response(response_preview=text, model="claude-3-5-sonnet-20241022")
+        log_rag_response(response_preview=text, model="claude-sonnet-4-5-20250929")
 
         system_full = system_blocks[0]["text"] + "\n\nContexto:\n" + context
         return text, tokens, latency_ms, system_full, context
@@ -628,7 +628,7 @@ def ask_with_router_debug(question: str, history: list[dict] | None = None) -> t
     }
     cached = (gen_tokens.get("cached_read") or 0) + (gen_tokens.get("cached_creation") or 0)
     debug["generation"] = {
-        "model": "claude-3-5-sonnet-20241022",
+        "model": "claude-sonnet-4-5-20250929",
         "tokens": gen_tokens,
         "cached_tokens": cached,
         "latency_ms": gen_latency_ms,

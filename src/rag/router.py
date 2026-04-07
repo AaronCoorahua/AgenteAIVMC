@@ -299,7 +299,7 @@ Responde SOLO con una palabra: faq, stock_search, soporte_humano o fuera_dominio
         client = Anthropic(api_key=api_key)
         t0 = time.perf_counter()
         response = client.messages.create(
-            model="claude-3-5-haiku-20241022",
+            model="claude-haiku-4-5-20251001",
             max_tokens=20,
             messages=[{
                 "role": "user",
