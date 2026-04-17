@@ -6,6 +6,7 @@ from __future__ import annotations
 
 import re
 import traceback
+import unicodedata
 from typing import Any
 
 from src.core.herald_client import (
@@ -20,6 +21,10 @@ from src.core.herald_client import (
 from src.core.logger import log_error, log_event
 
 MAX_CONTEXT_CHARS = 12_000
+# HERALD pagina resultados; antes pedíamos 20–25 y solo veías una página.
+HERALD_LOTS_PAGE_LIMIT = 100
+# Máximo a listar en un mensaje (WhatsApp / contexto); el total sigue saliendo en el encabezado.
+HERALD_LOTS_MAX_LINES = 80
 
 # Marcas reconocidas (orden: más largas primero para coincidencias correctas)
 KNOWN_MAKES = (
@@ -36,6 +41,10 @@ STOPWORDS = frozenset({
     "cuál", "tienen", "tiene", "busco", "quiero", "ver", "muestrame", "muéstrame",
     "disponible", "disponibles", "auto", "autos", "carro", "carros", "vehiculo",
     "vehículo", "camioneta", "modelo", "año", "ano", "precio", "precios",
+    # Frases típicas después del modelo (“hilux, puedes buscar…”)
+    "puedes", "puede", "pueden", "podrías", "podrias", "buscar", "busca", "buscame",
+    "mira", "mirá", "dime", "decir", "pregunte", "pregunta", "pregunté", "pero",
+    "solo", "también", "tambien", "ayuda", "ayudame", "ayúdame", "ahora", "bien",
 })
 
 _COVERAGE_PAT = re.compile(
@@ -51,6 +60,119 @@ _MARKET_PRICE_PAT = re.compile(
 
 def herald_configured() -> bool:
     return is_configured()
+
+
+def _lots_items(data: dict[str, Any]) -> list[Any]:
+    """Lista de lotes desde payload HERALD; tolera `data` ausente o no-lista."""
+    raw = data.get("data")
+    if isinstance(raw, list):
+        return raw
+    return []
+
+
+def _get_lots_paged(*, make: str | None = None) -> dict[str, Any] | None:
+    """
+    Página 1 con hasta HERALD_LOTS_PAGE_LIMIT ítems.
+    Si el API indica más publicados y la página 1 viene llena, pide página 2 y concatena
+    (hasta 2× límite) para acercarse a lo que el usuario ve en la web.
+    """
+    kw: dict[str, Any] = {"limit": HERALD_LOTS_PAGE_LIMIT, "page": 1}
+    if make:
+        kw["make"] = make
+    first = get_lots(**kw)
+    if first is None:
+        return None
+    items = _lots_items(first)
+    total = int(first.get("total") or 0)
+    if len(items) < HERALD_LOTS_PAGE_LIMIT:
+        return first
+    if total and total <= len(items):
+        return first
+    kw["page"] = 2
+    second = get_lots(**kw)
+    if second is None:
+        return first
+    items2 = _lots_items(second)
+    if not items2:
+        return first
+    merged = {**first, "data": items + items2}
+    log_event("herald_lots_merged_pages", make=make or "", page1=len(items), page2=len(items2), total=total)
+    return merged
+
+
+def _stock_query_text(question: str, history: list[dict[str, Any]] | None) -> str:
+    """Une últimos mensajes del usuario con la pregunta actual (marca/modelo en turnos previos)."""
+    q = unicodedata.normalize("NFKC", question or "").strip()
+    if not history:
+        return q
+    user_msgs = [
+        unicodedata.normalize("NFKC", m.get("content", "").strip())
+        for m in history
+        if m.get("role") == "user" and (m.get("content") or "").strip()
+    ]
+    tail = user_msgs[-2:]
+    merged = " ".join(tail + [q]) if q else " ".join(tail)
+    return " ".join(merged.split())
+
+
+def _make_matches_snap(want: str, snap_make: str) -> bool:
+    w = (want or "").strip().lower()
+    s = (snap_make or "").strip().lower()
+    if not w:
+        return True
+    if not s:
+        return False
+    return s == w or w in s or s in w
+
+
+def _filter_snapshots(
+    items: list[dict[str, Any]],
+    make: str | None,
+    model: str | None,
+) -> list[dict[str, Any]]:
+    model_key = (model or "").strip().lower().split()
+    model_key = model_key[0] if model_key else ""
+    out: list[dict[str, Any]] = []
+    for snap in items:
+        if make and not _make_matches_snap(make, str(snap.get("make") or "")):
+            continue
+        if model_key:
+            s_mod = (snap.get("model") or "").strip().lower()
+            if model_key not in s_mod:
+                continue
+        out.append(snap)
+    return out
+
+
+def _no_match_message(make: str | None, model: str | None) -> str:
+    mt = (make or "").strip().title() if make else ""
+    mo = (model or "").strip() if model else ""
+    if mt and mo:
+        return (
+            f"No encontré unidades publicadas de **{mt} {mo}** en HERALD ahora mismo. "
+            "Puedes revisar más tarde en vmcsubastas.com o preguntar por otro modelo."
+        )
+    if mt:
+        return (
+            f"No encontré unidades publicadas de **{mt}** en HERALD ahora mismo. "
+            "Revisa el catálogo en vmcsubastas.com o pregunta por otra marca o modelo."
+        )
+    return (
+        "No encontré coincidencias en el listado actual. "
+        "Revisa vmcsubastas.com o dime otra marca o modelo."
+    )
+
+
+def _wants_lots_inventory(text: str) -> bool:
+    """Pregunta por existencia / stock en catálogo (priorizar lotes sobre valoración AVT)."""
+    return bool(
+        re.search(
+            r"\b(tienen|hay|habrá|habra|buscar|busco|buscame|disponible|inventario|"
+            r"stock|unidades|ofertas?|consigues|encuentras|venden|ver\s+si)\b",
+            text,
+            re.IGNORECASE,
+        )
+    )
 
 
 def _truncate(s: str, max_len: int = MAX_CONTEXT_CHARS) -> str:
@@ -72,13 +194,22 @@ def _fmt_money(n: Any) -> str:
 def format_lots_response(data: dict[str, Any]) -> str:
     rows: list[str] = []
     total = data.get("total", 0)
-    page = data.get("page", 1)
     items = data.get("data") or []
-    rows.append(
-        f"Catálogo HERALD (total aproximado: {total}, página {page}, mostrando {len(items)})."
-    )
-    rows.append("Precios base en USD. Enlaces: usar canonical_url del lote.")
-    for snap in items[:50]:
+    shown = min(len(items), HERALD_LOTS_MAX_LINES)
+    if total and len(items) < total:
+        rows.append(
+            f"Listado de ofertas (HERALD: ~{total} publicados en catálogo; "
+            f"este mensaje muestra {shown} de {len(items)} traídos del API)."
+        )
+        rows.append(
+            "Si buscas más, entra a vmcsubastas.com o pregunta por marca/modelo para acotar."
+        )
+    else:
+        rows.append(
+            f"Listado de ofertas (HERALD: ~{total} publicados; mostrando {shown} en este mensaje)."
+        )
+    rows.append("Precios base en USD. Cada línea enlaza a la oferta en vmcsubastas.com.")
+    for snap in items[:HERALD_LOTS_MAX_LINES]:
         lid = snap.get("lot_id", "")
         code = snap.get("lot_code", "")
         url = snap.get("canonical_url", "")
@@ -216,6 +347,8 @@ def _extract_model(text: str, make: str) -> str | None:
     if not m:
         return None
     rest = t[m.end() :]
+    # Tras la marca suele venir “modelo, …” — cortar en coma o punto y coma
+    rest = rest.split(",")[0].split(";")[0]
     rest = re.sub(r"[^\w\s]", " ", rest)
     tokens: list[str] = []
     for w in rest.split():
@@ -267,7 +400,10 @@ def _chunks_from_lots(items: list[dict[str, Any]]) -> list[dict[str, Any]]:
     return out
 
 
-def fetch_stock_for_answer(question: str) -> tuple[str, list[dict[str, Any]], str | None]:
+def fetch_stock_for_answer(
+    question: str,
+    history: list[dict[str, Any]] | None = None,
+) -> tuple[str, list[dict[str, Any]], str | None]:
     """
     Devuelve (texto_para_usuario, chunks_debug, error_code).
     error_code: None si OK, o 'not_configured' | 'empty' | 'failed'
@@ -276,7 +412,7 @@ def fetch_stock_for_answer(question: str) -> tuple[str, list[dict[str, Any]], st
     if not herald_configured():
         return "", [], "not_configured"
 
-    q = (question or "").strip()
+    q = _stock_query_text(question, history)
     if not q:
         return "", [], "empty"
 
@@ -294,6 +430,7 @@ def fetch_stock_for_answer(question: str) -> tuple[str, list[dict[str, Any]], st
 
 def _fetch_stock_for_answer_impl(q: str) -> tuple[str, list[dict[str, Any]], str | None]:
     """Lógica interna; puede lanzar si algo va mal (capturada arriba)."""
+    q = unicodedata.normalize("NFKC", q or "").strip()
     # 1) Lote específico
     lot_id = _parse_lot_id(q)
     if lot_id is not None:
@@ -322,6 +459,8 @@ def _fetch_stock_for_answer_impl(q: str) -> tuple[str, list[dict[str, Any]], str
     if model and year and str(year) in model:
         model = model.replace(str(year), "").strip()
 
+    skip_valuation = _wants_lots_inventory(q) and bool(make and model) and year is None
+
     # 2) Cobertura de mercado (sin marca obligatoria)
     if _wants_coverage(q) and not make:
         data = get_market_coverage()
@@ -336,8 +475,8 @@ def _fetch_stock_for_answer_impl(q: str) -> tuple[str, list[dict[str, Any]], str
             log_event("herald_stock_route", route="market_year", make=make, model=model, year=year)
             return format_market_year(data), [], None
 
-    # 4) Marca + modelo → valoración por modelo
-    if make and model:
+    # 4) Marca + modelo → valoración por modelo (omitir si el usuario pide inventario / “¿tienen?”)
+    if make and model and not skip_valuation:
         data = get_market_make_model(make, model)
         if data:
             log_event("herald_stock_route", route="market_model", make=make, model=model)
@@ -352,12 +491,35 @@ def _fetch_stock_for_answer_impl(q: str) -> tuple[str, list[dict[str, Any]], str
             if data:
                 log_event("herald_stock_route", route="market_make", make=make)
                 return format_market_make(data), [], None
-        # Listado de lotes filtrado por marca
-        data = get_lots(make=make, limit=25, page=1)
-        if data and (data.get("data") or []):
-            items = data.get("data") or []
-            log_event("herald_stock_route", route="lots_by_make", make=make)
-            return format_lots_response(data), _chunks_from_lots(items), None
+        # Listado por marca: si el API falla con ?make= (None) o devuelve mezcla, reintentar sin filtro
+        # y aplicar marca/modelo solo en cliente — nunca caer al catálogo general con marca en la pregunta.
+        data = _get_lots_paged(make=make)
+        if data is None:
+            log_event("herald_lots_make_query_failed", make=make, fallback="unfiltered_plus_filter")
+            data = _get_lots_paged(make=None)
+        if data is not None:
+            raw_items = _lots_items(data)
+            items = _filter_snapshots(raw_items, make, model)
+            merged = {**data, "data": items}
+            log_event(
+                "herald_stock_route",
+                route="lots_by_make",
+                make=make,
+                model=model or "",
+                count=len(items),
+                raw_count=len(raw_items),
+            )
+            if not items and raw_items:
+                return _no_match_message(make, model), [], None
+            if not items and not raw_items:
+                return _no_match_message(make, model), [], None
+            return format_lots_response(merged), _chunks_from_lots(items), None
+        log_error(
+            "herald_stock",
+            message="get_lots devolvió None incluso sin filtro de marca",
+            make=make,
+        )
+        return "", [], "failed"
 
     # 6) Cobertura si preguntó mezclado con otras palabras
     if _wants_coverage(q):
@@ -366,13 +528,18 @@ def _fetch_stock_for_answer_impl(q: str) -> tuple[str, list[dict[str, Any]], str
             log_event("herald_stock_route", route="market_coverage_fallback")
             return format_market_coverage(data), [], None
 
-    # 7) Catálogo general
-    data = get_lots(limit=20, page=1)
-    if data and (data.get("data") is not None):
-        items = data.get("data") or []
-        log_event("herald_stock_route", route="lots_default")
-        return format_lots_response(data), _chunks_from_lots(items), None
+    # 7) Catálogo general (solo si no detectamos marca; si hay marca, el bloque 5 ya respondió o falló)
+    if not make:
+        data = _get_lots_paged(make=None)
+        if data is not None:
+            items = _lots_items(data)
+            merged = {**data, "data": items}
+            log_event("herald_stock_route", route="lots_default", count=len(items))
+            return format_lots_response(merged), _chunks_from_lots(items), None
 
-    log_error("herald_stock", message="empty response from HERALD")
+    log_error(
+        "herald_stock",
+        message="empty response from HERALD — get_lots devolvió None (revisa logs herald_http: 401, 5xx o red)",
+    )
     return "", [], "failed"
 

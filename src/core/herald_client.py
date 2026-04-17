@@ -46,19 +46,25 @@ def _get(path: str, params: dict[str, Any] | None = None) -> dict[str, Any] | No
     url = _base_url() + path
     try:
         r = requests.get(url, headers=_headers(), params=params or {}, timeout=TIMEOUT_S)
+        body_preview = (r.text or "")[:1200]
         if r.status_code == 401:
-            log_error("herald_http", message="401 unauthorized", path=path)
+            log_error(
+                "herald_http",
+                message="401 unauthorized — revisa HERALD_API_TOKEN en Vercel (sin espacios ni comillas)",
+                path=path,
+                body_preview=body_preview,
+            )
             return None
         if r.status_code == 429:
-            log_error("herald_http", message="429 rate limited", path=path)
+            log_error("herald_http", message="429 rate limited", path=path, body_preview=body_preview)
             return None
         if r.status_code == 404:
             return None
         if r.status_code >= 500:
-            log_error("herald_http", message=f"server error {r.status_code}", path=path)
+            log_error("herald_http", message=f"server error {r.status_code}", path=path, body_preview=body_preview)
             return None
         if not r.ok:
-            log_error("herald_http", message=f"http {r.status_code}", path=path)
+            log_error("herald_http", message=f"http {r.status_code}", path=path, body_preview=body_preview)
             return None
         return r.json()
     except requests.RequestException as e:

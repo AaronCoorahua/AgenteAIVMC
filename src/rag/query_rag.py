@@ -463,7 +463,7 @@ def ask_with_router(question: str, use_multi_query: bool = True, history: list[d
         try:
             from src.rag.herald_source import fetch_stock_for_answer, herald_configured
             if herald_configured():
-                h_text, h_chunks, h_err = fetch_stock_for_answer(question)
+                h_text, h_chunks, h_err = fetch_stock_for_answer(question, history=history)
                 if h_text and h_err != "failed":
                     return h_chunks, h_text, "stock_search"
             from src.rag.inventory import search_vehicles, format_stock_answer
@@ -558,7 +558,7 @@ def ask_with_router_debug(question: str, history: list[dict] | None = None) -> t
             try:
                 from src.rag.herald_source import fetch_stock_for_answer, herald_configured
                 if herald_configured():
-                    h_text, h_chunks, h_err = fetch_stock_for_answer(question)
+                    h_text, h_chunks, h_err = fetch_stock_for_answer(question, history=history)
                     debug["herald"] = {
                         "used": True,
                         "error": h_err,
