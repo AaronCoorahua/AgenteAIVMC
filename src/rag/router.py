@@ -4,11 +4,114 @@ Devuelve: faq | stock_search | soporte_humano | fuera_dominio
 Sin LangChain; llamada directa a Anthropic API.
 """
 import os
+import re
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[2]
 
 INTENTS = ("faq", "stock_search", "soporte_humano", "fuera_dominio")
+
+
+def _normalize(text: str) -> str:
+    """Convierte a minúsculas, elimina tildes y comprime espacios."""
+    text = text.lower().strip()
+    replacements = {
+        "á": "a", "é": "e", "í": "i", "ó": "o", "ú": "u", "ü": "u", "ñ": "n",
+    }
+    for src, dst in replacements.items():
+        text = text.replace(src, dst)
+    text = re.sub(r"\s+", " ", text)
+    return text
+
+
+# ---------------------------------------------------------------------------
+# Heurística Capa 1 — Alta confianza (sin llamar a Haiku)
+# ---------------------------------------------------------------------------
+_HIGH_CONFIDENCE_HUMAN = (
+    # Peticiones directas
+    "asesor", "asesora", "agente", "ejecutivo", "ejecutiva",
+    "representante", "persona real", "persona de verdad",
+    "humano", "humana", "alguien de verdad",
+    "hablar con alguien", "hablar con una persona", "hablar con un humano",
+    "quiero hablar", "necesito hablar",
+    "pasame con", "pásame con", "derivame", "derívame",
+    "transferme", "transfiéreme", "transfiereme",
+    "comunicarme con", "comunícame con",
+    "atencion humana", "atención humana", "soporte humano",
+    "agente humano", "operador",
+    # Escalada legal / regulatoria peruana
+    "indecopi", "libro de reclamaciones", "quiero reclamar",
+    "voy a reclamar", "voy a denunciar", "quiero hacer un reclamo",
+    "pesimo servicio", "pésimo servicio", "mal servicio",
+    "quiero mi dinero", "devuelvan mi dinero",
+    # Frustración explícita con el bot
+    "el bot no sirve", "el bot no me entiende", "esto no me sirve",
+    "no me estas ayudando", "no me estás ayudando",
+    "no me ayuda", "no me entiendes", "no te entiendo",
+    "bot inutil", "bot inútil",
+    # Peruanismos de escalada
+    "puro floro", "me estas floreando", "me estás floreando",
+    "me floreas", "tas floreando",
+    # Abandono transaccional (rescate comercial)
+    "da igual", "olvídalo", "olvidalo", "ya no quiero",
+    "ya fue", "dejalo ahi", "déjalo ahí", "me rindo",
+)
+
+_HIGH_CONFIDENCE_HUMAN_PATTERNS = (
+    # "quiero (un/una/al) asesor/agente/humano..."
+    r"quiero\s+(un|una|al)\s+(asesor|asesora|agente|humano|humana|ejecutivo|ejecutiva|representante)",
+    # "necesito (un/una) asesor..."
+    r"necesito\s+(un|una)\s+(asesor|asesora|agente|humano|humana|ejecutivo|ejecutiva|representante)",
+    # "me atiende un humano / que me atienda una persona"
+    r"(me\s+atiende|que\s+me\s+atienda)\s+.*(humano|persona|asesor|agente)",
+    # todo caps con queja (QUIERO, NO PUEDO, etc.)
+    r"^[A-ZÁÉÍÓÚÑ\s!?]{15,}$",
+    # signos de exclamación o interrogación excesivos
+    r"[!?]{3,}",
+)
+
+
+def _looks_like_human_support(msg: str) -> bool:
+    """
+    Heurística rápida de alta confianza para detectar soporte_humano sin llamar a Haiku.
+    Retorna True si el mensaje claramente pide un agente humano o escala emocionalmente.
+    """
+    if not msg:
+        return False
+    norm = _normalize(msg)
+    if any(kw in norm for kw in _HIGH_CONFIDENCE_HUMAN):
+        return True
+    # Patrones regex sobre el texto original (para detectar caps, !!! etc.)
+    for pattern in _HIGH_CONFIDENCE_HUMAN_PATTERNS:
+        if re.search(pattern, msg.strip(), re.IGNORECASE):
+            return True
+    return False
+
+
+# ---------------------------------------------------------------------------
+# Heurística Capa 2 — Media confianza (flag para Haiku)
+# ---------------------------------------------------------------------------
+_MEDIUM_CONFIDENCE_HUMAN = (
+    "ayuda", "auxilio", "no funciona", "no carga", "error",
+    "falla", "fallo", "no puedo", "no me deja", "no me sale",
+    "al toque", "urgente", "urgentemente", "rapido", "rápido",
+    "ya van", "cuantas veces", "cuántas veces", "otra vez",
+    "de nuevo", "sigo sin", "todavia no", "todavía no",
+    "no aparece", "no veo", "no encuentro",
+    "asado", "asada", "que palta", "qué palta", "que yuca", "qué yuca",
+    "que piña", "qué piña", "que lenteja", "qué lenteja",
+    "malísimo", "malisimo", "horrible", "terrible", "pésimo", "pesimo",
+    "no me sirve", "no sirve", "no ayuda",
+    "ya", "ok", "dale", "bueno",  # apatía (se evalúa con contexto)
+)
+
+
+def _might_need_human(msg: str) -> bool:
+    """Retorna True si hay señales de media confianza que ameritan flag en Haiku."""
+    if not msg:
+        return False
+    norm = _normalize(msg)
+    return any(kw in norm for kw in _MEDIUM_CONFIDENCE_HUMAN)
 
 
 def _looks_like_stock_query(msg: str) -> bool:
@@ -262,8 +365,11 @@ def classify_intent_with_debug(
     if not msg:
         return "faq", 0, _usage_to_dict(None), INTENT_EXPLANATIONS["faq"]
 
-    # Heurística local: si el mensaje claramente es una búsqueda de vehículos,
-    # marcamos stock_search sin llamar a Haiku (más barato y más robusto).
+    # Capa 1 — heurística de alta confianza: soporte_humano sin costo
+    if _looks_like_human_support(msg):
+        return "soporte_humano", 0, _usage_to_dict(None), INTENT_EXPLANATIONS["soporte_humano"]
+
+    # Capa 2 — heurística de alta confianza: stock_search sin costo
     if _looks_like_stock_query(msg):
         return "stock_search", 0, _usage_to_dict(None), INTENT_EXPLANATIONS["stock_search"]
 
@@ -275,22 +381,89 @@ def classify_intent_with_debug(
     if not api_key:
         return "faq", 0, _usage_to_dict(None), INTENT_EXPLANATIONS["faq"]
 
-    prompt = """Eres un clasificador de intención para el chatbot de VMC Subastas (plataforma de subastas de vehículos en Perú). Clasifica el mensaje del usuario en exactamente UNA de estas categorías:
+    # Capa 3 — flag de media confianza para orientar a Haiku
+    posible_frustracion = _might_need_human(msg)
+    frustration_flag = (
+        "\n<system_flag>POSIBLE_FRUSTRACION_DETECTADA: el mensaje contiene señales de "
+        "impaciencia o molestia. Evalúa con especial atención si el usuario realmente "
+        "está pidiendo un agente humano o solo está expresando urgencia.</system_flag>"
+        if posible_frustracion else ""
+    )
 
-- faq: preguntas sobre registro, cuenta, SubasCoins, billetera, consignación, ofertas En Vivo o Negociable, visitas, comisiones, proceso de compra, plazos, soporte. Cualquier duda sobre cómo funciona la plataforma. También saludos simples (hola, buenas, qué tal, hey, buenos días) y respuestas cortas (sí, no, ok, claro, dale) a una pregunta que el asistente acaba de hacer — en esos casos es faq para que la conversación continúe.
-
-- stock_search: el usuario quiere buscar, ver o listar vehículos disponibles que aún no conoce (ej. "¿tienen una Hilux?", "qué carros hay", "busco una camioneta 4x4"). NO es stock_search si el usuario ya identificó un vehículo específico y está hablando de participar en él, hacer una oferta, o preguntar sobre ese proceso.
-
-- soporte_humano: pide hablar con una persona, agente, ejecutivo, o está molesto y quiere escalar (ej. "quiero hablar con alguien", "me atiende un humano", "no me sirve esto").
-
-- fuera_dominio: el mensaje claramente no tiene relación con VMC Subastas ni con vehículos ni con subastas — por ejemplo preguntas sobre política, clima, recetas, chistes, temas completamente ajenos. Nunca uses fuera_dominio para saludos o mensajes ambiguos cortos — ante la duda clasifica como faq.
-
-Responde SOLO con una palabra: faq, stock_search, soporte_humano o fuera_dominio. Nada más."""
-
+    # Contexto de último mensaje del asistente
+    context_block = ""
     if last_assistant_message and (last_assistant_message or "").strip():
-        prompt += '\nContexto: El último mensaje del asistente fue: "' + (last_assistant_message or "").strip()[:500] + '". El usuario ahora dice: "' + msg[:200] + '". Si el usuario está respondiendo a esa pregunta del asistente (respuesta corta), clasifica como faq.\n\nMensaje del usuario a clasificar: ' + msg
-    else:
-        prompt += "\nMensaje del usuario: " + msg
+        context_block = (
+            "\n<last_assistant_message>"
+            + (last_assistant_message or "").strip()[:500]
+            + "</last_assistant_message>"
+            "\nSi el usuario está respondiendo directamente a esa pregunta del asistente "
+            "(respuesta corta como 'sí', 'no', 'ok', 'dale'), clasifica como faq."
+        )
+
+    prompt = f"""<role>
+Eres el clasificador de intención del chatbot de VMC Subastas, plataforma de subastas de vehículos usados en Perú. Tu única tarea es clasificar el mensaje del usuario en exactamente UNA categoría.
+</role>
+
+<intents_definition>
+- faq: Preguntas sobre la plataforma (registro, cuenta, SubasCoins, billetera, consignación, ofertas En Vivo o Negociable, visitas, comisiones, proceso de compra, plazos). También saludos simples y respuestas cortas a preguntas del asistente.
+
+- stock_search: El usuario quiere buscar o listar vehículos que aún no conoce ("¿tienen una Hilux?", "qué carros hay"). NO aplica si ya identificó el vehículo y habla de participar u ofertar.
+
+- soporte_humano: El usuario pide hablar con una persona real, agente, ejecutivo o asesor. También aplica cuando: está molesto y escala emocionalmente, usa jerga peruana de queja (asado, palta, floro, lenteja), amenaza con Indecopi o libro de reclamaciones, expresa abandono ("da igual", "olvídalo", "ya no quiero"), usa sarcasmo ("qué gran ayuda"), o repite la misma consulta varias veces sin ser atendido.
+
+- fuera_dominio: El mensaje claramente no tiene relación con VMC Subastas ni vehículos ni subastas. Nunca uses fuera_dominio para saludos o mensajes ambiguos cortos — ante la duda clasifica como faq.
+</intents_definition>
+
+<instructions>
+1. Lee el mensaje del usuario con atención completa al tono emocional, no solo al contenido literal.
+2. Detecta jerga peruana de queja o frustración: "asado/a", "qué palta", "qué yuca", "puro floro", "me está floreando", "qué lenteja", "al toque", "oe".
+3. Detecta señales de abandono transaccional: "da igual", "olvídalo", "ya fue", "ya no quiero" → siempre soporte_humano para rescate comercial.
+4. Detecta escalada legal: "Indecopi", "libro de reclamaciones", "quiero reclamar" → siempre soporte_humano.
+5. Usa <thinking> para razonar brevemente antes de decidir.
+6. Responde SOLO con la etiqueta <intent> conteniendo exactamente una palabra: faq, stock_search, soporte_humano o fuera_dominio.
+</instructions>
+
+<examples>
+  <example>
+    <user_input>quiero ver autos toyota yaris del 2020</user_input>
+    <thinking>El usuario quiere listar vehículos que no conoce aún. No hay frustración.</thinking>
+    <intent>stock_search</intent>
+  </example>
+  <example>
+    <user_input>oe tu bot es una lenteja, la subasta ya va a cerrar pásame con alguien al toque</user_input>
+    <thinking>Usa "lenteja" (peruanismo de queja), urgencia extrema ("al toque") y pide explícitamente hablar con alguien.</thinking>
+    <intent>soporte_humano</intent>
+  </example>
+  <example>
+    <user_input>ya van 3 veces q intento pujar y sale error de sesion, q palta de sistema</user_input>
+    <thinking>"q palta" es peruanismo de frustración. Reporta un fallo técnico repetitivo que bloquea al usuario en su cuenta. Necesita agente.</thinking>
+    <intent>soporte_humano</intent>
+  </example>
+  <example>
+    <user_input>ok, da igual, ya no quiero comprar nada olvídalo</user_input>
+    <thinking>Abandono transaccional claro. "da igual" y "olvídalo" indican resignación. Escalada para rescate comercial.</thinking>
+    <intent>soporte_humano</intent>
+  </example>
+  <example>
+    <user_input>qué gran ayuda me diste eh... me voy a indecopi</user_input>
+    <thinking>Sarcasmo ("qué gran ayuda") + amenaza legal (Indecopi). Escalada inmediata.</thinking>
+    <intent>soporte_humano</intent>
+  </example>
+  <example>
+    <user_input>me tas floreando, no veo mi deposito en la plataforma</user_input>
+    <thinking>"floreando" es peruanismo que acusa evasión. Problema financiero específico de su cuenta, no FAQ genérico.</thinking>
+    <intent>soporte_humano</intent>
+  </example>
+  <example>
+    <user_input>cómo funciona el sistema de garantía</user_input>
+    <thinking>Pregunta teórica general sobre la plataforma. Sin frustración ni urgencia específica de cuenta.</thinking>
+    <intent>faq</intent>
+  </example>
+</examples>
+{frustration_flag}{context_block}
+
+<input>{msg[:300]}</input>"""
 
     try:
         from dotenv import load_dotenv
@@ -316,7 +489,10 @@ Responde SOLO con una palabra: faq, stock_search, soporte_humano o fuera_dominio
         usage = getattr(response, "usage", None)
         tokens = _usage_to_dict(usage)
         block = response.content[0] if response.content else None
-        text = (block.text if block and hasattr(block, "text") else str(response.content)).strip().lower()
+        raw = (block.text if block and hasattr(block, "text") else str(response.content)).strip()
+        # Extraer el intent de la etiqueta <intent>...</intent>
+        match = re.search(r"<intent>\s*(\w+)\s*</intent>", raw, re.IGNORECASE)
+        text = match.group(1).lower() if match else raw.lower()
         for intent in INTENTS:
             if intent in text or text == intent:
                 return intent, latency_ms, tokens, INTENT_EXPLANATIONS.get(intent, "")
