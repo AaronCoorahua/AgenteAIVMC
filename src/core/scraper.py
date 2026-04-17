@@ -26,9 +26,14 @@ load_dotenv()
 # ---------------------------------------------------------------------------
 # 1. Rutas y configuración
 # ---------------------------------------------------------------------------
-_ROOT         = Path(__file__).resolve().parents[2]
+_ROOT = Path(__file__).resolve().parents[2]
+# En Vercel/serverless el FS bajo /var/task es solo lectura: usar /tmp.
 _FALLBACK_DIR = _ROOT / "data" / "raw" / "fallback"
-_FALLBACK_DIR.mkdir(parents=True, exist_ok=True)
+try:
+    _FALLBACK_DIR.mkdir(parents=True, exist_ok=True)
+except OSError:
+    _FALLBACK_DIR = Path("/tmp/vmc-bot-data/fallback")
+    _FALLBACK_DIR.mkdir(parents=True, exist_ok=True)
 
 _INVENTARIO_FALLBACK = _FALLBACK_DIR / "inventory_last_known.json"
 
