@@ -59,8 +59,6 @@ class FatalAPIError(Exception):
 def _system_has_cache_control(system) -> bool:
     """
     Devuelve True si el system prompt es una lista de bloques con cache_control.
-    En ese caso hay que usar client.beta.messages.create() en vez de
-    client.messages.create() para que el prompt caching funcione.
     """
     if not isinstance(system, list):
         return False
@@ -72,36 +70,18 @@ def _system_has_cache_control(system) -> bool:
 
 # ---------------------------------------------------------------------------
 # 4. Función principal: call_claude_with_retry()
-#    Envuelve cualquier llamada a client.messages.create()
-#    con lógica de reintento automático.
-#
-#    Si el system prompt contiene bloques con cache_control, usa
-#    automáticamente client.beta.messages.create() con el header de
-#    prompt caching. El caller no necesita saber este detalle.
-#
-#    Uso:
-#      from src.core.resilience import call_claude_with_retry
-#
-#      respuesta = call_claude_with_retry(
-#          client=anthropic_client,
-#          model="claude-sonnet-4-20250514",
-#          max_tokens=300,
-#          messages=[{"role": "user", "content": "Hola"}]
-#      )
 # ---------------------------------------------------------------------------
 def call_claude_with_retry(client, max_retries: int = 3, **kwargs):
     """
     Llama a client.messages.create() con reintentos automáticos.
 
-    Detecta automáticamente si el system prompt usa cache_control y
-    en ese caso enruta a client.beta.messages.create() con el beta
-    de prompt caching habilitado.
+    En Anthropic >= 0.34.0, Prompt Caching es GA y funciona directo
+    en messages.create() sin necesidad del endpoint beta.
 
     Args:
         client:       Cliente de Anthropic ya inicializado.
         max_retries:  Número máximo de intentos (default: 3).
         **kwargs:     Parámetros que se pasan directo a messages.create()
-                      (model, max_tokens, messages, system, etc.)
 
     Returns:
         Respuesta de Anthropic si algún intento tiene éxito.
@@ -110,7 +90,6 @@ def call_claude_with_retry(client, max_retries: int = 3, **kwargs):
         UserFacingError: Si todos los reintentos fallan.
         FatalAPIError:   Si el saldo es insuficiente (no reintenta).
     """
-    # Detectar si necesitamos el endpoint beta para prompt caching
     use_beta_caching = _system_has_cache_control(kwargs.get("system"))
 
     for attempt in range(1, max_retries + 1):
@@ -122,14 +101,8 @@ def call_claude_with_retry(client, max_retries: int = 3, **kwargs):
                 caching=use_beta_caching,
             )
 
-            if use_beta_caching:
-                # Endpoint beta con prompt caching habilitado
-                respuesta = client.beta.messages.create(
-                    **kwargs,
-                    betas=["prompt-caching-2024-07-31"],
-                )
-            else:
-                respuesta = client.messages.create(**kwargs)
+            # En Anthropic >= 0.34.0, Prompt Caching es GA y funciona directo en messages.create()
+            respuesta = client.messages.create(**kwargs)
 
             # Éxito — registramos y devolvemos
             log_event(

@@ -14,6 +14,25 @@ ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(ROOT))
 os.chdir(ROOT)
 
+
+def _escalation_wait_message(escalation_type: str) -> str:
+    """
+    Retorna el mensaje de espera para el usuario según el tipo de escalación.
+    Tono Subastin: español peruano, informal, máx 2 oraciones, sin lenguaje corporativo.
+    """
+    messages = {
+        "direct_simple":   "¡Dale! Un asesor del equipo te va a escribir en unos minutos 😊",
+        "doubt":           "Eso mejor te lo aclara un asesor directamente. En unos minutos alguien del equipo te escribe.",
+        "confusion":       "Mira, el tema puede ser medio enredado al inicio. Un asesor te lo explica mejor — te escribe en unos minutos.",
+        "pre_abandonment": "Espera, no te vayas todavía. Un asesor del equipo te escribe en unos minutos para ayudarte mejor 😊",
+        "live_auction":    "¡Ya le avisé al equipo, urgente! Un asesor te contacta al toque.",
+        "legal_vehicle":   "Ese tema requiere revisión detallada para no darte info incorrecta. Un asesor especializado te escribe en breve.",
+        "frustrated":      "Entendido, ya le pasé tu caso al equipo. Un asesor te contacta en breve para resolverlo.",
+        "legal_threat":    "Ya derivé tu caso directo al equipo especializado. Un asesor se comunica contigo en breve.",
+        "b2b":             "Eso suena como algo que puede manejar nuestro equipo comercial. Un asesor te escribe en unos minutos para coordinarlo.",
+    }
+    return messages.get(escalation_type, messages["direct_simple"])
+
 from dotenv import load_dotenv
 load_dotenv(ROOT / ".env")
 
@@ -235,7 +254,7 @@ def answer_with_claude_with_debug(
         t0  = time.perf_counter()
         msg = call_claude_with_retry(
             client=client,
-            model="claude-sonnet-4-20250514",
+            model="claude-sonnet-4-5-20250929",
             max_tokens=300,  # PASO 4: reducido de 500 → 300 (respuestas WhatsApp deben ser concisas)
             system=system_blocks,  # PASO 5: lista de bloques en vez de string plano
             messages=messages,
@@ -249,11 +268,11 @@ def answer_with_claude_with_debug(
         text   = trim_response_to_safe_length(text)
 
         log_cost(
-            model="claude-sonnet-4-20250514",
+            model="claude-sonnet-4-5-20250929",
             tokens_in=tokens.get("input", 0),
             tokens_out=tokens.get("output", 0),
         )
-        log_rag_response(response_preview=text, model="claude-sonnet-4-20250514")
+        log_rag_response(response_preview=text, model="claude-sonnet-4-5-20250929")
 
         system_full = system_blocks[0]["text"] + "\n\nContexto:\n" + context
         return text, tokens, latency_ms, system_full, context
@@ -496,7 +515,8 @@ def ask_with_router(question: str, use_multi_query: bool = True, history: list[d
             msg = "Por ahora estoy aprendiendo a buscar carros en tiempo real — esa función llega pronto 🚗\n\nMientras tanto, puedes ver todo el inventario disponible directo en 👉 vmcsubastas.com. Ahí encuentras filtros por marca, modelo y precio. ¿Te ayudo con algo más sobre el proceso de subasta?"
             return [], msg, "stock_search"
     if intent == "soporte_humano":
-        msg = "Entendido. Puedes contactarnos de Lunes a Viernes de 9am a 6pm por nuestro chat en vivo en la web o al correo contigo@vmcsubastas.com. Un agente te atenderá."
+        from src.rag.router import classify_escalation_type
+        msg = _escalation_wait_message(classify_escalation_type(question))
         return [], msg, "soporte_humano"
     msg = "¡Hola! 👋 Soy Subastin, el asistente virtual de VMC Subastas. Ese tema se escapa un poco de lo que manejo, pero si tienes dudas sobre registro, SubasCoins, consignación u ofertas, aquí estoy. ¿En qué te puedo ayudar?"
     return [], msg, "fuera_dominio"
@@ -598,7 +618,8 @@ def ask_with_router_debug(question: str, history: list[dict] | None = None) -> t
                 debug["total_latency_ms"] = int((time.perf_counter() - total_start) * 1000)
                 return [], msg, intent, debug
         elif intent == "soporte_humano":
-            msg = "Entendido. Puedes contactarnos de Lunes a Viernes de 9am a 6pm por nuestro chat en vivo en la web o al correo contigo@vmcsubastas.com. Un agente te atenderá."
+            from src.rag.router import classify_escalation_type
+            msg = _escalation_wait_message(classify_escalation_type(question))
         else:
             msg = "¡Hola! 👋 Soy Subastin, el asistente virtual de VMC Subastas. Ese tema se escapa un poco de lo que manejo, pero si tienes dudas sobre registro, SubasCoins, consignación u ofertas, aquí estoy. ¿En qué te puedo ayudar?"
         debug["total_latency_ms"] = int((time.perf_counter() - total_start) * 1000)
@@ -692,7 +713,7 @@ def ask_with_router_debug(question: str, history: list[dict] | None = None) -> t
     }
     cached = (gen_tokens.get("cached_read") or 0) + (gen_tokens.get("cached_creation") or 0)
     debug["generation"] = {
-        "model": "claude-sonnet-4-20250514",
+        "model": "claude-sonnet-4-5-20250929",
         "tokens": gen_tokens,
         "cached_tokens": cached,
         "latency_ms": gen_latency_ms,
