@@ -38,13 +38,16 @@ KNOWN_MAKES = (
 STOPWORDS = frozenset({
     "un", "una", "unos", "unas", "el", "la", "los", "las", "de", "del", "y", "o",
     "en", "por", "para", "con", "hay", "que", "qué", "cuánto", "cuanto", "cual",
-    "cuál", "tienen", "tiene", "busco", "quiero", "ver", "muestrame", "muéstrame",
+    "cuál", "tienen", "tiene", "tienes", "tengo", "busco", "quiero", "ver", "muestrame", "muéstrame",
     "disponible", "disponibles", "auto", "autos", "carro", "carros", "vehiculo",
     "vehículo", "camioneta", "modelo", "año", "ano", "precio", "precios",
     # Frases típicas después del modelo (“hilux, puedes buscar…”)
     "puedes", "puede", "pueden", "podrías", "podrias", "buscar", "busca", "buscame",
     "mira", "mirá", "dime", "decir", "pregunte", "pregunta", "pregunté", "pero",
     "solo", "también", "tambien", "ayuda", "ayudame", "ayúdame", "ahora", "bien",
+    # Explicaciones (“la unidad se llama…”)
+    "unidad", "unidades", "llama", "llaman", "llamas", "nombre", "llamado", "llamada",
+    "algun", "alguna", "algunos", "algunas", "dice", "dicen", "eso", "este", "esta",
 })
 
 _COVERAGE_PAT = re.compile(
@@ -100,19 +103,64 @@ def _get_lots_paged(*, make: str | None = None) -> dict[str, Any] | None:
     return merged
 
 
+def _dedupe_query_lines(s: str) -> str:
+    """Evita repetir la misma frase al unir varios mensajes (WhatsApp / debounce)."""
+    parts = re.split(r"[\n\r]+", s)
+    seen: set[str] = set()
+    out: list[str] = []
+    for p in parts:
+        p = " ".join(p.split())
+        if len(p) < 2:
+            continue
+        key = p.lower()
+        if key in seen:
+            continue
+        seen.add(key)
+        out.append(p)
+    return " ".join(out)
+
+
+def _extract_explicit_vehicle_label(text: str) -> str | None:
+    """
+    Captura “se llama TOYOTA AVANZA”, “unidad se llama …”, etc. para priorizar marca/modelo.
+    """
+    patterns = (
+        r"\b(?:la\s+)?unidad\s+se\s+llama\s+([A-Za-z0-9áéíóúÁÉÍÓÚÑñ\s\-]{2,80})",
+        r"\bse\s+llama\s+([A-Za-z0-9áéíóúÁÉÍÓÚÑñ\s\-]{2,80})",
+        r"\bnombre\s+(?:del\s+)?(?:modelo|vehículo|vehiculo|auto)\s*[:\s]+\s*([A-Za-z0-9áéíóúÁÉÍÓÚÑñ\s\-]{2,80})",
+    )
+    for pat in patterns:
+        m = re.search(pat, text, re.IGNORECASE)
+        if m:
+            lab = " ".join(m.group(1).split())
+            if len(lab) >= 2:
+                return lab
+    return None
+
+
+def _preferred_stock_query(s: str) -> str:
+    """Ante aclaraciones explícitas, pone primero marca/modelo para parsear bien."""
+    s = " ".join(s.split())
+    label = _extract_explicit_vehicle_label(s)
+    if label:
+        return f"{label}. {s}"
+    return s
+
+
 def _stock_query_text(question: str, history: list[dict[str, Any]] | None) -> str:
     """Une últimos mensajes del usuario con la pregunta actual (marca/modelo en turnos previos)."""
     q = unicodedata.normalize("NFKC", question or "").strip()
     if not history:
-        return q
+        return _preferred_stock_query(_dedupe_query_lines(q))
     user_msgs = [
         unicodedata.normalize("NFKC", m.get("content", "").strip())
         for m in history
         if m.get("role") == "user" and (m.get("content") or "").strip()
     ]
-    tail = user_msgs[-2:]
+    tail = user_msgs[-1:]  # solo el turno previo evita duplicar “toyota avanza” dos veces
     merged = " ".join(tail + [q]) if q else " ".join(tail)
-    return " ".join(merged.split())
+    merged = " ".join(merged.split())
+    return _preferred_stock_query(_dedupe_query_lines(merged))
 
 
 def _make_matches_snap(want: str, snap_make: str) -> bool:
@@ -130,15 +178,31 @@ def _filter_snapshots(
     make: str | None,
     model: str | None,
 ) -> list[dict[str, Any]]:
-    model_key = (model or "").strip().lower().split()
-    model_key = model_key[0] if model_key else ""
+    model_parts = (model or "").strip().lower().split()[:2]
     out: list[dict[str, Any]] = []
     for snap in items:
-        if make and not _make_matches_snap(make, str(snap.get("make") or "")):
-            continue
-        if model_key:
-            s_mod = (snap.get("model") or "").strip().lower()
-            if model_key not in s_mod:
+        sm = str(snap.get("make") or "").strip().lower()
+        s_mod = (snap.get("model") or "").strip().lower()
+        combined = f"{sm} {s_mod}".strip().lower()
+        if make:
+            mk = make.lower()
+            if sm and not _make_matches_snap(make, sm):
+                continue
+            if not sm:
+                if model_parts and model_parts[0] in s_mod:
+                    pass
+                elif mk not in combined and mk not in s_mod:
+                    continue
+        if model_parts:
+            ok = False
+            if len(model_parts) == 1:
+                ok = model_parts[0] in s_mod
+            else:
+                joined = " ".join(model_parts)
+                ok = joined in s_mod or all(p in s_mod for p in model_parts)
+            if not ok and model_parts[0] in combined:
+                ok = True
+            if not ok:
                 continue
         out.append(snap)
     return out
@@ -146,7 +210,8 @@ def _filter_snapshots(
 
 def _no_match_message(make: str | None, model: str | None) -> str:
     mt = (make or "").strip().title() if make else ""
-    mo = (model or "").strip() if model else ""
+    mo_raw = (model or "").strip().split()
+    mo = " ".join(mo_raw[:2]).strip() if mo_raw else ""  # mostrar como máx. 2 palabras (evita basura parseada)
     if mt and mo:
         return (
             f"No encontré unidades publicadas de **{mt} {mo}** en HERALD ahora mismo. "
@@ -167,7 +232,7 @@ def _wants_lots_inventory(text: str) -> bool:
     """Pregunta por existencia / stock en catálogo (priorizar lotes sobre valoración AVT)."""
     return bool(
         re.search(
-            r"\b(tienen|hay|habrá|habra|buscar|busco|buscame|disponible|inventario|"
+            r"\b(tienen|tienes|hay|habrá|habra|buscar|busco|buscame|disponible|inventario|"
             r"stock|unidades|ofertas?|consigues|encuentras|venden|ver\s+si)\b",
             text,
             re.IGNORECASE,
@@ -350,16 +415,21 @@ def _extract_model(text: str, make: str) -> str | None:
     # Tras la marca suele venir “modelo, …” — cortar en coma o punto y coma
     rest = rest.split(",")[0].split(";")[0]
     rest = re.sub(r"[^\w\s]", " ", rest)
+    words = rest.split()
+    make_tokens = set(make.lower().split())
+    i = 0
+    while i < len(words) and words[i] in STOPWORDS:
+        i += 1
     tokens: list[str] = []
-    for w in rest.split():
-        if not w:
-            continue
+    for w in words[i:]:
         if w in STOPWORDS:
-            continue
+            break
+        if w in make_tokens or w == make.lower():
+            break
         if w.isdigit() and len(w) == 4:
             break
         tokens.append(w)
-        if len(tokens) >= 4:
+        if len(tokens) >= 2:
             break
     if not tokens:
         return None
