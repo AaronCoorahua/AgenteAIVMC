@@ -7,6 +7,7 @@ Requiere PINECONE_API_KEY. Con ANTHROPIC_API_KEY genera respuesta con Claude.
 """
 import os
 import sys
+import traceback
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[2]
@@ -441,9 +442,32 @@ def ask_with_router(question: str, use_multi_query: bool = True, history: list[d
         return chunks, answer, "faq"
     if intent == "stock_search":
         try:
+            from src.rag.herald_source import fetch_stock_for_answer, herald_configured
+            if herald_configured():
+                h_text, h_chunks, h_err = fetch_stock_for_answer(question)
+                if h_text and h_err != "failed":
+                    return h_chunks, h_text, "stock_search"
             from src.rag.inventory import search_vehicles, format_stock_answer
-            vehicles = search_vehicles(question)
-            answer = format_stock_answer(question, vehicles)
+            try:
+                vehicles = search_vehicles(question)
+                answer = format_stock_answer(question, vehicles)
+            except Exception as inv_e:
+                log_error(
+                    "inventory_stock_exception",
+                    message=str(inv_e),
+                    traceback=traceback.format_exc()[:8000],
+                    question_preview=(question or "")[:200],
+                )
+                print(
+                    f"[inventory_stock_exception] question={(question or '')[:120]!r}\n{inv_e}\n{traceback.format_exc()[:4000]}",
+                    file=sys.stderr,
+                    flush=True,
+                )
+                fallback = (
+                    "No pude consultar el inventario en este momento. "
+                    "Revisa el catálogo en 👉 vmcsubastas.com (filtros por marca y modelo)."
+                )
+                return [], fallback, "stock_search"
             chunks = [
                 {
                     "id": v.get("id"),
@@ -455,7 +479,20 @@ def ask_with_router(question: str, use_multi_query: bool = True, history: list[d
                 for v in (vehicles or [])
             ]
             return chunks, answer, "stock_search"
-        except Exception:
+        except Exception as e:
+            tb = traceback.format_exc()
+            log_error(
+                "stock_search_exception",
+                message=str(e),
+                traceback=tb[:8000],
+                question_preview=(question or "")[:200],
+            )
+            # Vercel "Runtime Logs" a veces no muestra el logger de archivo; stderr sí suele verse en Messages.
+            print(
+                f"[stock_search_exception] question={(question or '')[:120]!r}\n{e}\n{tb[:4000]}",
+                file=sys.stderr,
+                flush=True,
+            )
             msg = "Por ahora estoy aprendiendo a buscar carros en tiempo real — esa función llega pronto 🚗\n\nMientras tanto, puedes ver todo el inventario disponible directo en 👉 vmcsubastas.com. Ahí encuentras filtros por marca, modelo y precio. ¿Te ayudo con algo más sobre el proceso de subasta?"
             return [], msg, "stock_search"
     if intent == "soporte_humano":
@@ -495,10 +532,46 @@ def ask_with_router_debug(question: str, history: list[dict] | None = None) -> t
     if intent != "faq":
         if intent == "stock_search":
             try:
+                from src.rag.herald_source import fetch_stock_for_answer, herald_configured
+                if herald_configured():
+                    h_text, h_chunks, h_err = fetch_stock_for_answer(question)
+                    debug["herald"] = {
+                        "used": True,
+                        "error": h_err,
+                        "chunks_returned": len(h_chunks or []),
+                    }
+                    if h_text and h_err != "failed":
+                        debug["stock"] = {
+                            "source": "herald",
+                            "results_count": len(h_chunks or []),
+                            "sample": [
+                                {"id": c.get("id"), "title": (c.get("text") or "")[:80], "url": c.get("source_url")}
+                                for c in (h_chunks or [])[:5]
+                            ],
+                        }
+                        debug["total_latency_ms"] = int((time.perf_counter() - total_start) * 1000)
+                        return h_chunks, h_text, intent, debug
+                debug["herald"] = {"used": False, "reason": "not_configured_or_fallback"}
                 from src.rag.inventory import search_vehicles, format_stock_answer
-                vehicles = search_vehicles(question)
-                msg = format_stock_answer(question, vehicles)
+                try:
+                    vehicles = search_vehicles(question)
+                    msg = format_stock_answer(question, vehicles)
+                except Exception as inv_e:
+                    debug["inventory_error"] = str(inv_e)
+                    debug["inventory_traceback"] = traceback.format_exc()[:8000]
+                    log_error(
+                        "inventory_stock_exception",
+                        message=str(inv_e),
+                        traceback=debug["inventory_traceback"],
+                        question_preview=(question or "")[:200],
+                    )
+                    msg = (
+                        "No pude consultar el inventario en este momento. "
+                        "Revisa el catálogo en 👉 vmcsubastas.com (filtros por marca y modelo)."
+                    )
+                    vehicles = []
                 debug["stock"] = {
+                    "source": "inventory_json",
                     "results_count": len(vehicles or []),
                     "sample": [
                         {"id": v.get("id"), "title": v.get("title"), "url": v.get("url")}
@@ -508,8 +581,20 @@ def ask_with_router_debug(question: str, history: list[dict] | None = None) -> t
                 debug["total_latency_ms"] = int((time.perf_counter() - total_start) * 1000)
                 return [], msg, intent, debug
             except Exception as e:
-                msg = "Por ahora estoy aprendiendo a buscar carros en tiempo real — esa función llega pronto 🚗\n\nMientras tanto, puedes ver todo el inventario disponible directo en 👉 vmcsubastas.com. Ahí encuentras filtros por marca, modelo y precio. ¿Te ayudo con algo más sobre el proceso de subasta?"
                 debug["stock_error"] = str(e)
+                debug["stock_traceback"] = traceback.format_exc()[:8000]
+                log_error(
+                    "stock_search_exception",
+                    message=str(e),
+                    traceback=debug["stock_traceback"],
+                    question_preview=(question or "")[:200],
+                )
+                print(
+                    f"[stock_search_exception] question={(question or '')[:120]!r}\n{e}\n{debug['stock_traceback'][:4000]}",
+                    file=sys.stderr,
+                    flush=True,
+                )
+                msg = "Por ahora estoy aprendiendo a buscar carros en tiempo real — esa función llega pronto 🚗\n\nMientras tanto, puedes ver todo el inventario disponible directo en 👉 vmcsubastas.com. Ahí encuentras filtros por marca, modelo y precio. ¿Te ayudo con algo más sobre el proceso de subasta?"
                 debug["total_latency_ms"] = int((time.perf_counter() - total_start) * 1000)
                 return [], msg, intent, debug
         elif intent == "soporte_humano":
