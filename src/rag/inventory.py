@@ -34,6 +34,7 @@ Formato esperado de inventory.json:
 from __future__ import annotations
 
 import json
+import os
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[2]
@@ -89,7 +90,11 @@ def load_inventory() -> dict | None:
         except Exception as e:
             log_error("inventario_carga_error", message=str(e), path=str(INVENTORY_PATH_PROCESSED))
 
-    # No hay inventario — intentar scraping en el momento
+    # No hay inventario — intentar scraping en el momento (solo en entornos con disco escribible)
+    if os.environ.get("VERCEL"):
+        # Vercel: FS de solo lectura salvo /tmp; el scraper escribe en data/ → Errno 30
+        log_event("inventario_skip_scraper", reason="vercel_readonly_no_data_dir")
+        return None
     log_event("inventario_no_encontrado", accion="intentando_scraping_live")
     try:
         from agents.inventory_scraper.scrape_inventory import main as run_scraper

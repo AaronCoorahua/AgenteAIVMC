@@ -512,7 +512,11 @@ def ask_with_router(question: str, use_multi_query: bool = True, history: list[d
                 file=sys.stderr,
                 flush=True,
             )
-            msg = "Por ahora estoy aprendiendo a buscar carros en tiempo real — esa función llega pronto 🚗\n\nMientras tanto, puedes ver todo el inventario disponible directo en 👉 vmcsubastas.com. Ahí encuentras filtros por marca, modelo y precio. ¿Te ayudo con algo más sobre el proceso de subasta?"
+            msg = (
+                "Hubo un error técnico al consultar vehículos (no es que la función esté “apagada”). "
+                "Mientras lo revisamos, puedes ver el catálogo en 👉 vmcsubastas.com. "
+                "¿Te ayudo con el proceso de subasta o tu cuenta?"
+            )
             return [], msg, "stock_search"
     if intent == "soporte_humano":
         from src.rag.router import classify_escalation_type
@@ -614,7 +618,11 @@ def ask_with_router_debug(question: str, history: list[dict] | None = None) -> t
                     file=sys.stderr,
                     flush=True,
                 )
-                msg = "Por ahora estoy aprendiendo a buscar carros en tiempo real — esa función llega pronto 🚗\n\nMientras tanto, puedes ver todo el inventario disponible directo en 👉 vmcsubastas.com. Ahí encuentras filtros por marca, modelo y precio. ¿Te ayudo con algo más sobre el proceso de subasta?"
+                msg = (
+                    "Hubo un error técnico al consultar vehículos (no es que la función esté “apagada”). "
+                    "Mientras lo revisamos, puedes ver el catálogo en 👉 vmcsubastas.com. "
+                    "¿Te ayudo con el proceso de subasta o tu cuenta?"
+                )
                 debug["total_latency_ms"] = int((time.perf_counter() - total_start) * 1000)
                 return [], msg, intent, debug
         elif intent == "soporte_humano":

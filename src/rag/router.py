@@ -318,7 +318,7 @@ def _usage_to_dict(usage) -> dict:
 
 INTENT_EXPLANATIONS = {
     "faq": "Pregunta sobre la plataforma (comisiones, registro, SubasCoins, etc.). Se responde con RAG.",
-    "stock_search": "El usuario quiere buscar o listar vehículos. Por ahora mostramos mensaje de próximamente.",
+    "stock_search": "El usuario quiere buscar o listar vehículos. Respuesta con HERALD (si hay token) o inventario JSON local.",
     "soporte_humano": "Pide hablar con un agente o humano. Se responde con contacto.",
     "fuera_dominio": "Tema fuera de VMC Subastas. Se responde con redirección al dominio.",
 }

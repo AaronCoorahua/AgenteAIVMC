@@ -9,6 +9,7 @@ Ejecutar: uvicorn src.server.app:app --reload --port 8000
 import asyncio
 import json
 import os
+import re
 import sys
 import time
 from datetime import datetime, timezone
@@ -229,10 +230,40 @@ def _deduct_balance(cost: float) -> float:
     return _write_balance(new_balance)
 
 
-def send_whatsapp_text(to_number: str, text: str) -> None:
+_QR_RE = re.compile(r"\[QR:\s*(.+?)\]")
+
+
+def _parse_qr(text: str):
+    """Extrae opciones [QR: a | b | c] del texto. Devuelve (texto_limpio, [opciones])."""
+    match = _QR_RE.search(text)
+    if not match:
+        return text, []
+    options = [o.strip() for o in match.group(1).split("|") if o.strip()]
+    clean = (text[: match.start()].rstrip() + text[match.end() :]).strip()
+    return clean, options
+
+
+def _wa_post(url: str, headers: dict, payload: dict) -> None:
+    """POST a la API de WhatsApp con logging de errores."""
+    try:
+        resp = requests.post(url, headers=headers, json=payload, timeout=10)
+        if resp.status_code >= 400:
+            log_error(
+                "whatsapp_send_error",
+                message=f"HTTP {resp.status_code}: {resp.text[:200]}",
+                status_code=resp.status_code,
+                body=resp.text[:500],
+            )
+    except Exception as e:
+        log_error("whatsapp_send_exception", message=str(e))
+
+
+def send_whatsapp_message(to_number: str, text: str) -> None:
     """
-    Envía un mensaje de texto simple por WhatsApp usando la Cloud API.
-    Se ejecuta típicamente en background para no bloquear la respuesta HTTP.
+    Envía un mensaje por WhatsApp. Si el texto contiene [QR: ...],
+    los convierte en botones interactivos reales.
+    - ≤3 opciones y cada una ≤20 chars → reply buttons
+    - >3 opciones o alguna >20 chars  → list message
     """
     if not WHATSAPP_ACCESS_TOKEN or not WHATSAPP_PHONE_NUMBER_ID:
         log_error(
@@ -246,24 +277,56 @@ def send_whatsapp_text(to_number: str, text: str) -> None:
         "Authorization": f"Bearer {WHATSAPP_ACCESS_TOKEN}",
         "Content-Type": "application/json",
     }
-    payload = {
-        "messaging_product": "whatsapp",
-        "to": to_number,
-        "type": "text",
-        "text": {"body": text[:4096]},
-    }
 
-    try:
-        resp = requests.post(url, headers=headers, json=payload, timeout=10)
-        if resp.status_code >= 400:
-            log_error(
-                "whatsapp_send_error",
-                message=f"HTTP {resp.status_code}: {resp.text[:200]}",
-                status_code=resp.status_code,
-                body=resp.text[:500],
-            )
-    except Exception as e:
-        log_error("whatsapp_send_exception", message=str(e))
+    body, options = _parse_qr(text)
+
+    if not options:
+        payload = {
+            "messaging_product": "whatsapp",
+            "to": to_number,
+            "type": "text",
+            "text": {"body": body[:4096]},
+        }
+        _wa_post(url, headers, payload)
+        return
+
+    use_buttons = len(options) <= 3 and all(len(o) <= 20 for o in options)
+
+    if use_buttons:
+        buttons = [
+            {"type": "reply", "reply": {"id": f"qr_{i}", "title": o[:20]}}
+            for i, o in enumerate(options)
+        ]
+        payload = {
+            "messaging_product": "whatsapp",
+            "to": to_number,
+            "type": "interactive",
+            "interactive": {
+                "type": "button",
+                "body": {"text": body[:1024]},
+                "action": {"buttons": buttons},
+            },
+        }
+    else:
+        rows = [
+            {"id": f"qr_{i}", "title": o[:24]}
+            for i, o in enumerate(options[:10])
+        ]
+        payload = {
+            "messaging_product": "whatsapp",
+            "to": to_number,
+            "type": "interactive",
+            "interactive": {
+                "type": "list",
+                "body": {"text": body[:1024]},
+                "action": {
+                    "button": "Ver opciones",
+                    "sections": [{"title": "Opciones", "rows": rows}],
+                },
+            },
+        }
+
+    _wa_post(url, headers, payload)
 
 
 def create_intercom_ticket(from_number: str, last_message: str, history: list) -> None:
@@ -353,27 +416,59 @@ class BalanceRequest(BaseModel):
 
 
 # ---------------------------------------------------------------------------
-# Historial de conversación
+# Historial de conversación (Redis persistente + fallback en memoria)
 # ---------------------------------------------------------------------------
 MAX_HISTORY_TURNS = 6
+_HISTORY_TTL = 86400  # 24 horas
 _conversation_store: dict[str, list[dict]] = {}
+
+try:
+    from upstash_redis import Redis as _UpstashRedis
+    _redis_url = os.getenv("UPSTASH_REDIS_REST_URL", "")
+    _redis_token = os.getenv("UPSTASH_REDIS_REST_TOKEN", "")
+    _redis = _UpstashRedis(url=_redis_url, token=_redis_token) if _redis_url and _redis_token else None
+except Exception:
+    _redis = None
 
 
 def _get_history(session_id: str) -> list[dict]:
+    if _redis:
+        try:
+            data = _redis.get(f"hist:{session_id}")
+            if data is not None:
+                if isinstance(data, bytes):
+                    data = data.decode("utf-8")
+                if isinstance(data, str):
+                    return json.loads(data)
+                if isinstance(data, list):
+                    return data
+        except Exception as e:
+            log_error("redis_get_history_error", message=str(e), session_id=session_id)
     return _conversation_store.get(session_id, [])
 
 
 def _append_history(session_id: str, role: str, content: str) -> None:
     if not session_id:
         return
-    history = _conversation_store.setdefault(session_id, [])
+    history = _get_history(session_id)
     history.append({"role": role, "content": content})
     if len(history) > MAX_HISTORY_TURNS * 2:
-        _conversation_store[session_id] = history[-(MAX_HISTORY_TURNS * 2):]
+        history = history[-(MAX_HISTORY_TURNS * 2):]
+    _conversation_store[session_id] = history
+    if _redis:
+        try:
+            _redis.set(f"hist:{session_id}", json.dumps(history, ensure_ascii=False), ex=_HISTORY_TTL)
+        except Exception as e:
+            log_error("redis_append_history_error", message=str(e), session_id=session_id)
 
 
 def _clear_history(session_id: str) -> None:
     _conversation_store.pop(session_id, None)
+    if _redis:
+        try:
+            _redis.delete(f"hist:{session_id}")
+        except Exception:
+            pass
 
 
 def _log_request(payload: dict) -> None:
@@ -480,12 +575,113 @@ def api_webhook_verify(
     raise HTTPException(status_code=403, detail="Token de verificación inválido.")
 
 
+_DEBOUNCE_SECS = 5  # segundos de espera para agrupar mensajes consecutivos
+
+
+def _handle_whatsapp_message(
+    session_id: str,
+    from_number: str,
+    text: str,
+    bg_tasks: Optional[BackgroundTasks] = None,
+) -> None:
+    """Procesa un mensaje (o conjunto de mensajes ya agrupados) y envía la respuesta."""
+    from src.rag.query_rag import ask_with_router
+    from src.core.resilience import FatalAPIError
+
+    history = _get_history(session_id)
+
+    try:
+        _, answer, intent = ask_with_router(text, history=history)
+        reply = answer or "Por ahora no puedo responder, intenta nuevamente en unos minutos."
+        if intent == "soporte_humano":
+            _notify_asesor_requested(
+                channel="whatsapp",
+                session_id=session_id,
+                from_number=from_number,
+                user_message=text,
+            )
+            # Crear el ticket en Intercom (requiere bg_tasks desde el request de FastAPI)
+            if bg_tasks is not None:
+                bg_tasks.add_task(create_intercom_ticket, from_number, text, history)
+    except FatalAPIError as e:
+        reply = _mensaje_sin_creditos(history)
+        intent = "error"
+        _notify_handoff(channel="whatsapp", session_id=session_id, from_number=from_number)
+        log_error(
+            "whatsapp_fatal_no_credits",
+            message=str(e),
+            session_id=session_id,
+            from_number=from_number,
+            has_history=len(history) > 0,
+        )
+    except Exception as e:
+        log_error("whatsapp_webhook_rag_error", message=str(e))
+        reply = "En este momento estoy con problemas técnicos. Intenta escribir de nuevo en unos minutos."
+
+    _append_history(session_id, "user", text)
+    _append_history(session_id, "assistant", reply)
+    send_whatsapp_message(from_number, reply)
+
+
+def _process_debounced(
+    session_id: str,
+    from_number: str,
+    my_ts: float,
+    bg_tasks: Optional[BackgroundTasks] = None,
+) -> None:
+    """
+    Espera _DEBOUNCE_SECS y procesa solo si no llegó ningún mensaje nuevo.
+    Si llegó otro mensaje en ese tiempo, ese otro se encargará de responder.
+    Todos los textos pendientes se combinan en uno antes de pasar al RAG.
+    """
+    import time as _t
+    _t.sleep(_DEBOUNCE_SECS)
+
+    if not _redis:
+        return
+
+    try:
+        stored_ts = _redis.get(f"last_ts:{session_id}")
+        if stored_ts is None:
+            return
+        if isinstance(stored_ts, bytes):
+            stored_ts = float(stored_ts.decode())
+        else:
+            stored_ts = float(stored_ts)
+
+        # Si llegó un mensaje más reciente, ese hilo se encargará
+        if abs(stored_ts - my_ts) > 0.001:
+            return
+
+        # Somos el último — recoger todos los mensajes pendientes
+        pending = _redis.lrange(f"pending:{session_id}", 0, -1)
+        _redis.delete(f"pending:{session_id}")
+        _redis.delete(f"last_ts:{session_id}")
+
+        if not pending:
+            return
+
+        texts = []
+        for p in pending:
+            if isinstance(p, bytes):
+                texts.append(p.decode("utf-8"))
+            else:
+                texts.append(str(p))
+
+        combined = "\n".join(texts)
+    except Exception as e:
+        log_error("debounce_redis_error", message=str(e), session_id=session_id)
+        return
+
+    _handle_whatsapp_message(session_id, from_number, combined, bg_tasks)
+
+
 @app.post("/webhook/whatsapp")
 @app.post("/api/webhook")
 async def whatsapp_webhook(request: Request, background_tasks: BackgroundTasks):
     """
     Recibe mensajes entrantes de WhatsApp Cloud API y responde usando el RAG.
-    Por ahora maneja solo mensajes de texto.
+    Implementa debounce: agrupa mensajes consecutivos antes de responder.
     """
     try:
         body = await request.json()
@@ -504,9 +700,15 @@ async def whatsapp_webhook(request: Request, background_tasks: BackgroundTasks):
         if not messages:
             return {"status": "ignored"}
         message = messages[0]
-        if message.get("type") != "text":
+        msg_type = message.get("type")
+        if msg_type == "text":
+            text = (message.get("text") or {}).get("body") or ""
+        elif msg_type == "interactive":
+            interactive = message.get("interactive") or {}
+            ir = interactive.get("button_reply") or interactive.get("list_reply") or {}
+            text = ir.get("title") or ""
+        else:
             return {"status": "ignored"}
-        text = (message.get("text") or {}).get("body") or ""
         from_number = message.get("from") or ""
     except Exception as e:
         log_error("whatsapp_webhook_parse_error", message=str(e))
@@ -516,45 +718,23 @@ async def whatsapp_webhook(request: Request, background_tasks: BackgroundTasks):
         return {"status": "ignored"}
 
     session_id = f"wa_{from_number}"
-    history = _get_history(session_id)
 
-    from src.rag.query_rag import ask_with_router
-    from src.core.resilience import FatalAPIError
+    if _redis:
+        # Debounce: buffer el mensaje y programa procesamiento diferido
+        try:
+            my_ts = time.time()
+            _redis.rpush(f"pending:{session_id}", text)
+            _redis.set(f"last_ts:{session_id}", str(my_ts), ex=60)
+            background_tasks.add_task(_process_debounced, session_id, from_number, my_ts, background_tasks)
+        except Exception as e:
+            log_error("debounce_buffer_error", message=str(e), session_id=session_id)
+            # Fallback: procesar inmediatamente si Redis falla
+            background_tasks.add_task(_handle_whatsapp_message, session_id, from_number, text, background_tasks)
+    else:
+        # Sin Redis: procesar inmediatamente
+        background_tasks.add_task(_handle_whatsapp_message, session_id, from_number, text, background_tasks)
 
-    try:
-        _, answer, intent = ask_with_router(text, history=history)
-        reply = answer or "Por ahora no puedo responder, intenta nuevamente en unos minutos."
-        if intent == "soporte_humano":
-            _notify_asesor_requested(
-                channel="whatsapp",
-                session_id=session_id,
-                from_number=from_number,
-                user_message=text,
-            )
-            # Crear el ticket en Intercom para el inbox de los agentes de soporte
-            background_tasks.add_task(create_intercom_ticket, from_number, text, history)
-    except FatalAPIError as e:
-        reply = _mensaje_sin_creditos(history)
-        intent = "error"
-        _notify_handoff(channel="whatsapp", session_id=session_id, from_number=from_number)
-        log_error(
-            "whatsapp_fatal_no_credits",
-            message=str(e),
-            session_id=session_id,
-            from_number=from_number,
-            has_history=len(history) > 0,
-        )
-    except Exception as e:
-        log_error("whatsapp_webhook_rag_error", message=str(e))
-        reply = "En este momento estoy con problemas técnicos. Intenta escribir de nuevo en unos minutos."
-        intent = "error"
-
-    _append_history(session_id, "user", text)
-    _append_history(session_id, "assistant", reply)
-
-    background_tasks.add_task(send_whatsapp_text, from_number, reply)
-
-    return {"status": "ok", "intent": intent}
+    return {"status": "ok"}
 
 
 def _client_key(request: Request) -> str:
