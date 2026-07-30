@@ -1,0 +1,887 @@
+{
+  "source": "https://centro-de-ayuda-vmc.vercel.app",
+  "chunks": [
+    {
+      "id": "hcweb1",
+      "text": "Devolución de mi saldo\nPuedes solicitar la devolución de tu saldo en US$ desde tu Zona de Usuario › Billetera › Transacciones (únicamente desde una computadora), siempre que no tengas consignaciones, ofertas ganadas, procesos de compra activos ni deudas, y tu saldo sea mayor a US$ 30. Se descuenta US$ 30 por fee administrativo y el abono toma hasta 7 días hábiles en una cuenta del BCP o hasta 21 días hábiles en una cuenta interbancaria.",
+      "topic": "Devolución de mi saldo",
+      "source_url": "https://centro-de-ayuda-vmc.vercel.app/categorias/billetera/devolucion-de-mi-saldo",
+      "has_numeric_data": true
+    },
+    {
+      "id": "hcweb2",
+      "text": "Si realicé una Recarga, ¿puedo solicitar la devolución de mi saldo en US$ dólares americanos?\nPuedes solicitarla, excepto si:\n\n- Tienes consignaciones.\n\n- Eres ganador o mejor postor de una o más ofertas.\n\n- Tienes un proceso de compra activo.\n\n- Tienes potencial oportunidad de compra.\n\n- Tienes una deuda pendiente.\n\n- Tu categoría de Riesgo Usuario es “Alto”.\n\n- Careces de participaciones en nuestro Marketplace.\n\n- Tu saldo en US$ dólares americanos es menor a US$ 30.\n¡Recuerda! Al solicitar la devolución de tu saldo, se te descontará US$ 30 dólares americanos por el concepto de fee administrativo.\nSi solicitas la devolución de tu saldo en US$ dólares americanos en una cuenta del BCP, el plazo puede tomar hasta 7 días hábiles. En caso la solicites a una cuenta interbancaria, puede tomar hasta 21 días hábiles.",
+      "topic": "Devolución de mi saldo",
+      "source_url": "https://centro-de-ayuda-vmc.vercel.app/categorias/billetera/devolucion-de-mi-saldo",
+      "has_numeric_data": true
+    },
+    {
+      "id": "hcweb3",
+      "text": "¿Cómo solicito la devolución de mi saldo en US$ dólares americanos?\nHazlo desde tu Zona de Usuario, en el módulo “Billetera”, haciendo clic o tap en “Transacciones”.\n¡Recuerda! Puedes solicitar la devolución de tu saldo en US$ dólares americanos únicamente desde una computadora.\n[Paso 1: Captura de la Zona de Usuario: módulo Billetera con el botón Transacciones resaltado, mostrando SubasCoins y saldo en US$]\nLuego, en la parte inferior de la pantalla, en el banner “devolución de saldo” dale clic o tap a “Solicitar”.\n[Paso 2: Captura del banner de devolución de saldo con el botón Solicitar resaltado]\n¡Recuerda! Al solicitar la devolución de tu saldo, se te descontará US$ 30 dólares americanos por el concepto de fee administrativo.",
+      "topic": "Devolución de mi saldo",
+      "source_url": "https://centro-de-ayuda-vmc.vercel.app/categorias/billetera/devolucion-de-mi-saldo",
+      "has_numeric_data": true
+    },
+    {
+      "id": "hcweb4",
+      "text": "Realicé una recarga y ahora tengo SubasCoins, ¿qué pasó?\nEsto puede pasar por:\na. Inactividad:\nEs necesario que inicies sesión en nuestro Marketplace, como mínimo, 1 vez cada 6 meses. Caso contrario, los US$ dólares americanos en tu Billetera digital serán convertidos en >S< SubasCoins irreversiblemente.\nb. Sanción:\nSi consignaste con US$ dólares americanos e incumples con tus responsabilidades, estos serán convertidos en >S< SubasCoins antes de ser devueltos a tu Billetera digital.",
+      "topic": "Devolución de mi saldo",
+      "source_url": "https://centro-de-ayuda-vmc.vercel.app/categorias/billetera/devolucion-de-mi-saldo",
+      "has_numeric_data": true
+    },
+    {
+      "id": "hcweb5",
+      "text": "Fee por el uso de pasarela\nEl Fee por uso de pasarela es un cargo por el procesamiento de pagos con medios electrónicos (tarjetas de crédito o débito) y equivale al 3.9% del valor de los SubasCoins adquiridos. Se muestra siempre antes de confirmar la compra y genera boleta o factura descargable desde Transacciones. Puedes evitarlo agregando fondos mediante recarga de dólares con tu C.U.U. por la App o ventanilla del BCP.",
+      "topic": "Fee por el uso de pasarela",
+      "source_url": "https://centro-de-ayuda-vmc.vercel.app/categorias/billetera/fee-por-uso-de-pasarela",
+      "has_numeric_data": true
+    },
+    {
+      "id": "hcweb6",
+      "text": "¿Qué es el Fee por el uso de pasarela?\nEs un cargo asociado al procesamiento de pagos realizados mediante medios de pago electrónicos, como tarjetas de crédito o débito.\nEste Fee se mostrará de manera clara, visible y en cada adquisición que realices.\nEl Fee por uso de pasarela equivale al 3.9% del valor de los SubasCoins adquiridos.\nSiempre aparecerá el detalle antes de confirmar la compra. Así siempre podrás revisar el importe total a pagar antes de finalizar la operación.",
+      "topic": "Fee por el uso de pasarela",
+      "source_url": "https://centro-de-ayuda-vmc.vercel.app/categorias/billetera/fee-por-uso-de-pasarela",
+      "has_numeric_data": true
+    },
+    {
+      "id": "hcweb7",
+      "text": "¿Recibiré comprobante por este cargo?\nSí. Obtendrás boleta o factura por el pago de este fee. Podrás descargarla desde el segmento “Transacciones”, dentro del módulo Billetera en tu Zona de Usuario.",
+      "topic": "Fee por el uso de pasarela",
+      "source_url": "https://centro-de-ayuda-vmc.vercel.app/categorias/billetera/fee-por-uso-de-pasarela",
+      "has_numeric_data": false
+    },
+    {
+      "id": "hcweb8",
+      "text": "¿Existe alguna forma de agregar fondos sin pagar este Fee?\nSí. Puedes agregar saldo a tu billetera mediante recarga de Dólares utilizando tu C.U.U. Lo puedes hacer a través de:\n\n- App del BCP\n\n- Ventanilla del BCP\nEsta modalidad no genera este cobro.",
+      "topic": "Fee por el uso de pasarela",
+      "source_url": "https://centro-de-ayuda-vmc.vercel.app/categorias/billetera/fee-por-uso-de-pasarela",
+      "has_numeric_data": false
+    },
+    {
+      "id": "hcweb9",
+      "text": "La Recarga: ¿Cómo funciona?\nLa Recarga es agregar fondos en US$ a tu Billetera de VMC, ya sea por los medios digitales del BCP (Banca Electrónica o Banca Móvil) o con un depósito en ventanilla en cualquier agencia del BCP, a la cuenta recaudadora de VMC Subastas. El monto mínimo es de US$ 30, necesitarás tu Código Único de Usuario (C.U.U.) y la validación puede tomar hasta 24 horas hábiles en reflejarse en tu Billetera. Es un medio sin el pago del Fee por uso de pasarela.",
+      "topic": "La Recarga: ¿Cómo funciona?",
+      "source_url": "https://centro-de-ayuda-vmc.vercel.app/categorias/billetera/la-recarga",
+      "has_numeric_data": true
+    },
+    {
+      "id": "hcweb10",
+      "text": "¿Qué es una Recarga?\nLe decimos Recarga a la acción de agregar fondos en US$ a tu Billetera en VMC a través de un depósito en ventanilla en una agencia del BCP o por transferencia electrónica por los medios digitales del BCP, a la cuenta recaudadora de VMC Subastas.\nRecuerda que la validación de la Recarga puede tomar hasta 24 horas hábiles en verse reflejada en tu Billetera.\nPodrás utilizar tus fondos para consignar y/o pagar comisiones por uso de nuestro servicio, en caso de ser ganador habilitado.\nLa Recarga es un medio sin el pago del Fee por uso de pasarela.",
+      "topic": "La Recarga: ¿Cómo funciona?",
+      "source_url": "https://centro-de-ayuda-vmc.vercel.app/categorias/billetera/la-recarga",
+      "has_numeric_data": true
+    },
+    {
+      "id": "hcweb11",
+      "text": "¿Cómo realizo una Recarga?\nPuedes realizarla de dos maneras: por los medios digitales del BCP o en ventanilla de cualquier agencia del BCP.\na. Mediante los medios digitales del BCP (Banca Electrónica y/o Banca Móvil):\n\n- Haz clic en “Pagos de Servicios” en el menú lateral.\n\n- Busca “VMC Subastas”.\n\n- Selecciona “Recarga”.\n\n- Te solicitará tu Código Único de Usuario y el monto que deseas recargar.\n\nb. En ventanilla, acercándote a cualquier agencia del BCP:\n\n- Indícale al cajero que deseas hacer un depósito a la cuenta recaudadora en dólares de VMC Subastas.\n\n- Elige el servicio de Recarga.\n\n- Luego, te pedirá tu Código Único de Usuario y el monto que deseas recargar.\nImportante: el monto mínimo de Recarga es de US$ 30 (treinta dólares americanos).",
+      "topic": "La Recarga: ¿Cómo funciona?",
+      "source_url": "https://centro-de-ayuda-vmc.vercel.app/categorias/billetera/la-recarga",
+      "has_numeric_data": true
+    },
+    {
+      "id": "hcweb12",
+      "text": "¿Dónde encuentro mi Código Único de Usuario (C.U.U.)?\nEncuentra tu C.U.U. en la parte superior de la plataforma; también lo puedes encontrar en tu zona de usuario.",
+      "topic": "La Recarga: ¿Cómo funciona?",
+      "source_url": "https://centro-de-ayuda-vmc.vercel.app/categorias/billetera/la-recarga",
+      "has_numeric_data": false
+    },
+    {
+      "id": "hcweb13",
+      "text": "SubasCoins: ¿Qué son, para qué sirven y cómo se adquieren?\nLas SubasCoins son la moneda virtual de VMC Subastas: 1 US$ = 1 SubasCoin. Adquiérelas desde tu zona, en la card de Billetera, con tarjeta de crédito o débito (incluida en soles) desde 30 SubasCoins, sin monto máximo. Si adquieres SubasCoins con tarjeta se aplica el Fee por uso de pasarela del 3.9%; recarga por el BCP con tu C.U.U. para evitarlo.",
+      "topic": "SubasCoins: ¿Qué son, para qué sirven y cómo se adquieren?",
+      "source_url": "https://centro-de-ayuda-vmc.vercel.app/categorias/billetera/subascoins",
+      "has_numeric_data": true
+    },
+    {
+      "id": "hcweb14",
+      "text": "¿Qué son las subascoins y para qué me sirven?\nSon la moneda virtual que usamos en VMC. La equivalencia es de 1 US$ = 1 Subascoin.\nPodrás usar tus subascoins para consignar en las ofertas disponibles, pagar comisiones, penalizaciones, comprar subaspass o canjear puntos.\nPara más información sobre nuestras Condiciones y Términos:\n\n¡Ingresa Aquí!: https://subastop.com/terminos-y-condiciones",
+      "topic": "SubasCoins: ¿Qué son, para qué sirven y cómo se adquieren?",
+      "source_url": "https://centro-de-ayuda-vmc.vercel.app/categorias/billetera/subascoins",
+      "has_numeric_data": true
+    },
+    {
+      "id": "hcweb15",
+      "text": "¿Cómo adquiero Subascoins?\nSolo debes iniciar sesión e ingresar a tu zona y dentro del card de Billetera darle al botón Adquiere SubasCoins.\n\n- Paso 1: En tu zona, dentro de la card de Billetera dale clic al botón Adquiere SubasCoins.\n\n- Paso 2: Selecciona o ingresa la cantidad de SubasCoins que deseas adquirir y dale clic a Sigamos. Recuerda que 1 SubasCoin es equivalente a US$ 1 (Un Dólar Americano).\n\n- Paso 3: Completa los datos de tu tarjeta y confirma el pago. Recuerda activar las compras por internet con tu banco.\n\n¡Listo! Verás la confirmación con las SubasCoins adquiridas, disponibles al instante en tu Billetera.",
+      "topic": "SubasCoins: ¿Qué son, para qué sirven y cómo se adquieren?",
+      "source_url": "https://centro-de-ayuda-vmc.vercel.app/categorias/billetera/subascoins",
+      "has_numeric_data": true
+    },
+    {
+      "id": "hcweb16",
+      "text": "¿Cuál es el monto mínimo y máximo de subascoins que puedo adquirir?\n- El monto mínimo que puedes adquirir en tu recarga es 30 subascoins.\n\n- Puedes adquirir tus subascoins cuando lo desees, no hay un monto máximo y todo estará en tu cuenta.",
+      "topic": "SubasCoins: ¿Qué son, para qué sirven y cómo se adquieren?",
+      "source_url": "https://centro-de-ayuda-vmc.vercel.app/categorias/billetera/subascoins",
+      "has_numeric_data": true
+    },
+    {
+      "id": "hcweb17",
+      "text": "¿Puedo adquirir SubasCoins con cualquier tarjeta?\nPuedes realizar la recarga a través del pago con tarjeta de crédito o débito de las siguientes marcas: Visa, Mastercard, American Express, Diners Club, oh!, CMR, Ripley, Cencosud, pre-pagos, y muchas más...\n\n- Solo debes asegurarte que se encuentre habilitada para compras por internet.\n\n- En caso tu tarjeta esté asociada a una cuenta en soles, el banco realizará la conversión a dólares y usará el tipo de cambio que manejen en ese momento.\n\n- Sí, sí puedes comprar SubasCoins con una tarjeta en soles.\n\n- La adquisición de SubasCoins se procesa automáticamente, por lo que podrás disponer de tus SubasCoins de manera inmediata.",
+      "topic": "SubasCoins: ¿Qué son, para qué sirven y cómo se adquieren?",
+      "source_url": "https://centro-de-ayuda-vmc.vercel.app/categorias/billetera/subascoins",
+      "has_numeric_data": false
+    },
+    {
+      "id": "hcweb18",
+      "text": "¿Existe algún recargo adicional por el uso de pasarela?\nSí. Las adquisiciones de SubasCoins realizadas con tarjeta a través de la pasarela de pagos tendrán un recargo adicional del 3.9%, informado cumpliendo con la normativa de Indecopi (artículo 7 de la Ley 29571).\n¿Quieres evitarlo? Recarga tu saldo en dólares a través de ventanilla, agente o la app del BCP utilizando tu C.U.U. Esta operación carece del cobro de este Fee.",
+      "topic": "SubasCoins: ¿Qué son, para qué sirven y cómo se adquieren?",
+      "source_url": "https://centro-de-ayuda-vmc.vercel.app/categorias/billetera/subascoins",
+      "has_numeric_data": true
+    },
+    {
+      "id": "hcweb19",
+      "text": "¿Qué es el Recibo VMC?\nEs la constancia que avala una operación de adquisición de SubasCoins o Recarga en la plataforma.\nSe emitirá el comprobante correspondiente al momento de utilizar los Dólares o SubasCoins en una operación final, derivada de los servicios prestados como lo es el pago de comisiones.",
+      "topic": "SubasCoins: ¿Qué son, para qué sirven y cómo se adquieren?",
+      "source_url": "https://centro-de-ayuda-vmc.vercel.app/categorias/billetera/subascoins",
+      "has_numeric_data": false
+    },
+    {
+      "id": "hcweb20",
+      "text": "¿Cómo uso el código de pago de Pacífico?\nEl código de pago de Pacífico es un valor alfanumérico de 6 caracteres activo en el BCP que sirve para pagar el valor de la oferta que acabas de ganar. Puedes pagar por Banca Web o Móvil del BCP (o TeleCrédito si eres persona jurídica) buscando el servicio “23 Deducibles Autos Dólares” de Pacífico Seguros e ingresando la placa del activo como código de pago, o en ventanilla indicando un pago a la cuenta recaudadora de Pacífico Seguros. Después del pago, adjunta el comprobante en el módulo “Tu Actividad”.",
+      "topic": "¿Cómo uso el código de pago de Pacífico?",
+      "source_url": "https://centro-de-ayuda-vmc.vercel.app/categorias/compra-venta/como-uso-el-codigo-de-pago-de-pacifico",
+      "has_numeric_data": true
+    },
+    {
+      "id": "hcweb21",
+      "text": "¿Qué es el código de pago Pacífico?\nEl código de pago de Pacífico es un valor alfanumérico de 6 caracteres que se encuentra activo en el BCP y que sirve para pagar el valor de la oferta que acabas de ganar.",
+      "topic": "¿Cómo uso el código de pago de Pacífico?",
+      "source_url": "https://centro-de-ayuda-vmc.vercel.app/categorias/compra-venta/como-uso-el-codigo-de-pago-de-pacifico",
+      "has_numeric_data": true
+    },
+    {
+      "id": "hcweb22",
+      "text": "¿Cómo puedo pagar la oferta usando el código de pago?\nPodrás realizar el pago usando los siguientes canales:\n1. Banca Web o Móvil\na. Personas Naturales\nPodrás realizar el pago usando la Banca Web o Móvil siguiendo estos pasos:\n\n- Dirigirse a Pago de Servicios.\n\n- Buscar la opción: Pacífico Seguros.\n\n- Elegir la opción “23 Deducibles Autos Dólares”.\n\n- Ingresar la placa del activo como código de pago.\n\n- Después del pago adjuntar el comprobante en el módulo “Tu Actividad”.\nb. Personas Jurídicas\nPodrás realizar el pago usando el TeleCrédito siguiendo estos pasos:\n\n- Dirigirse a la opción Operaciones Monetarias.\n\n- Pagos Varios.\n\n- Pago de Servicios.\n\n- En clasificación de pagos: Seguros y Clínicas.\n\n- Empresa: “Pacífico Seguros”.\n\n- Elegir la opción “23 Deducibles Autos Dólares”.\n\n- Ingresar la placa del activo como código de pago.\n\n- Después del pago adjuntar el comprobante en el módulo “Tu Actividad”.\n2. En ventanilla\n\n- Indicar que desea realizar un pago a la cuenta recaudadora de Pacífico Seguros.\n\n- Indicar la cuenta o servicio “23 Deducibles Autos Dólares”.\n\n- Ingresar la placa del activo como código de pago.\n\n- Después del pago adjuntar el comprobante en “Tu Actividad”.",
+      "topic": "¿Cómo uso el código de pago de Pacífico?",
+      "source_url": "https://centro-de-ayuda-vmc.vercel.app/categorias/compra-venta/como-uso-el-codigo-de-pago-de-pacifico",
+      "has_numeric_data": true
+    },
+    {
+      "id": "hcweb23",
+      "text": "La Comisión, ¿Por qué, cuánto y cómo se paga?\nLa comisión es el monto que todo ganador habilitado paga a VMC por el uso del servicio. El porcentaje se muestra en el detalle de cada publicación y se calcula sobre el valor del bid del ganador habilitado: Comisión = bid × porcentaje, con un mínimo de 50 SubasCoins. Se debita automáticamente de tu Billetera; si no tienes fondos suficientes, adquiere SubasCoins o haz una Recarga dentro del plazo indicado en el módulo “Tu Actividad”.",
+      "topic": "La Comisión, ¿Por qué, cuánto y cómo se paga?",
+      "source_url": "https://centro-de-ayuda-vmc.vercel.app/categorias/compra-venta/la-comision-por-que-cuanto-y-como-se-paga",
+      "has_numeric_data": true
+    },
+    {
+      "id": "hcweb24",
+      "text": "¿Dónde puedo ver el porcentaje y cómo se calcula la comisión?\nPuedes ver el porcentaje “%” de comisión que le corresponde a cada oferta en el detalle de su publicación.\nImportante: el monto de la comisión a pagar se calcula así:\nComisión = (bid del ganador) × (porcentaje de comisión)\nSi después de realizar el cálculo el monto de comisión se encuentra por debajo de los 50 SubasCoins, el ganador habilitado deberá pagar 50 SubasCoins como mínimo.",
+      "topic": "La Comisión, ¿Por qué, cuánto y cómo se paga?",
+      "source_url": "https://centro-de-ayuda-vmc.vercel.app/categorias/compra-venta/la-comision-por-que-cuanto-y-como-se-paga",
+      "has_numeric_data": true
+    },
+    {
+      "id": "hcweb25",
+      "text": "¿Mi bid incluye la comisión?\nNo. La comisión se calcula sobre el valor del bid de compra del ganador habilitado, es decir, se suma aparte de tu bid.",
+      "topic": "La Comisión, ¿Por qué, cuánto y cómo se paga?",
+      "source_url": "https://centro-de-ayuda-vmc.vercel.app/categorias/compra-venta/la-comision-por-que-cuanto-y-como-se-paga",
+      "has_numeric_data": false
+    },
+    {
+      "id": "hcweb26",
+      "text": "¿Cómo se paga la comisión?\nAl ser habilitado para comprar, la comisión será debitada de tu Billetera de manera automática.\nEn caso de contar con fondos insuficientes para cubrir tu deuda, deberás adquirir SubasCoins o realizar una Recarga dentro del plazo indicado en el módulo “Tu Actividad”.\n\n- Paso 1: Ingresa a tu Zona de Usuario y, en el módulo “Tu Actividad”, entra a Proceso de Compra.\n\n- Paso 2: Verás el detalle con la comisión, lo consignado y el monto pendiente. Dale clic o tap a “Paga la comisión aquí”.",
+      "topic": "La Comisión, ¿Por qué, cuánto y cómo se paga?",
+      "source_url": "https://centro-de-ayuda-vmc.vercel.app/categorias/compra-venta/la-comision-por-que-cuanto-y-como-se-paga",
+      "has_numeric_data": true
+    },
+    {
+      "id": "hcweb27",
+      "text": "¿Por qué se paga comisión?\nLa comisión es un monto que todo ganador habilitado deberá pagar a VMC por concepto de uso del servicio.",
+      "topic": "La Comisión, ¿Por qué, cuánto y cómo se paga?",
+      "source_url": "https://centro-de-ayuda-vmc.vercel.app/categorias/compra-venta/la-comision-por-que-cuanto-y-como-se-paga",
+      "has_numeric_data": false
+    },
+    {
+      "id": "hcweb28",
+      "text": "¡Consignar es necesario para participar!\nPara participar en una oferta de VMC Subastas debes consignar: entra al detalle de la oferta, dale clic o tap a “Participa” (o inicia la negociación en una oferta “Negociable”) y, al aceptar, el sistema debita automáticamente de tu Billetera el monto indicado y te da acceso a la sala. Al consignar te comprometes a enviar al menos un bid válido durante el proceso “En Vivo”, o serás sancionado. Si tu Riesgo Usuario es “Alto”, no podrás consignar en ofertas financiables.\n🎬 ¿Prefieres verlo en video? Mira “” en YouTube.",
+      "topic": "¡Consignar es necesario para participar!",
+      "source_url": "https://centro-de-ayuda-vmc.vercel.app/categorias/consignacion/consignar-es-necesario-para-participar",
+      "has_numeric_data": false
+    },
+    {
+      "id": "hcweb29",
+      "text": "¿Cómo y cuánto debo consignar para poder participar?\nPara ver el monto a consignar, debes iniciar sesión, ingresar al detalle de la oferta de tu interés y luego darle clic o tap a “Participa” 👇\nPodrás ver el monto a consignar. Haz clic o tap sobre acepto y automáticamente el sistema debitará de tu Billetera el monto indicado y tendrás el acceso al proceso en la sala.\nRecuerda que al aceptar eres responsable como participante, de enviar al menos un bid válido durante el proceso “En Vivo” o serás sancionado.",
+      "topic": "¡Consignar es necesario para participar!",
+      "source_url": "https://centro-de-ayuda-vmc.vercel.app/categorias/consignacion/consignar-es-necesario-para-participar",
+      "has_numeric_data": false
+    },
+    {
+      "id": "hcweb30",
+      "text": "Quiero participar en una oferta financiable, pero se me impide consignar. ¿Qué puedo hacer?\nSi tu Riesgo Usuario es “Alto”, se te restringirá la consignación en ofertas financiables.\nPuedes mejorar tu Riesgo Usuario canjeando Puntos VMC o, en su defecto, adquirir un Subaspass para participar en todas las subastas sin importar tu nivel de riesgo. Aprende cómo canjear tus puntos:\nAQUÍ: https://centro-de-ayuda-vmc.vercel.app/categorias/riesgo-usuario/canjea-puntos-vmc-y-mejora-tu-riesgo-usuario",
+      "topic": "¡Consignar es necesario para participar!",
+      "source_url": "https://centro-de-ayuda-vmc.vercel.app/categorias/consignacion/consignar-es-necesario-para-participar",
+      "has_numeric_data": false
+    },
+    {
+      "id": "hcweb31",
+      "text": "¿Cómo y cuánto debo consignar para poder participar en una oferta “Negociable”?\nEn una oferta “Negociable”, al iniciar una negociación, el sistema debitará automáticamente el monto indicado a consignar e iniciarás tu negociación con el vendedor.",
+      "topic": "¡Consignar es necesario para participar!",
+      "source_url": "https://centro-de-ayuda-vmc.vercel.app/categorias/consignacion/consignar-es-necesario-para-participar",
+      "has_numeric_data": false
+    },
+    {
+      "id": "hcweb32",
+      "text": "¿Cómo agrego valor a mi billetera para consignar?\nPuedes hacerlo adquiriendo SubasCoins\no haciendo una recarga, aprende cómo hacerlo:\nAQUÍ: https://centro-de-ayuda-vmc.vercel.app/categorias/billetera/la-recarga\nRecuerda: adquirir SubasCoins con tarjeta genera el Fee por uso de pasarela (3.9% del valor de los SubasCoins adquiridos); la Recarga es la opción sin este cobro.",
+      "topic": "¡Consignar es necesario para participar!",
+      "source_url": "https://centro-de-ayuda-vmc.vercel.app/categorias/consignacion/consignar-es-necesario-para-participar",
+      "has_numeric_data": true
+    },
+    {
+      "id": "hcweb33",
+      "text": "¿Cuándo me devuelven la consignación?\nLa consignación se devuelve a tu Billetera cuando concluye el proceso, salvo que resultes Ganador Directo, Mejor Postor, o tengas oportunidad de compra por estar en el 2do o 3er lugar de una oferta “En Vivo” sin Precio Reserva; ahí se libera al culminar el proceso de compra. Si incumples tus responsabilidades como participante o tu Riesgo Usuario es “Alto”, se libera a las 23:59:59 horas del mismo día del proceso “En Vivo”. Si te devolvieron SubasCoins en vez de dólares, fue por una sanción.",
+      "topic": "¿Cuándo me devuelven la consignación?",
+      "source_url": "https://centro-de-ayuda-vmc.vercel.app/categorias/consignacion/cuando-me-devuelven-la-consignacion",
+      "has_numeric_data": true
+    },
+    {
+      "id": "hcweb34",
+      "text": "La consignación, ¿cuándo me la devuelven?\nLa consignación será devuelta a tu Billetera cuando haya concluido el proceso, a menos que:\n\n- Resultes Ganador Directo de un proceso “En Vivo”.\n\n- Resultes Mejor Postor de un proceso “En Vivo”.\n\n- Tienes oportunidad de compra al estar en el 2do o 3er lugar de una oferta “En Vivo” sin Precio Reserva. En ese caso, lo consignado se liberará a tu billetera cuando culmine el proceso de compra.\nSi incumples tus responsabilidades como participante o tu categoría de Riesgo Usuario es Alto, tu consignación será liberada a las 23:59:59 horas del mismo día del proceso “En vivo”.",
+      "topic": "¿Cuándo me devuelven la consignación?",
+      "source_url": "https://centro-de-ayuda-vmc.vercel.app/categorias/consignacion/cuando-me-devuelven-la-consignacion",
+      "has_numeric_data": true
+    },
+    {
+      "id": "hcweb35",
+      "text": "¿Por qué mi Riesgo Usuario es Alto, y por qué eso impacta en la liberación de mi consignación?\nVMC califica de manera constante a todo usuario desde la creación de su cuenta. Por lo tanto el usuario puede ganar o perder Puntos, al cumplir o incumplir con sus responsabilidades como participante o ganador.\nAl incumplir pierdes Puntos y toda calificación negativa significa el nivel de Riesgo Usuario “Alto”. Cada vez que participes de un proceso “En Vivo”, la consignación se liberará a las 23:59:59 horas del mismo día del proceso “En vivo”.",
+      "topic": "¿Cuándo me devuelven la consignación?",
+      "source_url": "https://centro-de-ayuda-vmc.vercel.app/categorias/consignacion/cuando-me-devuelven-la-consignacion",
+      "has_numeric_data": true
+    },
+    {
+      "id": "hcweb36",
+      "text": "Hice una consignación en dólares pero me han devuelto el equivalente en SubasCoins, ¿qué pasó?\nEsto se debe a que has sido sancionado por incumplir tus responsabilidades como participante.\nMás info en el artículo Responsabilidades y Sanciones.\nAQUÍ: https://centro-de-ayuda-vmc.vercel.app/categorias/responsabilidades-sanciones/responsabilidades-de-los-participantes",
+      "topic": "¿Cuándo me devuelven la consignación?",
+      "source_url": "https://centro-de-ayuda-vmc.vercel.app/categorias/consignacion/cuando-me-devuelven-la-consignacion",
+      "has_numeric_data": false
+    },
+    {
+      "id": "hcweb37",
+      "text": "¡He sido habilitado para comprar! ¿Qué hago ahora?\nTras pagar la comisión y subir tus documentos, solo esperas las instrucciones de pago del vendedor: el pago de la oferta se hace directamente al vendedor, en dólares americanos (los fondos de tu Billetera solo sirven para consignar y pagar comisiones). Adjuntas el comprobante de pago y recibes el contacto del vendedor para la transferencia y el recojo. Puede aplicar un Fee de Habilitación adicional a la comisión si las condiciones lo indican, más los gastos administrativos de la transferencia. Incumplir la compra se sanciona: pagas igual la comisión, tu cuenta se inhabilita 7 días, pierdes 75 Puntos, y al tercer incumplimiento con un mismo vendedor quedas suspendido permanentemente con él.",
+      "topic": "¡He sido habilitado para comprar! ¿Qué hago ahora?",
+      "source_url": "https://centro-de-ayuda-vmc.vercel.app/categorias/habilitacion/he-sido-habilitado-que-hago-ahora",
+      "has_numeric_data": true
+    },
+    {
+      "id": "hcweb38",
+      "text": "¿Qué hacer después de la habilitación?\nCada oferta cuenta con diferentes condiciones de ofrecimiento y compra, por lo que cada proceso de compra puede tener diferentes requisitos y plazos de pago, esta información también se encuentra en el documento \"Resumen de oferta\" que se encuentra disponible para su descarga en la publicación de la oferta.\nLa primera fase del proceso de venta requiere que pagues la comisión por uso de nuestro servicio y así cargues la documentación que solicita el vendedor, para ello debes ingresar a tu Zona de Usuario, y luego al proceso de compra dentro del módulo \"Tu Actividad\".\n\n- Paso 1: Al ser habilitado, verás la fecha y hora límite para concretar el proceso de compra, la comisión y el botón \"Paga la comisión aquí\".\nImportante: Debes cumplir el plazo de pago que se encuentra en el módulo \"Tu Actividad\".\n\n- Paso 2: Adjunta la documentación que solicita el vendedor y dale a \"Enviar Documentos\".",
+      "topic": "¡He sido habilitado para comprar! ¿Qué hago ahora?",
+      "source_url": "https://centro-de-ayuda-vmc.vercel.app/categorias/habilitacion/he-sido-habilitado-que-hago-ahora",
+      "has_numeric_data": true
+    },
+    {
+      "id": "hcweb39",
+      "text": "¿Dónde se encuentra mi Zona de Usuario y el módulo \"Tu Actividad\"?\nPara ingresar a tu Zona de Usuario, debes hacer clic o tap en tu CUU. Se encuentra ubicado en la esquina superior, derecha de la plataforma.\nLuego, en tu Zona de Usuario, haz clic o tap en Proceso de compra dentro del módulo \"Tu Actividad\":",
+      "topic": "¡He sido habilitado para comprar! ¿Qué hago ahora?",
+      "source_url": "https://centro-de-ayuda-vmc.vercel.app/categorias/habilitacion/he-sido-habilitado-que-hago-ahora",
+      "has_numeric_data": false
+    },
+    {
+      "id": "hcweb40",
+      "text": "¿Dónde puedo ver el plazo de pago para cumplir mis responsabilidades como ganador habilitado?\nAntes del inicio del proceso puedes ver el plazo de pago en las condiciones de la oferta y en el documento \"Resumen de oferta\" que se encuentra en la publicación de la oferta.",
+      "topic": "¡He sido habilitado para comprar! ¿Qué hago ahora?",
+      "source_url": "https://centro-de-ayuda-vmc.vercel.app/categorias/habilitacion/he-sido-habilitado-que-hago-ahora",
+      "has_numeric_data": false
+    },
+    {
+      "id": "hcweb41",
+      "text": "¿Qué documentos debo adjuntar después de ser habilitado?\nAntes del inicio del proceso puedes ver los documentos que solicita el vendedor en las condiciones de la oferta y en el documento \"Resumen de oferta\" que se encuentra en la publicación de la oferta.\nCuando tengas los documentos, puedes adjuntarlos en la sección de documentación requerida.\n\n- Paso 1: Adjunta cada documento solicitado haciendo clic o tap en \"Adjunta\".\n\n- Paso 2: Una vez adjuntados todos los documentos, dale clic o tap a \"Enviar Documentos\".",
+      "topic": "¡He sido habilitado para comprar! ¿Qué hago ahora?",
+      "source_url": "https://centro-de-ayuda-vmc.vercel.app/categorias/habilitacion/he-sido-habilitado-que-hago-ahora",
+      "has_numeric_data": true
+    },
+    {
+      "id": "hcweb42",
+      "text": "Ya pagué la comisión y subí los documentos solicitados, ¿ahora qué tengo que hacer?\nSolo debes esperar a que te proporcionemos las instrucciones de pago del vendedor, para que puedas continuar con el proceso de compra.\nEn caso se indique en las condiciones de oferta, deberás pagar el Fee de Habilitación en esta etapa.\nEl Fee de Habilitación es un monto que el ganador habilitado deberá pagar a VMC SUBASTAS por concepto de gastos administrativos, gestión interna y evaluaciones requeridas para ser habilitado, cuando se indique en las Condiciones del Ofrecimiento.\nEl Fee de Habilitación es un monto adicional a la comisión por uso de nuestro servicio.\nImportante: Debes seguir las instrucciones tal como se te indica dentro del plazo establecido o serás sancionado por incumplir tus responsabilidades como comprador.",
+      "topic": "¡He sido habilitado para comprar! ¿Qué hago ahora?",
+      "source_url": "https://centro-de-ayuda-vmc.vercel.app/categorias/habilitacion/he-sido-habilitado-que-hago-ahora",
+      "has_numeric_data": false
+    },
+    {
+      "id": "hcweb43",
+      "text": "Ya hice el pago de la oferta, ¿ahora qué sigue?\nUna vez realizado el pago, deberás adjuntar el comprobante para seguir con el proceso de compra.\n\n- Sigue las instrucciones de pago de la oferta (banco y cuenta de destino indicados) y adjunta tu comprobante de pago.\n\n- Dale clic o tap a \"Enviar\".\nFinalmente, te brindaremos la Información de Contacto del vendedor y cuando sea posible las instrucciones de transferencia (si es un carro) y recojo.\nImportante: Cabe resaltar que esta información es proporcionada por el mismo vendedor y por lo tanto la gestión en esta fase es entre comprador y el vendedor.",
+      "topic": "¡He sido habilitado para comprar! ¿Qué hago ahora?",
+      "source_url": "https://centro-de-ayuda-vmc.vercel.app/categorias/habilitacion/he-sido-habilitado-que-hago-ahora",
+      "has_numeric_data": false
+    },
+    {
+      "id": "hcweb44",
+      "text": "Tengo fondos en mi billetera, ¿puedo usarlos para pagar la oferta?\nRecuerda que los fondos disponibles en tu Billetera solo sirven para realizar consignaciones y pagar comisiones.\nEl pago de la oferta se hace directamente al vendedor, en dólares americanos, según lo indicado en las condiciones de compra en el detalle de la oferta.",
+      "topic": "¡He sido habilitado para comprar! ¿Qué hago ahora?",
+      "source_url": "https://centro-de-ayuda-vmc.vercel.app/categorias/habilitacion/he-sido-habilitado-que-hago-ahora",
+      "has_numeric_data": false
+    },
+    {
+      "id": "hcweb45",
+      "text": "¿Hay pagos adicionales que hacer?\nTendrás que hacerte cargo de los gastos administrativos que puedan surgir al momento de la transferencia del bien.\nEn el caso de tener que cubrir otros gastos se te indicará en las Condiciones de Compra publicadas en el detalle de la oferta.",
+      "topic": "¡He sido habilitado para comprar! ¿Qué hago ahora?",
+      "source_url": "https://centro-de-ayuda-vmc.vercel.app/categorias/habilitacion/he-sido-habilitado-que-hago-ahora",
+      "has_numeric_data": false
+    },
+    {
+      "id": "hcweb46",
+      "text": "Si incumplo con la compra de una oferta, ¿qué pasa?\nSi incumples con tus responsabilidades como ganador habilitado, deberás pagar la comisión por el uso de nuestros servicios de igual manera. En caso que tengas deudas con nosotros, el acceso a tu cuenta permanecerá restringido y te impedirá usar nuestro servicio. También se te sancionará, significa que aumentarás tu Riesgo Usuario.\nHas sido sancionado:\n- Se inhabilitará tu cuenta durante siete (7) días calendario.\n\n- Se procederá a cobrar la comisión por uso de nuestro servicio.\n\n- Perdiste 75 Puntos.\n\nImportante: Si incurres en tres incumplimientos de compra con un mismo vendedor, se te suspenderá de manera permanente para participar en cualquier proceso de dicho vendedor.",
+      "topic": "¡He sido habilitado para comprar! ¿Qué hago ahora?",
+      "source_url": "https://centro-de-ayuda-vmc.vercel.app/categorias/habilitacion/he-sido-habilitado-que-hago-ahora",
+      "has_numeric_data": true
+    },
+    {
+      "id": "hcweb47",
+      "text": "Terminé el proceso de compra de la oferta y necesito mi comprobante de pago (boleta/factura), ¿a quién y cómo lo solicito?\nTodo comprobante por la compra de una oferta deberá ser solicitado directamente al vendedor.",
+      "topic": "¡He sido habilitado para comprar! ¿Qué hago ahora?",
+      "source_url": "https://centro-de-ayuda-vmc.vercel.app/categorias/habilitacion/he-sido-habilitado-que-hago-ahora",
+      "has_numeric_data": false
+    },
+    {
+      "id": "hcweb48",
+      "text": "¿Dónde encuentro el comprobante de pago de comisión?\nPuedes encontrar tus comprobantes de pago por las comisiones pagadas ingresando a tu Zona de Usuario, en \"transacciones\" dentro del módulo Billetera y descargar los comprobantes.",
+      "topic": "¡He sido habilitado para comprar! ¿Qué hago ahora?",
+      "source_url": "https://centro-de-ayuda-vmc.vercel.app/categorias/habilitacion/he-sido-habilitado-que-hago-ahora",
+      "has_numeric_data": false
+    },
+    {
+      "id": "hcweb49",
+      "text": "¿Por qué me dan opción de compra?\nEl vendedor se reserva el derecho a brindarle la opción de compra a cualquier participante por debajo del 3er lugar en una oferta en vivo sin precio reserva y por debajo del 2do lugar en una oferta con precio reserva.\nImportante: En caso te den opción de compra, podrás rechazarla libre de sanciones. En caso aceptes la Opción de compra asumes todas las responsabilidades de un ganador habilitado.",
+      "topic": "¡He sido habilitado para comprar! ¿Qué hago ahora?",
+      "source_url": "https://centro-de-ayuda-vmc.vercel.app/categorias/habilitacion/he-sido-habilitado-que-hago-ahora",
+      "has_numeric_data": true
+    },
+    {
+      "id": "hcweb50",
+      "text": "La oferta “En Vivo”: El proceso terminó. ¿Ahora, qué sigue?\nAl terminar un proceso “En Vivo”, la consignación se devuelve a tu Billetera salvo que seas Ganador Directo, Mejor Postor o tengas oportunidad de compra. La oportunidad de compra es una condicional del mejor postor en ofertas con reserva (o del 2do y 3er lugar en procesos sin reserva): si el vendedor la activa, adquieres las responsabilidades de ganador directo habilitado. El vendedor también puede ofrecerte una opción de compra aunque hayas quedado más abajo: puedes rechazarla libre de sanciones, pero si la aceptas asumes las responsabilidades de un ganador habilitado.",
+      "topic": "La oferta “En Vivo”: El proceso terminó. ¿Ahora, qué sigue?",
+      "source_url": "https://centro-de-ayuda-vmc.vercel.app/categorias/oferta-en-vivo/el-proceso-termino-que-sigue",
+      "has_numeric_data": true
+    },
+    {
+      "id": "hcweb51",
+      "text": "¿Qué es oportunidad de compra?\nLa oportunidad de compra es una condicional obtenida por el mejor postor en una oferta “En Vivo” con reserva y por el 2do o 3er lugar en un proceso sin reserva.\nRecuerda: mientras tengas una oportunidad de compra, tu garantía se mantendrá consignada hasta que el proceso de venta de la oferta haya finalizado.\nEn caso de activarse la oportunidad de compra el participante adquirirá las responsabilidades de ganador directo habilitado siendo responsable de seguir con el proceso de compra, bajo pena de sanción en caso de incumplimiento.",
+      "topic": "La oferta “En Vivo”: El proceso terminó. ¿Ahora, qué sigue?",
+      "source_url": "https://centro-de-ayuda-vmc.vercel.app/categorias/oferta-en-vivo/el-proceso-termino-que-sigue",
+      "has_numeric_data": true
+    },
+    {
+      "id": "hcweb52",
+      "text": "Quedé segundo en una oferta que cerró con precio reserva. ¿Aún tengo opciones de comprar?\nEl vendedor se reserva el derecho a brindarle la opción de compra a cualquier participante por debajo del 3er lugar en una oferta en vivo sin precio reserva y por debajo del 2do lugar en una oferta con precio reserva.\nOjo con el plazo: la opción de compra tiene una fecha y hora de vigencia, que verás indicada en la notificación.\nEn caso te den opción de compra, podrás rechazarla libre de sanciones. En caso aceptes la Opción de Compra asumes todas las responsabilidades de un ganador habilitado.",
+      "topic": "La oferta “En Vivo”: El proceso terminó. ¿Ahora, qué sigue?",
+      "source_url": "https://centro-de-ayuda-vmc.vercel.app/categorias/oferta-en-vivo/el-proceso-termino-que-sigue",
+      "has_numeric_data": true
+    },
+    {
+      "id": "hcweb53",
+      "text": "La oferta “En Vivo”: ¡Es hora de participar!\nPara participar en un proceso “En Vivo” solo necesitas un dispositivo con conexión a internet de por lo menos 5 Mbps. Un bid es la acción de incrementar el Precio Base enviando intenciones de compra: envías todos los que necesites tocando el botón inferior de la “Sala”, y gana quien envía el último bid válido. Puedes entrar aunque el proceso ya haya iniciado (si sigue activo y consignaste por adelantado), y el proceso termina cuando transcurren 12 segundos desde el último bid válido.",
+      "topic": "La oferta “En Vivo”: ¡Es hora de participar!",
+      "source_url": "https://centro-de-ayuda-vmc.vercel.app/categorias/oferta-en-vivo/es-hora-de-participar",
+      "has_numeric_data": true
+    },
+    {
+      "id": "hcweb54",
+      "text": "¿Puedo participar desde mi teléfono móvil?\nSí, nuestra plataforma te permite participar desde cualquier tipo de dispositivo móvil que tenga una conexión a internet de por lo menos 5 Mbps.",
+      "topic": "La oferta “En Vivo”: ¡Es hora de participar!",
+      "source_url": "https://centro-de-ayuda-vmc.vercel.app/categorias/oferta-en-vivo/es-hora-de-participar",
+      "has_numeric_data": true
+    },
+    {
+      "id": "hcweb55",
+      "text": "¿Qué es un bid?\n“Bid” se refiere a la acción de incrementar el Precio Base a través del envío de intenciones de compra durante el proceso “En Vivo”.\nEsto significa que los participantes compiten enviando sus bids, lo cual promueve un aumento escalonado del Precio Base, por ende, quien envía el último bid válido gana el proceso.",
+      "topic": "La oferta “En Vivo”: ¡Es hora de participar!",
+      "source_url": "https://centro-de-ayuda-vmc.vercel.app/categorias/oferta-en-vivo/es-hora-de-participar",
+      "has_numeric_data": false
+    },
+    {
+      "id": "hcweb56",
+      "text": "¿Cómo envío mis bids durante el proceso “En Vivo”?\nSolo debes hacer clic o tap sobre el botón inferior de la “Sala”, donde se muestra el monto a bidear.",
+      "topic": "La oferta “En Vivo”: ¡Es hora de participar!",
+      "source_url": "https://centro-de-ayuda-vmc.vercel.app/categorias/oferta-en-vivo/es-hora-de-participar",
+      "has_numeric_data": false
+    },
+    {
+      "id": "hcweb57",
+      "text": "¿Cuántos bids puedo hacer?\nPodrás enviar la cantidad de bids que consideres necesarias para tratar de ganar la oferta.\nPuedes ver la repetición de un proceso haciendo clic:\nAQUÍ: https://centro-de-ayuda-vmc.vercel.app/videotutoriales",
+      "topic": "La oferta “En Vivo”: ¡Es hora de participar!",
+      "source_url": "https://centro-de-ayuda-vmc.vercel.app/categorias/oferta-en-vivo/es-hora-de-participar",
+      "has_numeric_data": false
+    },
+    {
+      "id": "hcweb58",
+      "text": "La oferta “En Vivo” ya inició, ¿todavía puedo participar en ella?\nPodrás ingresar a la “Sala” siempre y cuando el proceso siga activo y consignes el monto indicado por adelantado.\nSiempre recomendamos presenciar el inicio del proceso en “En Vivo”, ingresando a la sala con anticipación.",
+      "topic": "La oferta “En Vivo”: ¡Es hora de participar!",
+      "source_url": "https://centro-de-ayuda-vmc.vercel.app/categorias/oferta-en-vivo/es-hora-de-participar",
+      "has_numeric_data": false
+    },
+    {
+      "id": "hcweb59",
+      "text": "¿Cuándo termina el proceso “En Vivo”?\nSe da por concluido el proceso cuando transcurren 12 segundos desde que se registra el último bid válido.\nComo referencia, el sistema muestra una barra de progreso y hace una cuenta a tres, durante estos 12 segundos.",
+      "topic": "La oferta “En Vivo”: ¡Es hora de participar!",
+      "source_url": "https://centro-de-ayuda-vmc.vercel.app/categorias/oferta-en-vivo/es-hora-de-participar",
+      "has_numeric_data": true
+    },
+    {
+      "id": "hcweb60",
+      "text": "Gané una oferta “En Vivo”: ¿Cuáles son los siguientes pasos?\nGanador Directo es quien envía el último bid válido en un proceso sin Precio Reserva; Mejor Postor es el 1er lugar en un proceso con Precio Reserva, cuya propuesta el vendedor evalúa en hasta 10 días (puede aceptar, rechazar o contraproponer). Todo ganador necesita la habilitación del vendedor para iniciar el proceso de compra, cuyos pasos ves en “Tu Actividad”. Para seguir participando en otros procesos debes pagar primero la comisión de la oferta ganada, y al terminar el proceso puedes mejorar tu bid para aumentar la probabilidad de que el vendedor lo acepte.",
+      "topic": "Gané una oferta “En Vivo”: ¿Cuáles son los siguientes pasos?",
+      "source_url": "https://centro-de-ayuda-vmc.vercel.app/categorias/oferta-en-vivo/gane-una-oferta-en-vivo-siguientes-pasos",
+      "has_numeric_data": true
+    },
+    {
+      "id": "hcweb61",
+      "text": "¿Qué significa Ganador directo?\nSe declara Ganador Directo al participante que envía el último bid válido en un proceso sin Precio Reserva.\nDe todas formas, pasarás evaluación con el vendedor si así lo requiere, y esta evaluación también puede tomar hasta 10 días hábiles.",
+      "topic": "Gané una oferta “En Vivo”: ¿Cuáles son los siguientes pasos?",
+      "source_url": "https://centro-de-ayuda-vmc.vercel.app/categorias/oferta-en-vivo/gane-una-oferta-en-vivo-siguientes-pasos",
+      "has_numeric_data": true
+    },
+    {
+      "id": "hcweb62",
+      "text": "He resultado Ganador Directo, ¿qué pasos debo seguir?\nUna vez habilitado, podrás visualizar los pasos a seguir para completar la compra en el módulo “Tu Actividad”, desde tu Zona de Usuario.",
+      "topic": "Gané una oferta “En Vivo”: ¿Cuáles son los siguientes pasos?",
+      "source_url": "https://centro-de-ayuda-vmc.vercel.app/categorias/oferta-en-vivo/gane-una-oferta-en-vivo-siguientes-pasos",
+      "has_numeric_data": false
+    },
+    {
+      "id": "hcweb63",
+      "text": "¿Qué es la habilitación?\nEs la aprobación que todo ganador debe recibir por parte del vendedor para iniciar el proceso de compra.\nEl vendedor se reserva el derecho de habilitación, por lo que puede denegar la venta del bien a cualquier ganador según sus políticas de evaluación internas, sin necesidad o deber de dar algún tipo de justificación detallada al respecto.\n\n- 1. Ganador directo: sin precio reserva.\n\n- 2. Habilitación: en algunos casos, el ganador directo debe ser habilitado por el vendedor.\n\n- 3. Ganador habilitado: ganador responsable de seguir con el proceso de compra, bajo pena de sanción en caso de incumplimiento.",
+      "topic": "Gané una oferta “En Vivo”: ¿Cuáles son los siguientes pasos?",
+      "source_url": "https://centro-de-ayuda-vmc.vercel.app/categorias/oferta-en-vivo/gane-una-oferta-en-vivo-siguientes-pasos",
+      "has_numeric_data": true
+    },
+    {
+      "id": "hcweb64",
+      "text": "Soy Ganador Directo, quiero seguir participando, ¿qué puedo hacer?\nPara poder seguir participando en otros procesos, deberás pagar la comisión de la oferta que has ganado, ya que automáticamente has generado una deuda en plataforma.\nEncontrarás el detalle en el proceso de compra (comisión, monto consignado y pendiente) junto al botón “Paga la comisión aquí”.\nLa consignación se toma como adelanto de la comisión por uso de nuestro servicio; para pagar lo restante, agrega fondos mediante una Recarga o adquiriendo SubasCoins.\nEn caso hayas consignado por adelantado para acceder a otros procesos, la plataforma te impedirá ingresar y serás sancionado. Es por ello que deberás pagar la comisión de la oferta ganada.",
+      "topic": "Gané una oferta “En Vivo”: ¿Cuáles son los siguientes pasos?",
+      "source_url": "https://centro-de-ayuda-vmc.vercel.app/categorias/oferta-en-vivo/gane-una-oferta-en-vivo-siguientes-pasos",
+      "has_numeric_data": false
+    },
+    {
+      "id": "hcweb65",
+      "text": "¿Qué significa Mejor Postor?\nObtuviste el 1er Lugar en un proceso con Precio Reserva. Tu propuesta pasa a consulta para ser evaluada por el vendedor.\n¡Importante! Esta evaluación puede tomar hasta 10 días hábiles.",
+      "topic": "Gané una oferta “En Vivo”: ¿Cuáles son los siguientes pasos?",
+      "source_url": "https://centro-de-ayuda-vmc.vercel.app/categorias/oferta-en-vivo/gane-una-oferta-en-vivo-siguientes-pasos",
+      "has_numeric_data": true
+    },
+    {
+      "id": "hcweb66",
+      "text": "He resultado Mejor Postor, ¿ahora qué debo hacer?\nEn este caso, tu consignación permanecerá retenida hasta recibir una respuesta por parte del vendedor. El vendedor tiene hasta 10 días para:\n\n- Aceptar tu bid.\n\n- Rechazar tu bid.\n\n- Contra proponerte.\nEn caso el vendedor acepte el bid final del Mejor Postor o el Mejor Postor acepte la contrapropuesta del vendedor, el participante adquirirá las responsabilidades de Ganador Habilitado siendo responsable de seguir con el proceso de compra, bajo pena de sanción en caso de incumplimiento.",
+      "topic": "Gané una oferta “En Vivo”: ¿Cuáles son los siguientes pasos?",
+      "source_url": "https://centro-de-ayuda-vmc.vercel.app/categorias/oferta-en-vivo/gane-una-oferta-en-vivo-siguientes-pasos",
+      "has_numeric_data": true
+    },
+    {
+      "id": "hcweb67",
+      "text": "¿Cómo puedo mejorar mis probabilidades para que el vendedor acepte mi bid?\nAl terminar el proceso “En Vivo”, podrás mejorar tu bid y esto aumentará tus probabilidades de que el vendedor la acepte.",
+      "topic": "Gané una oferta “En Vivo”: ¿Cuáles son los siguientes pasos?",
+      "source_url": "https://centro-de-ayuda-vmc.vercel.app/categorias/oferta-en-vivo/gane-una-oferta-en-vivo-siguientes-pasos",
+      "has_numeric_data": false
+    },
+    {
+      "id": "hcweb68",
+      "text": "La oferta “En Vivo”: Aquí está la información que buscabas\nLa oferta “En Vivo” es la evolución digital de la subasta presencial: los participantes que consignan acceden a la “Sala” y compiten enviando bids en tiempo real desde el Precio Base, el día y hora indicados en la oferta. Todas cuentan con Precio Reserva (la expectativa de venta confidencial del vendedor), salvo que se indique lo contrario. El botón de ingreso se activa 5 minutos antes, se requiere un mínimo de 2 participantes y debes enviar al menos un bid válido o serás sancionado con la pérdida de 15 Puntos.",
+      "topic": "La oferta “En Vivo”: Aquí está la información que buscabas",
+      "source_url": "https://centro-de-ayuda-vmc.vercel.app/categorias/oferta-en-vivo/la-oferta-en-vivo-informacion",
+      "has_numeric_data": true
+    },
+    {
+      "id": "hcweb69",
+      "text": "¿Qué es el Precio Base?\nAl publicar una oferta “En Vivo” se propone un Precio Base, que es el punto de partida desde donde se dará inicio al proceso de bids en “Sala”, el día y hora indicados en la publicación de la oferta.",
+      "topic": "La oferta “En Vivo”: Aquí está la información que buscabas",
+      "source_url": "https://centro-de-ayuda-vmc.vercel.app/categorias/oferta-en-vivo/la-oferta-en-vivo-informacion",
+      "has_numeric_data": false
+    },
+    {
+      "id": "hcweb70",
+      "text": "Si quiero participar en una oferta hoy, ¿qué tengo que hacer?\nSi quieres participar en un proceso “En Vivo” hoy y careces de fondos en tu Billetera, deberás adquirir el monto de SubasCoins que se te muestra, al hacer clic o tap sobre “Participa” en el detalle de la oferta.\nAl consignar, aceptas conectarte a la sala “En Vivo” y a enviar por lo menos un bid válido durante el proceso en vivo.\n¡Con SubasCoins la consignación será menor!",
+      "topic": "La oferta “En Vivo”: Aquí está la información que buscabas",
+      "source_url": "https://centro-de-ayuda-vmc.vercel.app/categorias/oferta-en-vivo/la-oferta-en-vivo-informacion",
+      "has_numeric_data": false
+    },
+    {
+      "id": "hcweb71",
+      "text": "¿Qué es una oferta “En Vivo” y cómo funciona?\nEs la evolución tecnológica del proceso de subasta tradicional. Nuestros procesos “En Vivo” rescatan los principios fundamentales del proceso de subasta presencial, replicándose en un ambiente digital, seguro y transparente.\nEsto nos permite ofrecer un servicio confiable, para que nuestros usuarios puedan participar de manera segura desde cualquier dispositivo con conexión a internet.\nTodos los participantes que consignen el monto solicitado tendrán acceso a la “Sala”, para participar del proceso “En Vivo” y así competir enviando sus bids en tiempo real.\nSi deseas ver cómo es una oferta “En Vivo”, puedes ver una repetición:\nAQUÍ: https://centro-de-ayuda-vmc.vercel.app/videotutoriales",
+      "topic": "La oferta “En Vivo”: Aquí está la información que buscabas",
+      "source_url": "https://centro-de-ayuda-vmc.vercel.app/categorias/oferta-en-vivo/la-oferta-en-vivo-informacion",
+      "has_numeric_data": false
+    },
+    {
+      "id": "hcweb72",
+      "text": "¿Qué es el Precio Reserva?\nEs la expectativa de venta del vendedor. Es importante recalcar que el Precio Reserva es una variable confidencial determinada por el mismo vendedor.",
+      "topic": "La oferta “En Vivo”: Aquí está la información que buscabas",
+      "source_url": "https://centro-de-ayuda-vmc.vercel.app/categorias/oferta-en-vivo/la-oferta-en-vivo-informacion",
+      "has_numeric_data": false
+    },
+    {
+      "id": "hcweb73",
+      "text": "¿Todas las ofertas “En Vivo” cuentan con Precio Reserva?\nTodas las ofertas “En Vivo” cuentan con Precio Reserva, a menos que se indique lo contrario en el detalle de su publicación.",
+      "topic": "La oferta “En Vivo”: Aquí está la información que buscabas",
+      "source_url": "https://centro-de-ayuda-vmc.vercel.app/categorias/oferta-en-vivo/la-oferta-en-vivo-informacion",
+      "has_numeric_data": false
+    },
+    {
+      "id": "hcweb74",
+      "text": "¿Cuándo inicia el proceso “En Vivo”?\nCada oferta “En Vivo” tiene una hora de inicio programada en orden secuencial, razón por la cual es posible que un proceso empiece sin que el otro haya terminado.\nPor lo tanto, te recomiendo tener clara la hora de inicio de las ofertas en las que quieras participar antes de consignar el monto indicado en la oferta.\nEncontrarás el día y la hora de inicio del proceso “En Vivo” en el detalle de cada oferta.",
+      "topic": "La oferta “En Vivo”: Aquí está la información que buscabas",
+      "source_url": "https://centro-de-ayuda-vmc.vercel.app/categorias/oferta-en-vivo/la-oferta-en-vivo-informacion",
+      "has_numeric_data": false
+    },
+    {
+      "id": "hcweb75",
+      "text": "¿Por qué es tan importante estar conectado a la hora de inicio?\nEs importante porque es el momento en que el proceso “En Vivo” da inicio. Solo los participantes conectados en “Sala” podrán proponer activamente para ganar la oferta.\nAdicionalmente, al realizar la consignación, deberás enviar por lo menos un bid válido durante el proceso “En Vivo”.\nSi incumples tus responsabilidades como participante, la consignación será liberada a las 23:59:59 horas del mismo día de ser registrado el incumplimiento, será devuelta en SubasCoins y perderás 15 Puntos.\n¡SubasTip! Para evitar sanciones, conéctate y trata de ser el primero en enviar un bid durante el proceso en vivo.",
+      "topic": "La oferta “En Vivo”: Aquí está la información que buscabas",
+      "source_url": "https://centro-de-ayuda-vmc.vercel.app/categorias/oferta-en-vivo/la-oferta-en-vivo-informacion",
+      "has_numeric_data": true
+    },
+    {
+      "id": "hcweb76",
+      "text": "¿Cómo ingreso a la “Sala”?\nPodrás ingresar haciendo clic o tap en el botón “Ingresa a sala en vivo” el cual se activará 5 minutos antes de la hora de inicio de la oferta “En Vivo”. La cuota mínima es de 2 participantes.\n¡Importante! En caso hayan transcurrido 30 segundos, y existan menos participantes que la cuota mínima, el proceso “En Vivo” se declara desierto.",
+      "topic": "La oferta “En Vivo”: Aquí está la información que buscabas",
+      "source_url": "https://centro-de-ayuda-vmc.vercel.app/categorias/oferta-en-vivo/la-oferta-en-vivo-informacion",
+      "has_numeric_data": true
+    },
+    {
+      "id": "hcweb77",
+      "text": "La oferta “Negociable”: ¿Cómo funciona?\nLa oferta “Negociable” te permite negociar directamente con el vendedor: no tiene Precio Base ni Precio Reserva, así que propones libremente el monto que desees desde el botón “Negocia Ahora” (necesitas fondos en tu billetera para la consignación). El vendedor puede aceptar, contraproponer (hasta 5 contrapropuestas por negociación) o rechazar; si una propuesta se rechaza, la negociación concluye y tu consignación se libera, con un máximo de 5 negociaciones por oferta.",
+      "topic": "La oferta “Negociable”: ¿Cómo funciona?",
+      "source_url": "https://centro-de-ayuda-vmc.vercel.app/categorias/oferta-negociable/la-oferta-negociable-como-funciona",
+      "has_numeric_data": true
+    },
+    {
+      "id": "hcweb78",
+      "text": "¿Qué significa oferta “Negociable”?\nLa oferta “Negociable” es un tipo de ofrecimiento en el cual podrás iniciar una negociación directamente con el vendedor, para tratar de llegar a un acuerdo de venta.\nPor su misma naturaleza, este tipo de oferta carece de Precio Base y Precio Reserva, razón por la cual podrás iniciar una negociación enviando libremente el monto que tú desees.",
+      "topic": "La oferta “Negociable”: ¿Cómo funciona?",
+      "source_url": "https://centro-de-ayuda-vmc.vercel.app/categorias/oferta-negociable/la-oferta-negociable-como-funciona",
+      "has_numeric_data": false
+    },
+    {
+      "id": "hcweb79",
+      "text": "¿Cómo inicio una negociación?\nPara iniciar una negociación, solo debes de hacer clic o tap sobre el botón “Negocia Ahora”.\nIngresa el monto que quieres proponerle al vendedor y dale tap o clic al botón “Proponer”.\n¡Listo, ya iniciaste la negociación! Tu propuesta ha sido enviada al vendedor.\nRecuerda que para iniciar una negociación, debes contar con fondos en tu billetera para la consignación en SubasCoins o Dólares solicitada.",
+      "topic": "La oferta “Negociable”: ¿Cómo funciona?",
+      "source_url": "https://centro-de-ayuda-vmc.vercel.app/categorias/oferta-negociable/la-oferta-negociable-como-funciona",
+      "has_numeric_data": false
+    },
+    {
+      "id": "hcweb80",
+      "text": "¿En dónde puedo ver la respuesta del vendedor y el estado de la negociación?\nMientras el vendedor no responda verás “Esperando respuesta”. Tu propuesta expira en 24 horas.\nEn el módulo “Tu Actividad” podrás verificar el estado de la negociación y en caso acepte tu propuesta, los pasos a seguir.",
+      "topic": "La oferta “Negociable”: ¿Cómo funciona?",
+      "source_url": "https://centro-de-ayuda-vmc.vercel.app/categorias/oferta-negociable/la-oferta-negociable-como-funciona",
+      "has_numeric_data": true
+    },
+    {
+      "id": "hcweb81",
+      "text": "El vendedor ha aceptado mi propuesta, ¿qué hago?\n¡Felicitaciones!\n¡Has concretado exitosamente el proceso de negociación!\nEs hora de comenzar el proceso de compra, solo debes ingresar al módulo “Tu Actividad” para ver los pasos a seguir.\nPara más información sobre el proceso de compra, ingresa:\nAQUÍ: https://centro-de-ayuda-vmc.vercel.app/categorias/habilitacion/he-sido-habilitado-que-hago-ahora",
+      "topic": "La oferta “Negociable”: ¿Cómo funciona?",
+      "source_url": "https://centro-de-ayuda-vmc.vercel.app/categorias/oferta-negociable/la-oferta-negociable-como-funciona",
+      "has_numeric_data": false
+    },
+    {
+      "id": "hcweb82",
+      "text": "El vendedor me ha enviado una contrapropuesta, ¿qué hago?\nSi estás de acuerdo con la contrapropuesta del vendedor, acéptala, para iniciar el proceso de compra.\nOjo con el plazo: la contrapropuesta del vendedor expira en 72 horas. Desde ahí puedes Aceptar, Contraproponer o Rechazar.\nSi todavía quieres seguir negociando, puedes enviarle una contrapropuesta al vendedor, podrás hacer esto hasta en 5 oportunidades por negociación.",
+      "topic": "La oferta “Negociable”: ¿Cómo funciona?",
+      "source_url": "https://centro-de-ayuda-vmc.vercel.app/categorias/oferta-negociable/la-oferta-negociable-como-funciona",
+      "has_numeric_data": true
+    },
+    {
+      "id": "hcweb83",
+      "text": "¿Qué pasa si el vendedor rechaza mi propuesta o yo rechazo la suya?\nAl ser rechazada una propuesta, el proceso de negociación se da por concluido y tu consignación es liberada.\nSi aún te interesa el bien, podrás iniciar una nueva negociación con el vendedor. Recuerda que podrás iniciar un máximo de 5 negociaciones por oferta.",
+      "topic": "La oferta “Negociable”: ¿Cómo funciona?",
+      "source_url": "https://centro-de-ayuda-vmc.vercel.app/categorias/oferta-negociable/la-oferta-negociable-como-funciona",
+      "has_numeric_data": true
+    },
+    {
+      "id": "hcweb84",
+      "text": "¡Registrarte es fácil y rápido!\nRegístrate gratis en subastop.com completando los pasos del formulario con tus datos tal como figuran en tu DNI. Puedes registrarte como persona jurídica haciendo clic en “FACTURA”. Recuerda, si olvidaste tu contraseña, restablécela desde: ¿Olvidaste tu contraseña?\n🎬 ¿Prefieres verlo en video? Mira “¿Cómo me registro?” en YouTube.",
+      "topic": "¡Registrarte es fácil y rápido!",
+      "source_url": "https://centro-de-ayuda-vmc.vercel.app/categorias/registro/registrarte-es-facil-y-rapido",
+      "has_numeric_data": false
+    },
+    {
+      "id": "hcweb85",
+      "text": "¿Cómo me registro?\n¡Es muy fácil y rápido!\n\n- Paso 1: Ingresa a vmcsubastas.com y haz clic en el botón Ingresar.\nPaso 2: Podrás ver la pantalla de Bienvenida. Ahora haz clic en el botón Regístrate.\n\n- Paso 3: Completa tus Datos Personales.\n\n- Paso 4: Marca las casillas para aceptar las Condiciones y Términos y la Política de privacidad.\n\n¿Estás listo para registrarte?\nIngresa al formulario",
+      "topic": "¡Registrarte es fácil y rápido!",
+      "source_url": "https://centro-de-ayuda-vmc.vercel.app/categorias/registro/registrarte-es-facil-y-rapido",
+      "has_numeric_data": true
+    },
+    {
+      "id": "hcweb86",
+      "text": "¿Puedo registrarme como persona jurídica?\nClaro que sí. Para registrarte como persona jurídica, debes ir hacia la zona “Quiero Recibir” en el mismo formulario y seleccionar que deseas recibir “FACTURA”. Es importante que tomes en cuenta que de elegir esta opción, los comprobantes se emitirán a nombre de la razón social de la empresa registrada.\n¡ATENCIÓN: Una vez que te registres como persona jurídica, todas tus compras se realizarán con factura. Si te registras como persona natural solo recibirás boleta.",
+      "topic": "¡Registrarte es fácil y rápido!",
+      "source_url": "https://centro-de-ayuda-vmc.vercel.app/categorias/registro/registrarte-es-facil-y-rapido",
+      "has_numeric_data": false
+    },
+    {
+      "id": "hcweb87",
+      "text": "He olvidado mi contraseña, ¿cómo puedo recuperar el ingreso a mi cuenta?\nRecuperar tu contraseña es demasiado fácil. Solo debes ir a la zona de ¿Olvidaste tu contraseña?\nRecupérala Aquí",
+      "topic": "¡Registrarte es fácil y rápido!",
+      "source_url": "https://centro-de-ayuda-vmc.vercel.app/categorias/registro/registrarte-es-facil-y-rapido",
+      "has_numeric_data": false
+    },
+    {
+      "id": "hcweb88",
+      "text": "Estoy intentando registrarme, pero el formulario me impide realizarlo, ¿qué puedo hacer?\nEsto suele suceder por los siguientes motivos:\n\n- Si en caso te hayas registrado anteriormente, el sistema te impedirá un nuevo registro. Solo debes ir a INICIAR SESIÓN. En caso no recuerdes tu clave, por favor restablece la contraseña.\n\n- En caso que un familiar haya usado tu correo o número de celular para su registro, no podrás usar el mismo para crear tu cuenta.\n\n- En caso nunca te hayas registrado, contáctanos mediante nuestro chat en línea para validar tus datos.\n¡ATENCIÓN! Solo debes crear la cuenta con tus datos, no permitimos registros de terceros.",
+      "topic": "¡Registrarte es fácil y rápido!",
+      "source_url": "https://centro-de-ayuda-vmc.vercel.app/categorias/registro/registrarte-es-facil-y-rapido",
+      "has_numeric_data": false
+    },
+    {
+      "id": "hcweb89",
+      "text": "¿Ha quedado contestada tu pregunta?\n😞 😐 😃",
+      "topic": "¡Registrarte es fácil y rápido!",
+      "source_url": "https://centro-de-ayuda-vmc.vercel.app/categorias/registro/registrarte-es-facil-y-rapido",
+      "has_numeric_data": false
+    },
+    {
+      "id": "hcweb90",
+      "text": "Responsabilidades de los ganadores habilitados y sanciones por incumplimiento\nTodo ganador habilitado debe concretar el proceso de compra de la oferta que ganó según las instrucciones del vendedor y los plazos del módulo “Tu Actividad”, y pagar la comisión por uso del servicio incluso si incumple. Si incumples: pierdes 75 Puntos y aumenta tu Riesgo Usuario, tu cuenta se inhabilita por 7 días calendario y se cobra la comisión (si no hay fondos, queda como deuda y tu cuenta se restringe hasta pagarla). En ofertas sin comisión, el incumplimiento obliga a pagar el 7.5% de la propuesta de compra. Los reclamos se envían a contigo@vmcsubastas.com.",
+      "topic": "Responsabilidades de los ganadores habilitados y sanciones por incumplimiento",
+      "source_url": "https://centro-de-ayuda-vmc.vercel.app/categorias/responsabilidades-sanciones/responsabilidades-de-los-ganadores-habilitados",
+      "has_numeric_data": true
+    },
+    {
+      "id": "hcweb91",
+      "text": "¿Qué es una sanción?\nLa sanción es una medida correctiva cualitativa, aplicable a todo usuario, participante y/o ganador, que incumpla alguna de las responsabilidades derivadas a su actividad en plataforma.",
+      "topic": "Responsabilidades de los ganadores habilitados y sanciones por incumplimiento",
+      "source_url": "https://centro-de-ayuda-vmc.vercel.app/categorias/responsabilidades-sanciones/responsabilidades-de-los-ganadores-habilitados",
+      "has_numeric_data": false
+    },
+    {
+      "id": "hcweb92",
+      "text": "¿Cuáles son mis responsabilidades como ganador directo habilitado?\n- Todo ganador habilitado es responsable de concretar el proceso de compra de la oferta que ganó según las instrucciones proporcionadas por el vendedor y de acuerdo con las instrucciones y los plazos que se indiquen en el módulo “Tu Actividad”.\n\n- Todo ganador habilitado declara y reconoce que deberá realizar el pago de la comisión, por uso del servicio respectivo y seguir las Condiciones de Compra según se indica en el detalle de cada ofrecimiento, incluso si incurre en incumplimiento.",
+      "topic": "Responsabilidades de los ganadores habilitados y sanciones por incumplimiento",
+      "source_url": "https://centro-de-ayuda-vmc.vercel.app/categorias/responsabilidades-sanciones/responsabilidades-de-los-ganadores-habilitados",
+      "has_numeric_data": false
+    },
+    {
+      "id": "hcweb93",
+      "text": "¿Qué sucede si incumplo con mis responsabilidades como ganador directo habilitado?\n- Perderás 75 Puntos y aumentarás tu Riesgo Usuario.\n\n- Se inhabilitará tu Cuenta durante siete (7) días calendario.\n\n- Se procederá a cobrar la comisión por uso de nuestro servicio; en caso de carecer de fondos para pagar el total de la comisión, mantendrás deuda.\nAdemás, el acceso a tu cuenta será restringido hasta cancelar esta deuda en su totalidad.\nImportante: Si el participante incurre en un tercer incumplimiento en procesos de un mismo vendedor, se le suspenderá de manera permanente para participar en cualquier oferta de dicho vendedor.",
+      "topic": "Responsabilidades de los ganadores habilitados y sanciones por incumplimiento",
+      "source_url": "https://centro-de-ayuda-vmc.vercel.app/categorias/responsabilidades-sanciones/responsabilidades-de-los-ganadores-habilitados",
+      "has_numeric_data": true
+    },
+    {
+      "id": "hcweb94",
+      "text": "Si abandoné el proceso de compra de la oferta que gané, ¿por qué debo pagar la comisión de VMC?\nEl pago de la comisión por el uso del servicio es un deber intrínseco de todo ganador habilitado, inclusive si está en falta por incumplimiento en alguna de sus responsabilidades durante el proceso de compra, de acuerdo con las instrucciones y los plazos que se indiquen en el módulo “Tu Actividad”.\nEn caso de ser una oferta sin comisión, el ganador habilitado deberá pagar a VMC por uso del servicio el 7.5% de la propuesta de compra.",
+      "topic": "Responsabilidades de los ganadores habilitados y sanciones por incumplimiento",
+      "source_url": "https://centro-de-ayuda-vmc.vercel.app/categorias/responsabilidades-sanciones/responsabilidades-de-los-ganadores-habilitados",
+      "has_numeric_data": true
+    },
+    {
+      "id": "hcweb95",
+      "text": "Quiero presentar un reclamo, ¿qué debo hacer?\nTodo reclamo deberá ser enviado por correo a contigo@vmcsubastas.com desde la dirección de correo vinculada a la cuenta del usuario.\nSe podrán adjuntar sustentos probatorios, como imágenes y/o videos con información completa y legible donde se pueda apreciar a cabalidad la información que permita identificar la identidad del usuario, la oferta a través de su código de oferta o número de placa, la fecha y la hora del dispositivo del usuario al momento de realizar la captura de la imagen o video, y que se pueda apreciar con claridad la dirección web de nuestra plataforma.\nTodo material probatorio que presente edición, sean recortes o filtros, o se encuentre incompleto, sea ilegible por la calidad de la imagen o se tratase de una captura de otra imagen, será desestimado inmediatamente y considerado de mala fe por su carácter inapelable.",
+      "topic": "Responsabilidades de los ganadores habilitados y sanciones por incumplimiento",
+      "source_url": "https://centro-de-ayuda-vmc.vercel.app/categorias/responsabilidades-sanciones/responsabilidades-de-los-ganadores-habilitados",
+      "has_numeric_data": false
+    },
+    {
+      "id": "hcweb96",
+      "text": "Responsabilidades de los participantes y sanciones por incumplimiento\nLa sanción es una medida correctiva aplicable a quien incumpla las responsabilidades derivadas de su actividad en la plataforma. Como participante, al consignar eres responsable de enviar por lo menos un bid válido durante el proceso “En Vivo”. Si incumples: el monto consignado queda retenido hasta las 23:59:59 del mismo día del incumplimiento, pierdes 15 Puntos y, si consignaste en Dólares, se devuelven en SubasCoins. La calidad de tu conexión a internet (mínimo 5 Mbps) es tu responsabilidad.",
+      "topic": "Responsabilidades de los participantes y sanciones por incumplimiento",
+      "source_url": "https://centro-de-ayuda-vmc.vercel.app/categorias/responsabilidades-sanciones/responsabilidades-de-los-participantes",
+      "has_numeric_data": true
+    },
+    {
+      "id": "hcweb97",
+      "text": "¿Cuál es mi responsabilidad como participante?\nAl consignar eres responsable de enviar por lo menos un bid válido durante el proceso “En Vivo”. Recuerda que en el momento de aceptar la consignación se indica lo siguiente:",
+      "topic": "Responsabilidades de los participantes y sanciones por incumplimiento",
+      "source_url": "https://centro-de-ayuda-vmc.vercel.app/categorias/responsabilidades-sanciones/responsabilidades-de-los-participantes",
+      "has_numeric_data": false
+    },
+    {
+      "id": "hcweb98",
+      "text": "¿Qué sucede si incumplo con mi responsabilidad como participante?\nEn caso de incumplir con tus responsabilidades como participante:\n\n- El monto consignado permanecerá retenido hasta las 23:59:59 horas del mismo día de registrado cada incumplimiento.\n\n- Perderás 15 Puntos.\n\n- En caso hayas consignado en Dólares, serán devueltos en SubasCoins.",
+      "topic": "Responsabilidades de los participantes y sanciones por incumplimiento",
+      "source_url": "https://centro-de-ayuda-vmc.vercel.app/categorias/responsabilidades-sanciones/responsabilidades-de-los-participantes",
+      "has_numeric_data": true
+    },
+    {
+      "id": "hcweb99",
+      "text": "Me fue imposible acceder a la sala por problemas con mi conexión a internet, ¿me sancionarán igual?\nTodo participante declara conocer y aceptar que es el único responsable de la calidad de su conexión a internet. Los participantes requieren un ancho de banda de 5 Mbps como mínimo para asegurar el correcto funcionamiento del servicio.\nRecuerda que VMC Subastas, bajo ningún motivo, asegura ni garantiza el acceso, o la prestación continua e ininterrumpida de sus servicios a los participantes cuyos equipos y/o conexión a internet incumplan los requisitos técnicos establecidos en el Título V, Numeral 9 de las Condiciones y Términos.",
+      "topic": "Responsabilidades de los participantes y sanciones por incumplimiento",
+      "source_url": "https://centro-de-ayuda-vmc.vercel.app/categorias/responsabilidades-sanciones/responsabilidades-de-los-participantes",
+      "has_numeric_data": true
+    },
+    {
+      "id": "hcweb100",
+      "text": "Ingresé a la sala y el proceso “En Vivo” cerró sin que pueda bidear, ¿qué pasa con mi consignación en este caso?\nTodo usuario conoce y acepta que, para participar en una oferta, debe consignar, de manera libre y voluntaria, el monto solicitado y reconoce que, 18 segundos después de realizar la consignación, esta respalda su participación, siendo responsable de enviar por lo menos un bid válido durante el proceso \"En vivo\" de toda oferta en la cual esté participando.\nDe incumplir con tus responsabilidades como participante, serás sancionado con la pérdida de 15 Puntos y el monto permanecerá consignado hasta las 23:59:59 horas del mismo día de registrado el incumplimiento. Tu consignación será devuelta a tu Billetera en SubasCoins.\nEn caso la oferta \"En Vivo\" haya sido declarada desierta por falta de la cantidad mínima de participantes requeridos, la consignación será devuelta a tu Billetera, para que puedas seguir participando.",
+      "topic": "Responsabilidades de los participantes y sanciones por incumplimiento",
+      "source_url": "https://centro-de-ayuda-vmc.vercel.app/categorias/responsabilidades-sanciones/responsabilidades-de-los-participantes",
+      "has_numeric_data": true
+    },
+    {
+      "id": "hcweb101",
+      "text": "¿Tienes una deuda y quieres participar en una oferta?\nLa deuda es el monto pendiente de pago por comisiones, fees o cualquier otro cobro por el uso del servicio, y se genera cuando incumples tus responsabilidades como ganador habilitado. Para volver a participar debes pagar la totalidad de la deuda que se muestra en tu Zona de Usuario, ya sea mediante una Recarga en US$ por el BCP (digital o ventanilla, con tu Código Único de Usuario) o adquiriendo SubasCoins desde el módulo Billetera. La validación de una recarga puede tomar hasta 24 horas hábiles.",
+      "topic": "¿Tienes una deuda y quieres participar en una oferta?",
+      "source_url": "https://centro-de-ayuda-vmc.vercel.app/categorias/responsabilidades-sanciones/tienes-una-deuda-y-quieres-participar",
+      "has_numeric_data": true
+    },
+    {
+      "id": "hcweb102",
+      "text": "¿Qué es una deuda y por qué tengo una con VMC Subastas?\nEs el monto que tienes pendiente de pago para cubrir la(s) comisión(es), fee(s) o cualquier otro cobro por el uso de nuestro servicio.\nSi registras una deuda, es porque incumpliste tus responsabilidades como ganador habilitado en una o más ofertas.",
+      "topic": "¿Tienes una deuda y quieres participar en una oferta?",
+      "source_url": "https://centro-de-ayuda-vmc.vercel.app/categorias/responsabilidades-sanciones/tienes-una-deuda-y-quieres-participar",
+      "has_numeric_data": false
+    },
+    {
+      "id": "hcweb103",
+      "text": "¿Cuáles son mis responsabilidades como ganador habilitado?\nComo ganador habilitado:\n\n- Eres responsable de concretar el proceso de compra de la oferta que ganaste, según las instrucciones del vendedor y de acuerdo con los plazos e instrucciones que se indiquen en el módulo “Tu Actividad”.\n\n- Declaras y reconoces que deberás pagar la comisión, por uso del servicio respectivo y seguir las Condiciones de Compra según se indica en el detalle de cada ofrecimiento, incluso si incurres en incumplimiento.",
+      "topic": "¿Tienes una deuda y quieres participar en una oferta?",
+      "source_url": "https://centro-de-ayuda-vmc.vercel.app/categorias/responsabilidades-sanciones/tienes-una-deuda-y-quieres-participar",
+      "has_numeric_data": false
+    },
+    {
+      "id": "hcweb104",
+      "text": "¿Cuándo se generó mi deuda?\nAl ser habilitado por el vendedor, te enviamos un correo para que compres la oferta.\nSi venció el plazo de dos días hábiles y dejaste de hacerla, se aplicarán las sanciones y penalizaciones respectivas, así como cualquier otro concepto indicado en las Condiciones de Compra.\nPara más información sobre nuestras Condiciones y Términos ingresa:\n\nAQUÍ: https://www.vmcsubastas.com/condiciones-y-terminos",
+      "topic": "¿Tienes una deuda y quieres participar en una oferta?",
+      "source_url": "https://centro-de-ayuda-vmc.vercel.app/categorias/responsabilidades-sanciones/tienes-una-deuda-y-quieres-participar",
+      "has_numeric_data": false
+    },
+    {
+      "id": "hcweb105",
+      "text": "¿Tengo que pagar el total de mi deuda?\nPara volver a participar en las mejores ofertas, es necesario que pagues la totalidad de tu deuda que se muestra en tu Zona de Usuario.",
+      "topic": "¿Tienes una deuda y quieres participar en una oferta?",
+      "source_url": "https://centro-de-ayuda-vmc.vercel.app/categorias/responsabilidades-sanciones/tienes-una-deuda-y-quieres-participar",
+      "has_numeric_data": false
+    },
+    {
+      "id": "hcweb106",
+      "text": "¿Cómo puedo pagar mi deuda?\nPuedes realizarlo mediante una recarga o adquiriendo SubasCoins.",
+      "topic": "¿Tienes una deuda y quieres participar en una oferta?",
+      "source_url": "https://centro-de-ayuda-vmc.vercel.app/categorias/responsabilidades-sanciones/tienes-una-deuda-y-quieres-participar",
+      "has_numeric_data": false
+    },
+    {
+      "id": "hcweb107",
+      "text": "¿Qué es una recarga y cómo la realizo?\nLe decimos Recarga a la acción de agregar fondos en US$ a tu Billetera en VMC a través de un depósito en ventanilla en una agencia del BCP o por transferencia electrónica por los medios digitales del BCP, a la cuenta recaudadora de VMC Subastas.\nPuedes realizarla de dos maneras:\na. Mediante los medios digitales del BCP (Banca Electrónica y/o Banca Móvil)\n\n- Haciendo tap o clic en “Pagos de Servicios” en el menú lateral.\n\n- Busca “VMC Subastas”.\n\n- Selecciona “Recarga”.\n\n- Te solicitará tu Código Único de Usuario y el monto que deseas recargar.\nb. En ventanilla, acercándote a cualquier agencia del BCP\n\n- Indícale al cajero que deseas hacer un depósito a la cuenta recaudadora en dólares de VMC Subastas.\n\n- Elige el servicio de Recarga.\n\n- Luego, te pedirá tu Código Único de Usuario y el monto que deseas recargar.\nRecuerda que la validación de la recarga puede tomar hasta 24 horas hábiles en verse reflejada en tu Billetera.",
+      "topic": "¿Tienes una deuda y quieres participar en una oferta?",
+      "source_url": "https://centro-de-ayuda-vmc.vercel.app/categorias/responsabilidades-sanciones/tienes-una-deuda-y-quieres-participar",
+      "has_numeric_data": true
+    },
+    {
+      "id": "hcweb108",
+      "text": "¿Qué son los SubasCoins y cómo los adquiero?\nEs el nombre de nuestra moneda digital. El valor de 1.00 SubasCoin es equivalente a US$ 1 (un Dólar Americano) para efectos de uso solo en plataforma.\nInicia sesión e ingresa al módulo de Billetera, en el botón “Adquiere SubasCoins”. Puedes hacerlo desde cualquier dispositivo con conexión a internet haciendo clic o tap:\n\nAQUÍ: https://www.vmcsubastas.com/zona/selecciona-monto.html",
+      "topic": "¿Tienes una deuda y quieres participar en una oferta?",
+      "source_url": "https://centro-de-ayuda-vmc.vercel.app/categorias/responsabilidades-sanciones/tienes-una-deuda-y-quieres-participar",
+      "has_numeric_data": true
+    },
+    {
+      "id": "hcweb109",
+      "text": "Canjea Puntos VMC y mejora tu Riesgo Usuario\nEl canje de Puntos VMC es una operación final y definitiva en la que usas SubasCoins para canjear Puntos VMC y mejorar tu Riesgo Usuario de forma inmediata (1 SubasCoin equivale a 1 Punto VMC). Se hace desde la Zona de Usuario: entra a “Tu perfil”, presiona “Canjea Puntos VMC”, elige cuántos puntos canjear y confirma la operación.",
+      "topic": "Canjea Puntos VMC y mejora tu Riesgo Usuario",
+      "source_url": "https://centro-de-ayuda-vmc.vercel.app/categorias/riesgo-usuario/canjea-puntos-vmc-y-mejora-tu-riesgo-usuario",
+      "has_numeric_data": true
+    },
+    {
+      "id": "hcweb110",
+      "text": "¿Qué es el canje de Puntos VMC?\nEs una operación final y definitiva en la que el usuario usa SubasCoins para canjear Puntos VMC y mejora su Riesgo Usuario de forma inmediata.\nMejora tu Riesgo Usuario y disfruta de sus beneficios.\nPara conocer todas las condiciones de cada categoría de Riesgo Usuario ingresa:\n\nAQUÍ: https://centro-de-ayuda-vmc.vercel.app/categorias/riesgo-usuario/el-riesgo-usuario-y-sus-categorias",
+      "topic": "Canjea Puntos VMC y mejora tu Riesgo Usuario",
+      "source_url": "https://centro-de-ayuda-vmc.vercel.app/categorias/riesgo-usuario/canjea-puntos-vmc-y-mejora-tu-riesgo-usuario",
+      "has_numeric_data": false
+    },
+    {
+      "id": "hcweb111",
+      "text": "¿Cómo canjeo Puntos VMC?\nIngresa a tu Zona de Usuario, sección “Tu perfil”; ahí encontrarás el botón de “Canjea Puntos VMC”.\nLa única manera de canjear Puntos VMC es usando SubasCoins. 1 SubasCoin es equivalente a 1 Punto VMC.\n\n- En tu Zona de Usuario dale clic o tap a “Tu perfil”.\n\n- Presiona el botón “Canjea Puntos VMC”.\n\n- Elige cuántos Puntos VMC quieres canjear (o ingresa un monto libre) y dale clic o tap a “Canjea”.\n\n- Ahora confirma tu canje con “¡Confirmar!”.\n¡Y listo! Canjeaste tus Puntos VMC y mejoraste tu Riesgo Usuario.\nImportante: Canjear SubasCoins por Puntos VMC es una operación final y definitiva.",
+      "topic": "Canjea Puntos VMC y mejora tu Riesgo Usuario",
+      "source_url": "https://centro-de-ayuda-vmc.vercel.app/categorias/riesgo-usuario/canjea-puntos-vmc-y-mejora-tu-riesgo-usuario",
+      "has_numeric_data": true
+    },
+    {
+      "id": "hcweb112",
+      "text": "El Riesgo Usuario y sus categorías\nEl Riesgo Usuario es la categoría que VMC Subastas asigna evaluando tu actividad en la plataforma mediante Puntos VMC. Son 4 categorías: Muy Bajo (300 o más puntos, participa sin consignación), Bajo (150 a 299), Regular (0 a 149, donde inicia todo usuario nuevo) y Alto (puntaje negativo, consigna solo en SubasCoins montos según sus sanciones). Cumplir tus responsabilidades suma puntos; incumplir como participante resta 15 y como ganador habilitado resta 75. Puedes mejorar tu categoría usando bien el servicio o canjeando Puntos VMC.",
+      "topic": "El Riesgo Usuario y sus categorías",
+      "source_url": "https://centro-de-ayuda-vmc.vercel.app/categorias/riesgo-usuario/el-riesgo-usuario-y-sus-categorias",
+      "has_numeric_data": true
+    },
+    {
+      "id": "hcweb113",
+      "text": "¿Cómo puedo saber cuál es mi categoría de Riesgo Usuario?\nIngresando a tu Zona de Usuario, podrás ver tu Riesgo Usuario al lado de la cantidad de Puntos VMC. Todo usuario nuevo inicia con un Riesgo Usuario “Regular” y 0 Puntos VMC.",
+      "topic": "El Riesgo Usuario y sus categorías",
+      "source_url": "https://centro-de-ayuda-vmc.vercel.app/categorias/riesgo-usuario/el-riesgo-usuario-y-sus-categorias",
+      "has_numeric_data": true
+    },
+    {
+      "id": "hcweb114",
+      "text": "¿Qué es el Riesgo Usuario y cómo me asignan una categoría?\nVMC Subastas evalúa activamente la actividad de los usuarios en plataforma, asignándoles Puntos VMC según su actuar como participante y comprador.\nQueremos generar un ambiente seguro para vendedores y compradores, en donde puedas participar con confianza.\nPor lo tanto, cuando cumples con tus responsabilidades como participante y ganador, obtendrás Puntos VMC; caso contrario, los perderás.",
+      "topic": "El Riesgo Usuario y sus categorías",
+      "source_url": "https://centro-de-ayuda-vmc.vercel.app/categorias/riesgo-usuario/el-riesgo-usuario-y-sus-categorias",
+      "has_numeric_data": false
+    },
+    {
+      "id": "hcweb115",
+      "text": "¿Cuáles son las categorías de Riesgo Usuario?\nSon 4 categorías:\n\n- Riesgo Muy Bajo: de 300 o más Puntos VMC.\n\n- Riesgo Bajo: de 150 a 299 Puntos VMC.\n\n- Riesgo Regular: de 0 a 149 Puntos VMC.\n\n- Riesgo Alto: todo puntaje negativo.",
+      "topic": "El Riesgo Usuario y sus categorías",
+      "source_url": "https://centro-de-ayuda-vmc.vercel.app/categorias/riesgo-usuario/el-riesgo-usuario-y-sus-categorias",
+      "has_numeric_data": true
+    },
+    {
+      "id": "hcweb116",
+      "text": "¿Cuáles son las condiciones de cada categoría de Riesgo Usuario?\nCada una de estas categorías comprende las siguientes condiciones:\n1. Riesgo Muy Bajo (de 300 a más Puntos VMC)\n\n- En esta categoría se acumulan 15 Puntos VMC por oferta comprada.\n\n- Por ser un usuario responsable podrá participar sin necesidad de consignación.\n2. Riesgo Bajo (de 150 a 299 Puntos VMC)\n\n- En esta categoría se asigna 1 Punto VMC por participación y 15 Puntos VMC por oferta comprada.\n\n- Puede consignar en Dólares y SubasCoins.\n3. Riesgo Regular (de 0 a 149 Puntos VMC)\n\n- Todo usuario inicia en esta categoría.\n\n- En esta categoría se asignan 2 Puntos VMC por participación y 15 Puntos VMC por oferta comprada.\n\n- Puede participar consignando en Dólares y SubasCoins.\n4. Riesgo Alto (todo puntaje negativo)\n\n- En esta categoría solo se acumulan 15 Puntos VMC por oferta comprada.\n\n- Participa consignando montos calculados sobre la cantidad de sanciones que el usuario tenga a la fecha.\n\n- Por ser un usuario de alto riesgo, solo podrá participar consignando montos expresados en SubasCoins.\n\n- Toda consignación será devuelta a su Billetera a las 23:59:59 horas del mismo día de finalizado el proceso “En Vivo”.",
+      "topic": "El Riesgo Usuario y sus categorías",
+      "source_url": "https://centro-de-ayuda-vmc.vercel.app/categorias/riesgo-usuario/el-riesgo-usuario-y-sus-categorias",
+      "has_numeric_data": true
+    },
+    {
+      "id": "hcweb117",
+      "text": "¿Por qué mi categoría de Riesgo Usuario es “Alto”?\nCada vez que incumples con tus responsabilidades, ya sea como participante o ganador habilitado, perderás Puntos VMC, y cuando tienes Puntos VMC negativos, obtienes la categoría “Alto”.\n\n- En caso de incumplimiento de tus responsabilidades como participante, serás sancionado con la pérdida de 15 Puntos VMC.\n\n- En caso de incumplimiento de tus responsabilidades como vendedor y/o ganador habilitado, serás sancionado con la pérdida de 75 Puntos VMC.\nImportante: Cada incumplimiento es sancionado de manera independiente.",
+      "topic": "El Riesgo Usuario y sus categorías",
+      "source_url": "https://centro-de-ayuda-vmc.vercel.app/categorias/riesgo-usuario/el-riesgo-usuario-y-sus-categorias",
+      "has_numeric_data": true
+    },
+    {
+      "id": "hcweb118",
+      "text": "¿Cómo puedo mejorar mi categoría de Riesgo Usuario?\nPodrás hacerlo al usar nuestro servicio adecuadamente, cumpliendo con las responsabilidades de participante y ganador habilitado respectivamente.\nSi quieres mejorar tu Riesgo Usuario de forma inmediata, puedes canjear tus Puntos VMC ingresando:\n\nAQUÍ: https://www.vmcsubastas.com/zona/canjear-puntos-vmc",
+      "topic": "El Riesgo Usuario y sus categorías",
+      "source_url": "https://centro-de-ayuda-vmc.vercel.app/categorias/riesgo-usuario/el-riesgo-usuario-y-sus-categorias",
+      "has_numeric_data": false
+    },
+    {
+      "id": "hcweb119",
+      "text": "¿Puedo perder mis Puntos VMC? ¿Cuáles son los motivos?\nSí, por las siguientes 4 razones principales:\n\n- Incumplimiento de responsabilidad como participante: el usuario será sancionado con la pérdida de 15 Puntos VMC.\n\n- Incumplimiento de responsabilidades como ganador habilitado: el usuario será sancionado con la pérdida de 75 Puntos VMC.\n\n- Expiración: los Puntos VMC tienen una vigencia de 12 meses; transcurrido ese tiempo, los Puntos VMC expirarán.\n\n- Solicitud de congelamiento de cuenta: al solicitar la devolución de los Dólares disponibles en tu Billetera, perderás todo puntaje positivo acumulado. Al solicitar el congelamiento de tu cuenta perderás tu nivel automáticamente.",
+      "topic": "El Riesgo Usuario y sus categorías",
+      "source_url": "https://centro-de-ayuda-vmc.vercel.app/categorias/riesgo-usuario/el-riesgo-usuario-y-sus-categorias",
+      "has_numeric_data": true
+    },
+    {
+      "id": "hcweb120",
+      "text": "Las visitas e inspecciones físicas\nPara visitar un vehículo en VMC Subastas solo necesitas estar registrado y agendar desde la sección “Visitas” del detalle de la oferta, con más de 48 horas de anticipación. Se permite 1 solo visitante (el dueño de la cuenta o, en cuentas de empresa, el representante legal o encargado), debes llevar tu DNI vigente y las inspecciones son solo visuales, no mecánicas. La sección “Visitas” muestra el distrito y la provincia; la dirección exacta llega en el mail de confirmación al agendar.\n🎬 ¿Prefieres verlo en video? Mira “¿Cómo agendo una visita?” en YouTube.",
+      "topic": "Las visitas e inspecciones físicas",
+      "source_url": "https://centro-de-ayuda-vmc.vercel.app/categorias/visitas/las-visitas-e-inspecciones-fisicas",
+      "has_numeric_data": true
+    },
+    {
+      "id": "hcweb121",
+      "text": "¿Qué debo hacer para agendar visitas?\nSolo debes estar registrado como usuario de nuestro servicio. Si quieres registrarte ingresa:\nAQUÍ: https://www.vmcsubastas.com/registro\nLuego, selecciona la mejor oferta para ti:\nEntra a “Ver detalle” de la oferta y baja hasta la sección “Visitas”. Clic o tap ahí si es que la oferta cuenta con la opción a visitas disponibles.\nSelecciona la fecha y hora de visita ¡y listo! Dale clic o tap a “Agenda tu visita”.",
+      "topic": "Las visitas e inspecciones físicas",
+      "source_url": "https://centro-de-ayuda-vmc.vercel.app/categorias/visitas/las-visitas-e-inspecciones-fisicas",
+      "has_numeric_data": false
+    },
+    {
+      "id": "hcweb122",
+      "text": "¿Puedo realizar la visita con acompañantes?\nLamentablemente, por temas de aforo del almacén del vendedor, solo puede ingresar 1 persona.\nEn caso de cuentas personales, deberá ir el usuario dueño de la cuenta y en caso de las cuentas de empresas, el representante legal o el usuario encargado de la cuenta.",
+      "topic": "Las visitas e inspecciones físicas",
+      "source_url": "https://centro-de-ayuda-vmc.vercel.app/categorias/visitas/las-visitas-e-inspecciones-fisicas",
+      "has_numeric_data": true
+    },
+    {
+      "id": "hcweb123",
+      "text": "Durante las visitas, ¿se pueden realizar inspecciones mecánicas?\nPor temas de seguridad las inspecciones son sólo visuales.",
+      "topic": "Las visitas e inspecciones físicas",
+      "source_url": "https://centro-de-ayuda-vmc.vercel.app/categorias/visitas/las-visitas-e-inspecciones-fisicas",
+      "has_numeric_data": false
+    },
+    {
+      "id": "hcweb124",
+      "text": "¿Se puede agendar una visita el mismo día del proceso?\nLas visitas se deberán agendar con más de 48 hrs. de anticipación, a menos que se indique lo contrario en el detalle de la oferta.",
+      "topic": "Las visitas e inspecciones físicas",
+      "source_url": "https://centro-de-ayuda-vmc.vercel.app/categorias/visitas/las-visitas-e-inspecciones-fisicas",
+      "has_numeric_data": true
+    },
+    {
+      "id": "hcweb125",
+      "text": "Ya agendé mi visita ¿qué necesito llevar?\nEs necesario que lleves tu DNI vigente y revisar las condiciones adicionales estipuladas por el vendedor en el detalle de la oferta.\nEn caso existan requisitos solicitados por el vendedor, se debe enviar la documentación al correo indicado, por lo menos un día anterior del día de la visita.",
+      "topic": "Las visitas e inspecciones físicas",
+      "source_url": "https://centro-de-ayuda-vmc.vercel.app/categorias/visitas/las-visitas-e-inspecciones-fisicas",
+      "has_numeric_data": false
+    },
+    {
+      "id": "hcweb126",
+      "text": "¿Dónde se encuentra la oferta de mi interés?\nPuedes encontrar la ubicación de la oferta en la sección “Visitas”, en el campo “Ubicación”. Cada uno de los vendedores tiene lugares específicos ya sea un almacén o depósito, donde mantiene ubicado el bien.\nAhí verás el distrito y la provincia. La dirección exacta se te proporciona una vez que agendas: llega en el mail de confirmación a tu bandeja de correo electrónico.\n¡Importante! Para visitar el bien, debes de haber agendado previamente y seguir las indicaciones del vendedor y/o los requisitos.",
+      "topic": "Las visitas e inspecciones físicas",
+      "source_url": "https://centro-de-ayuda-vmc.vercel.app/categorias/visitas/las-visitas-e-inspecciones-fisicas",
+      "has_numeric_data": false
+    }
+  ]
+}
