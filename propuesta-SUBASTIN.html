@@ -1,0 +1,1188 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Subastin — Propuesta de trabajo</title>
+<meta name="description" content="Propuesta para consolidar el chatbot de VMC Subastas: intención, costos reales, control de calidad, circuito bot-humano y plan.">
+
+<style>
+  *, *::before, *::after { box-sizing: border-box; }
+  body { margin: 0; }
+
+  :root {
+    --ink: #0F1620; --ink-2: #26313F; --muted: #5A6675; --faint: #8C97A5;
+    --ground: #FBFAF8; --panel: #FFFFFF; --line: #E2E0DA; --line-soft: #EDEBE5;
+    --accent: #B0730A; --accent-bg: #FBF3E2;
+    --crit: #A33224; --crit-bg: #FBEDEA;
+    --warn: #9A6B08; --warn-bg: #FAF2E0;
+    --ok: #3F6B4A; --ok-bg: #EDF3EE;
+    --info: #3A5A7A; --info-bg: #EBF1F7;
+    --serif: "Newsreader", "Iowan Old Style", "Palatino Linotype", Palatino, Georgia, serif;
+    --sans: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+    --mono: ui-monospace, "Cascadia Mono", Consolas, monospace;
+    --measure: 68ch;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --ink: #E8E9EA; --ink-2: #C4C8CD; --muted: #949CA6; --faint: #6D757F;
+      --ground: #10151B; --panel: #171D25; --line: #2A323C; --line-soft: #212932;
+      --accent: #E0A63C; --accent-bg: #241C0D;
+      --crit: #E08578; --crit-bg: #2A1815; --warn: #DBA63F; --warn-bg: #261D0E;
+      --ok: #86B593; --ok-bg: #16211A; --info: #86AACD; --info-bg: #141D26;
+    }
+  }
+  :root[data-theme="light"] {
+    --ink: #0F1620; --ink-2: #26313F; --muted: #5A6675; --faint: #8C97A5;
+    --ground: #FBFAF8; --panel: #FFFFFF; --line: #E2E0DA; --line-soft: #EDEBE5;
+    --accent: #B0730A; --accent-bg: #FBF3E2;
+    --crit: #A33224; --crit-bg: #FBEDEA; --warn: #9A6B08; --warn-bg: #FAF2E0;
+    --ok: #3F6B4A; --ok-bg: #EDF3EE; --info: #3A5A7A; --info-bg: #EBF1F7;
+  }
+  :root[data-theme="dark"] {
+    --ink: #E8E9EA; --ink-2: #C4C8CD; --muted: #949CA6; --faint: #6D757F;
+    --ground: #10151B; --panel: #171D25; --line: #2A323C; --line-soft: #212932;
+    --accent: #E0A63C; --accent-bg: #241C0D;
+    --crit: #E08578; --crit-bg: #2A1815; --warn: #DBA63F; --warn-bg: #261D0E;
+    --ok: #86B593; --ok-bg: #16211A; --info: #86AACD; --info-bg: #141D26;
+  }
+
+  body {
+    background: var(--ground); color: var(--ink);
+    font-family: var(--sans); font-size: 15.5px; line-height: 1.62;
+    -webkit-font-smoothing: antialiased;
+  }
+  .page { max-width: 900px; margin: 0 auto; padding: 44px 28px 100px; }
+
+  header.masthead { border-bottom: 2px solid var(--ink); padding-bottom: 26px; margin-bottom: 34px; }
+  .eyebrow {
+    font-family: var(--mono); font-size: 10.5px; letter-spacing: .13em;
+    text-transform: uppercase; color: var(--accent); margin-bottom: 13px;
+  }
+  h1 {
+    font-family: var(--serif); font-size: clamp(30px, 4.8vw, 44px);
+    line-height: 1.08; letter-spacing: -0.02em; font-weight: 600; margin: 0 0 14px;
+    text-wrap: balance;
+  }
+  .lede { color: var(--ink-2); font-size: 16.5px; max-width: 64ch; margin: 0; }
+
+  h2 {
+    font-family: var(--serif); font-size: 25px; font-weight: 600;
+    letter-spacing: -0.015em; margin: 46px 0 6px;
+    display: flex; align-items: baseline; gap: 12px;
+  }
+  h2 .n { font-family: var(--mono); font-size: 11.5px; color: var(--accent); font-weight: 400; }
+  .subhead { color: var(--muted); font-size: 14px; max-width: var(--measure); margin: 0 0 20px; padding-bottom: 12px; border-bottom: 1px solid var(--line); }
+
+  h3 {
+    font-size: 11.5px; letter-spacing: .085em; text-transform: uppercase;
+    font-weight: 600; color: var(--muted); margin: 28px 0 12px;
+  }
+
+  p { max-width: var(--measure); margin: 0 0 14px; }
+  strong { font-weight: 600; }
+  em { font-style: italic; }
+  code { font-family: var(--mono); font-size: .86em; background: var(--line-soft); padding: .1em .35em; border-radius: 3px; }
+  a { color: var(--accent); text-underline-offset: 2px; }
+  ul.plain { max-width: var(--measure); margin: 0 0 14px; padding-left: 19px; }
+  ul.plain li { margin-bottom: 6px; }
+
+  /* ---- ficha de datos (kickoff) ---- */
+  .facts {
+    background: var(--panel); border: 1px solid var(--line); border-radius: 6px;
+    padding: 4px 20px; margin: 0 0 20px;
+  }
+  .facts dl { margin: 0; }
+  .facts .row {
+    display: grid; grid-template-columns: 128px minmax(0, 1fr); gap: 16px;
+    padding: 13px 0; border-bottom: 1px solid var(--line-soft); align-items: start;
+  }
+  .facts .row:last-child { border-bottom: 0; }
+  .facts dt {
+    font-family: var(--mono); font-size: 10px; letter-spacing: .1em;
+    text-transform: uppercase; color: var(--faint); padding-top: 3px;
+  }
+  .facts dd { margin: 0; font-size: 14.5px; color: var(--ink-2); }
+  .facts dd strong { color: var(--ink); }
+  @media (max-width: 560px) {
+    .facts .row { grid-template-columns: 1fr; gap: 4px; }
+  }
+
+  /* ---- lista de tareas ---- */
+  .tasks { display: flex; flex-direction: column; gap: 2px; margin: 0 0 20px; }
+  .task {
+    display: grid; grid-template-columns: 62px minmax(0, 1fr); gap: 4px;
+    background: var(--panel); border: 1px solid var(--line);
+    border-radius: 5px; padding: 14px 17px; align-items: start;
+  }
+  .task.keystone { border-color: var(--accent); background: var(--accent-bg); }
+  .task-id {
+    font-family: var(--mono); font-size: 11px; font-weight: 600;
+    color: var(--accent); letter-spacing: .04em; padding-top: 3px;
+  }
+  .task-b { min-width: 0; }
+  .task-t { font-weight: 600; font-size: 15px; margin-bottom: 4px; letter-spacing: -0.008em; }
+  .task-d { font-size: 14px; color: var(--ink-2); }
+  .keystone-flag {
+    display: inline-block; font-family: var(--mono); font-size: 9.5px;
+    letter-spacing: .09em; text-transform: uppercase; color: var(--accent);
+    border: 1px solid var(--accent); border-radius: 3px; padding: 1px 6px;
+    margin-left: 8px; vertical-align: 2px;
+  }
+
+  /* ---- objetivos como escalera ---- */
+  .objs { display: flex; flex-direction: column; gap: 10px; margin: 0 0 20px; }
+  .obj {
+    background: var(--panel); border: 1px solid var(--line);
+    border-left: 3px solid var(--line); border-radius: 0 5px 5px 0; padding: 14px 18px;
+  }
+  .obj.bridge { border-left-color: var(--accent); background: var(--accent-bg); }
+  .obj-h {
+    display: flex; flex-wrap: wrap; align-items: baseline; gap: 10px; margin-bottom: 6px;
+  }
+  .obj-n { font-family: var(--mono); font-size: 11px; color: var(--accent); font-weight: 600; }
+  .obj-path {
+    font-family: var(--mono); font-size: 10.5px; color: var(--faint);
+    background: var(--line-soft); border-radius: 3px; padding: 1px 7px;
+  }
+  .obj.bridge .obj-path { background: transparent; border: 1px solid var(--accent); color: var(--accent); }
+  .obj p { margin: 0; font-size: 14.5px; color: var(--ink-2); max-width: none; }
+
+  /* ---- responsabilidades ---- */
+  .resp { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin: 0 0 20px; }
+  @media (max-width: 640px) { .resp { grid-template-columns: 1fr; } }
+  .resp-c {
+    background: var(--panel); border: 1px solid var(--line); border-radius: 5px; padding: 15px 17px;
+  }
+  .resp-c h4 {
+    margin: 0 0 3px; font-size: 14.5px; font-weight: 600;
+  }
+  .resp-c .who {
+    font-family: var(--mono); font-size: 10px; letter-spacing: .08em;
+    text-transform: uppercase; color: var(--faint); margin-bottom: 8px;
+  }
+  .resp-c p { margin: 0; font-size: 14px; color: var(--ink-2); max-width: none; }
+
+  /* ---- checklist de validación ---- */
+  .checks { display: flex; flex-direction: column; gap: 1px; margin: 0 0 20px; }
+  .check {
+    display: grid; grid-template-columns: 22px minmax(0, 1fr) auto; gap: 12px;
+    align-items: baseline; padding: 11px 16px;
+    background: var(--panel); border: 1px solid var(--line); border-radius: 4px;
+  }
+  .check .tick { color: var(--ok); font-size: 14px; font-weight: 700; }
+  .check .what { font-size: 14px; font-weight: 500; }
+  .check .how { font-size: 13.5px; color: var(--muted); text-align: right; }
+  @media (max-width: 620px) {
+    .check { grid-template-columns: 22px minmax(0, 1fr); }
+    .check .how { grid-column: 2; text-align: left; }
+  }
+
+  /* challenge cards */
+  .ch { border: 1px solid var(--line); border-left: 3px solid var(--accent); border-radius: 0 5px 5px 0; background: var(--panel); padding: 15px 18px; margin-bottom: 12px; }
+  .ch-t { font-weight: 600; font-size: 14.5px; margin-bottom: 6px; }
+  .ch-t .tag { font-family: var(--mono); font-size: 10.5px; color: var(--accent); margin-right: 7px; }
+  .ch p { font-size: 14px; color: var(--ink-2); margin: 0 0 8px; max-width: none; }
+  .ch .sol { background: var(--ok-bg); color: var(--ok); border-radius: 4px; padding: 8px 12px; font-size: 13.5px; }
+  .ch .sol b { font-weight: 600; }
+
+  /* tablas */
+  .tw { overflow-x: auto; border: 1px solid var(--line); border-radius: 5px; background: var(--panel); margin-bottom: 16px; }
+  table { border-collapse: collapse; width: 100%; font-size: 13.5px; min-width: 480px; }
+  th {
+    text-align: left; font-family: var(--mono); font-size: 9.5px; letter-spacing: .09em;
+    text-transform: uppercase; color: var(--faint); font-weight: 400;
+    padding: 9px 13px; border-bottom: 1px solid var(--line); background: var(--ground); white-space: nowrap;
+  }
+  td { padding: 9px 13px; border-bottom: 1px solid var(--line-soft); vertical-align: top; }
+  td.num { font-variant-numeric: tabular-nums; white-space: nowrap; }
+  tbody tr:last-child td { border-bottom: 0; }
+  tr.hi td { background: var(--accent-bg); }
+
+  .pill {
+    display: inline-block; font-family: var(--mono); font-size: 9.5px;
+    letter-spacing: .05em; text-transform: uppercase; padding: 2px 6px;
+    border-radius: 3px; white-space: nowrap; font-weight: 500;
+  }
+  .p-ok { background: var(--ok-bg); color: var(--ok); }
+  .p-warn { background: var(--warn-bg); color: var(--warn); }
+  .p-crit { background: var(--crit-bg); color: var(--crit); }
+  .p-info { background: var(--info-bg); color: var(--info); }
+
+  .callout {
+    background: var(--accent-bg); border: 1px solid color-mix(in srgb, var(--accent) 28%, transparent);
+    border-radius: 5px; padding: 14px 18px; margin: 0 0 18px; max-width: var(--measure);
+  }
+  .callout .lbl { font-family: var(--mono); font-size: 10px; letter-spacing: .1em; text-transform: uppercase; color: var(--accent); display: block; margin-bottom: 6px; }
+  .callout p { margin: 0; font-size: 14px; }
+
+  /* ---- circuito de atención: estados ---- */
+  .states { margin: 0 0 18px; }
+  .state {
+    display: grid; grid-template-columns: 34px minmax(0, 1fr) 132px; gap: 16px;
+    background: var(--panel); border: 1px solid var(--line); border-radius: 6px;
+    padding: 15px 18px; align-items: start;
+  }
+  .state.bot { border-left: 3px solid var(--accent); }
+  .state.human { border-left: 3px solid var(--info); }
+  .state-n {
+    font-family: var(--serif); font-size: 22px; font-weight: 600;
+    color: var(--accent); line-height: 1; padding-top: 1px;
+  }
+  .state.human .state-n { color: var(--info); }
+  .state-b { min-width: 0; }
+  .state-t { font-weight: 600; font-size: 15px; margin-bottom: 5px; }
+  .state-b p { margin: 0; font-size: 14px; color: var(--ink-2); max-width: none; }
+  .voice {
+    font-family: var(--mono); font-size: 9.5px; letter-spacing: .07em;
+    text-transform: uppercase; padding: 3px 8px; border-radius: 3px;
+    white-space: nowrap; text-align: center; font-weight: 500;
+  }
+  .v-bot { background: var(--accent-bg); color: var(--accent); }
+  .v-human { background: var(--info-bg); color: var(--info); }
+  .arrow {
+    display: grid; grid-template-columns: 34px minmax(0, 1fr); gap: 16px;
+    padding: 7px 18px; align-items: center;
+  }
+  .arrow .mark { color: var(--faint); text-align: center; font-size: 15px; line-height: 1; }
+  .arrow .why { font-size: 13px; color: var(--muted); font-style: italic; }
+  @media (max-width: 620px) {
+    .state { grid-template-columns: 30px minmax(0, 1fr); }
+    .voice { grid-column: 2; justify-self: start; margin-top: 8px; }
+    .arrow { grid-template-columns: 30px minmax(0, 1fr); }
+  }
+
+  .cap { font-size: 12.5px; color: var(--faint); margin: -8px 0 18px; font-style: italic; }
+
+  /* ---- antes / después ---- */
+  .ba { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin: 0 0 18px; }
+  @media (max-width: 640px) { .ba { grid-template-columns: 1fr; } }
+  .ba-c { border: 1px solid var(--line); border-radius: 5px; padding: 15px 17px; background: var(--panel); }
+  .ba-c.now { border-left: 3px solid var(--crit); }
+  .ba-c.next { border-left: 3px solid var(--ok); }
+  .ba-c h4 { margin: 0 0 9px; font-size: 11px; letter-spacing: .08em; text-transform: uppercase; font-weight: 600; }
+  .ba-c.now h4 { color: var(--crit); }
+  .ba-c.next h4 { color: var(--ok); }
+  .ba-c ul { margin: 0; padding-left: 17px; font-size: 13.5px; color: var(--ink-2); }
+  .ba-c li { margin-bottom: 6px; }
+  .ba-c li:last-child { margin-bottom: 0; }
+
+  /* ---- pasos numerados de la migración ---- */
+  .steps { display: flex; flex-direction: column; gap: 10px; margin: 0 0 18px; }
+  .stp {
+    display: grid; grid-template-columns: 30px minmax(0, 1fr); gap: 14px;
+    background: var(--panel); border: 1px solid var(--line); border-radius: 5px;
+    padding: 14px 17px; align-items: start;
+  }
+  .stp-n {
+    font-family: var(--serif); font-size: 20px; font-weight: 600;
+    color: var(--accent); line-height: 1.1;
+  }
+  .stp-b { min-width: 0; }
+  .stp-t { font-weight: 600; font-size: 14.5px; margin-bottom: 4px; }
+  .stp-b p { margin: 0; font-size: 14px; color: var(--ink-2); max-width: none; }
+  .stp-meta { font-size: 12.5px; color: var(--faint); margin-top: 7px; }
+
+  footer { border-top: 1px solid var(--line); margin-top: 46px; padding-top: 16px; font-size: 12.5px; color: var(--faint); max-width: var(--measure); }
+  footer a { color: var(--accent); }
+
+  @media print {
+    .page { padding: 0; max-width: none; }
+    h2 { break-after: avoid; }
+    .tw, .ch, .facts, .task, .obj, .resp-c, .state, .check, .callout { break-inside: avoid; }
+  }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <header class="masthead">
+    <div class="eyebrow">Intention Builder · Propuesta de trabajo · Julio 2026</div>
+    <h1>SUBASTIN — consolidar el canal de atención con IA</h1>
+  </header>
+
+  <!-- ============ KICKOFF ============ -->
+  <h2><span class="n">§</span> Kickoff</h2>
+  <div class="facts">
+    <dl>
+      <div class="row">
+        <dt>Code name</dt>
+        <dd><strong>SUBASTIN</strong></dd>
+      </div>
+      <div class="row">
+        <dt>Por qué</dt>
+        <dd>
+          Cada consulta que un asesor responde a mano cuesta tiempo y llega tarde. El bot ya
+          responde primero, pero hoy tiene dos huecos de seguridad, cero pruebas automáticas y un
+          circuito de derivación a humanos que queda a medias. Consolidarlo convierte un prototipo
+          prometedor en un canal de atención confiable.
+        </dd>
+      </div>
+      <div class="row">
+        <dt>Alcance</dt>
+        <dd>
+          Macro — endurecer y operar el chatbot existente. El motor de respuestas y las decisiones
+          de fondo se mantienen: <strong>no es una reescritura</strong>.
+        </dd>
+      </div>
+      <div class="row">
+        <dt>Stakeholders</dt>
+        <dd>
+          VMC Subastas — el equipo comercial y de atención, que hereda cada conversación que el
+          bot no resuelve.
+        </dd>
+      </div>
+      <div class="row">
+        <dt>Equipo</dt>
+        <dd>Un desarrollador con agentes de IA como multiplicador, bajo el mismo modelo de gobernanza que Voyager.</dd>
+      </div>
+    </dl>
+  </div>
+
+  <!-- ============ INTENTION MATRIX ============ -->
+  <h2><span class="n">1</span> Intention Matrix</h2>
+  <p class="subhead">Necesidad, apuesta, desafíos con solución, e hipótesis.</p>
+
+  <h3>Necessity</h3>
+  <p>
+    VMC recibe todos los días las mismas preguntas — registro, comisiones, consignación, SubasCoins —
+    y consultas de stock que un humano responde una por una. Subastin ya cubre ese primer contacto,
+    pero opera con un webhook que cualquiera puede falsificar, sin una sola prueba automatizada,
+    y con una derivación a asesores que crea el ticket y se desentiende. En ese estado no se puede
+    abrir al público con tranquilidad: el riesgo no es que el bot responda mal una vez, es que nadie
+    se enteraría.
+  </p>
+
+  <h3>Supposition</h3>
+  <p>
+    Con la seguridad cerrada, un control de calidad que corre solo y el circuito bot-humano completo,
+    Subastin atiende el primer contacto de todos los clientes a un costo de centavos por conversación,
+    y los asesores reciben únicamente los casos donde una persona aporta valor — con el contexto ya
+    puesto. La atención escala sin que el equipo crezca.
+  </p>
+
+  <h3>Challenges &amp; Solutions</h3>
+
+  <div class="ch">
+    <div class="ch-t"><span class="tag">CHALLENGE A</span> El canal no verifica quién le habla</div>
+    <p>
+      El webhook de WhatsApp acepta cualquier mensaje con el formato correcto, sin validar la firma
+      que Meta incluye en cada envío. Quien descubra la URL puede hacerse pasar por un cliente,
+      quemar el saldo de API o hacer que el bot escriba a números ajenos. El endpoint que administra
+      el saldo tiene el mismo problema: sin token configurado, queda abierto.
+    </p>
+    <div class="sol"><b>Solución:</b> verificación HMAC de la firma de Meta en cada mensaje entrante, y todos los endpoints administrativos fallan cerrado — sin credencial configurada, se niega el acceso. Son horas de trabajo, no semanas.</div>
+  </div>
+
+  <div class="ch">
+    <div class="ch-t"><span class="tag">CHALLENGE B</span> Nada detiene una regresión antes del deploy</div>
+    <p>
+      Hay cero tests. Un bug de función duplicada dejó muerta media capa del clasificador — la que
+      detecta frustración peruana — y nadie lo notó porque nada lo verificaba. El material para el
+      control de calidad ya existe (un set de 50 preguntas con respuestas esperadas y un evaluador),
+      pero se corre a mano, cuando alguien se acuerda.
+    </p>
+    <div class="sol"><b>Solución:</b> control de calidad en tres niveles — análisis estático que atrapa duplicaciones, pruebas unitarias sobre las piezas frágiles, y el set de evaluación como puerta de despliegue: si el puntaje baja del umbral, no sale. Detalle en la sección 4.</div>
+  </div>
+
+  <div class="ch">
+    <div class="ch-t"><span class="tag">CHALLENGE C</span> El circuito bot-humano está a medias</div>
+    <p>
+      Hoy el bot detecta que alguien necesita asesor, crea el ticket en Intercom con contexto y avisa
+      al equipo. Pero no se calla cuando el asesor entra a la conversación, no confirma al cliente
+      que ya lo van a atender, y no sabe cuándo retomar. Dos voces respondiendo el mismo chat es
+      peor que ninguna.
+    </p>
+    <div class="sol"><b>Solución:</b> protocolo de estados por conversación — bot activo, escalado, humano atendiendo, cerrado — con el bot en silencio mientras el asesor trabaja y retorno automático al cerrar. Detalle en la sección 6.</div>
+  </div>
+
+  <div class="ch">
+    <div class="ch-t"><span class="tag">CHALLENGE D</span> El costo por mensaje tiene fugas conocidas</div>
+    <p>
+      Cada mensaje cuesta alrededor de un centavo de dólar, que está bien. Pero el caché del
+      clasificador está mal colocado y paga un recargo en cada llamada sin acertar nunca, y las
+      preguntas repetidas — que en soporte son muchas — se procesan completas cada vez.
+    </p>
+    <div class="sol"><b>Solución:</b> arreglar la colocación del caché, servir las preguntas frecuentes desde un caché de respuestas y cortar la generación cuando la búsqueda no encontró nada — eso baja la factura ~30% sin cambiar de proveedor. En paralelo, medir Gemini contra el set de evaluación: cuesta la mitad, y a volumen alto esa diferencia es de cientos de dólares al mes. Números en la sección 3.</div>
+  </div>
+
+  <div class="ch">
+    <div class="ch-t"><span class="tag">CHALLENGE E</span> Tres piezas asumen un servidor que no existe</div>
+    <p>
+      El agrupado de mensajes en ráfaga, el límite de consultas y el guardado del historial fueron
+      diseñados para un servidor prendido permanentemente. Corren en Vercel, donde cada mensaje
+      levanta un proceso que muere al responder: el agrupado puede no ejecutarse nunca y el límite
+      no limita nada.
+    </p>
+    <div class="sol"><b>Solución:</b> alinear el diseño con la plataforma — contadores y estado en Redis con operaciones atómicas, y el agrupado resuelto dentro del request o desactivado hasta que el volumen lo pida.</div>
+  </div>
+
+  <div class="ch">
+    <div class="ch-t"><span class="tag">CHALLENGE F</span> La base en producción arrastra su origen artesanal</div>
+    <p>
+      El contenido que responde hoy se extrajo de imágenes, porque el centro de ayuda antiguo era
+      casi todo infografías. De sus 81 fragmentos, 41 quedaron sin clasificar y todos enlazan a
+      URLs que ya cambiaron. La calidad de las respuestas está limitada por ahí antes que por el
+      modelo. La base nueva ya está extraída — 126 fragmentos limpios — pero aún no responde a
+      nadie.
+    </p>
+    <div class="sol"><b>Solución:</b> probar la base nueva contra el set de evaluación, publicarla solo si gana, y dejar la actualización automatizada. Detalle en la sección 5.</div>
+  </div>
+
+  <div class="ch">
+    <div class="ch-t"><span class="tag">CHALLENGE G</span> Operar el bot obliga a mirar el celular</div>
+    <p>
+      El bot atiende clientes en producción, pero para saber qué pasó hay que abrir WhatsApp en un
+      teléfono o leer archivos en el servidor. No hay forma de ver los chats del día, los casos
+      escalados, si un asesor los tomó, ni cuánto se gastó. Todo eso está en los datos y no tiene
+      dónde mostrarse.
+    </p>
+    <div class="sol"><b>Solución:</b> un panel web con acceso restringido al equipo: conversaciones, tickets escalados, métricas, preguntas sin respuesta y controles básicos. Detalle en la sección 7.</div>
+  </div>
+
+  <h3>Hypothesis</h3>
+  <p>
+    Cerrados esos cinco frentes, Subastin demuestra que VMC puede atender a todos sus leads al
+    instante sin agrandar el equipo: el bot resuelve el primer contacto por centavos, deriva con
+    contexto solo lo que un humano debe tocar, y cada cambio al sistema se mide contra el golden
+    dataset antes de tocar producción. La ventaja no es solo este bot — es que la atención deja de
+    ser un costo que crece con cada cliente nuevo.
+  </p>
+
+  <!-- ============ PURPOSE PYRAMID ============ -->
+  <h2><span class="n">2</span> Purpose Pyramid</h2>
+  <p class="subhead">Tareas, objetivos y responsabilidades que sostienen la hipótesis.</p>
+
+  <h3>Tareas base</h3>
+  <div class="tasks">
+    <div class="task">
+      <div class="task-id">TASK A</div>
+      <div class="task-b">
+        <div class="task-t">Cerrar seguridad y bugs críticos</div>
+        <div class="task-d">Firma del webhook, endpoints cerrados, la función duplicada del clasificador, y las piezas alineadas con la plataforma. Es la base que todo lo demás requiere.</div>
+      </div>
+    </div>
+    <div class="task">
+      <div class="task-id">TASK B</div>
+      <div class="task-b">
+        <div class="task-t">Instrumentar el control de calidad</div>
+        <div class="task-d">Análisis estático, pruebas unitarias y el set de evaluación como puerta de despliegue. Nada sale a producción sin pasar el umbral.</div>
+      </div>
+    </div>
+    <div class="task">
+      <div class="task-id">TASK C</div>
+      <div class="task-b">
+        <div class="task-t">Validar y publicar la base de conocimiento nueva</div>
+        <div class="task-d">Ya está extraída del centro de ayuda web: 126 fragmentos con tema real, enlaces vigentes y cifras marcadas. Falta probarla contra el set de evaluación, publicarla si gana, y automatizar su actualización.</div>
+      </div>
+    </div>
+    <div class="task keystone">
+      <div class="task-id">TASK D</div>
+      <div class="task-b">
+        <div class="task-t">Completar el circuito bot → humano → bot<span class="keystone-flag">Keystone</span></div>
+        <div class="task-d">Estados por conversación: el bot se calla cuando entra el asesor, el cliente sabe quién lo atiende, y el bot retoma al cerrar el caso.</div>
+      </div>
+    </div>
+    <div class="task">
+      <div class="task-id">TASK E</div>
+      <div class="task-b">
+        <div class="task-t">Construir el panel de administración</div>
+        <div class="task-d">Una aplicación web para que el equipo vea conversaciones, casos escalados y métricas sin depender del celular — y pueda operar el bot sin tocar código.</div>
+      </div>
+    </div>
+    <div class="task">
+      <div class="task-id">TASK F</div>
+      <div class="task-b">
+        <div class="task-t">Optimizar el costo y medirlo</div>
+        <div class="task-d">Caché bien colocado, preguntas frecuentes servidas desde caché, umbral de confianza. El costo por conversación pasa a ser un número visible, no una estimación.</div>
+      </div>
+    </div>
+    <div class="task">
+      <div class="task-id">TASK G</div>
+      <div class="task-b">
+        <div class="task-t">Evolucionar el producto sobre métricas</div>
+        <div class="task-d">Notas de voz, extracción de vehículos con herramientas del modelo, evaluación de proveedores con datos propios, y métricas de negocio: leads atendidos, rescates de abandono, conversión.</div>
+      </div>
+    </div>
+  </div>
+
+  <h3>Objetivos — el estado al que lleva cada par de tareas</h3>
+  <div class="objs">
+    <div class="obj">
+      <div class="obj-h"><span class="obj-n">Objetivo 1</span><span class="obj-path">Task A → B</span></div>
+      <p>El bot opera sobre una base segura y con control de calidad activo: nadie puede falsificar mensajes, y ninguna regresión llega a producción sin que una máquina la detecte primero.</p>
+    </div>
+    <div class="obj">
+      <div class="obj-h"><span class="obj-n">Objetivo 2</span><span class="obj-path">Task B → C</span></div>
+      <p>El bot responde desde una base de conocimiento completa y vigente: enlaces que funcionan, temas bien clasificados, cifras rastreables hasta su fuente, y actualización que no depende de que alguien se acuerde.</p>
+    </div>
+    <div class="obj bridge">
+      <div class="obj-h"><span class="obj-n">Objetivo 3</span><span class="obj-path">Task C → D · puente keystone</span></div>
+      <p>El circuito de atención completo funciona y está validado: el cliente siempre sabe quién lo atiende, el asesor siempre llega con el contexto puesto, y el bot nunca habla encima de un humano.</p>
+    </div>
+    <div class="obj">
+      <div class="obj-h"><span class="obj-n">Objetivo 4</span><span class="obj-path">Task D → E</span></div>
+      <p>El equipo de VMC administra el bot por su cuenta: ve las conversaciones, los casos escalados y el gasto desde una pantalla, sin depender del celular ni de alguien técnico.</p>
+    </div>
+    <div class="obj">
+      <div class="obj-h"><span class="obj-n">Objetivo 5</span><span class="obj-path">Task E → F</span></div>
+      <p>El costo por conversación está medido, optimizado y visible — las decisiones de modelo y proveedor se toman con números propios, no con precios de lista.</p>
+    </div>
+    <div class="obj">
+      <div class="obj-h"><span class="obj-n">Objetivo 6</span><span class="obj-path">Task F → G</span></div>
+      <p>El producto crece guiado por sus métricas: qué preguntas no sabe responder, cuántos leads rescata, cuánto cuesta cada uno.</p>
+    </div>
+  </div>
+
+  <h3>Responsabilidades permanentes</h3>
+  <div class="resp">
+    <div class="resp-c">
+      <h4>Sostener la puerta de calidad</h4>
+      <div class="who">Responsabilidad X · eje en Task B</div>
+      <p>
+        Ningún cambio — de instrucciones, de código o de contenido — se despliega por debajo del
+        umbral del set de evaluación. Una cifra inventada es bloqueante, siempre.
+      </p>
+    </div>
+    <div class="resp-c">
+      <h4>Proteger el circuito de atención</h4>
+      <div class="who">Responsabilidad Y · eje en Task D</div>
+      <p>
+        Ningún cliente queda sin respuesta, ninguno recibe dos voces a la vez, y ningún caso
+        escalado a un asesor se pierde en el camino.
+      </p>
+    </div>
+  </div>
+
+  <div class="callout">
+    <span class="lbl">Purpose</span>
+    <p>
+      Que cada persona que escribe a VMC reciba respuesta inmediata y correcta, con salida a un
+      humano cuando importa — a un costo que no crece con cada conversación.
+    </p>
+  </div>
+
+  <!-- ============ COSTOS ============ -->
+  <h2><span class="n">3</span> Costos: lo que gastamos y las alternativas</h2>
+  <p class="subhead">Precios verificados a julio 2026 contra las páginas oficiales de Anthropic y Google.</p>
+
+  <h3>Qué cuesta un mensaje hoy</h3>
+  <p>
+    Un mensaje típico de pregunta frecuente mueve 3.100 tokens de entrada (el prompt del sistema,
+    que va cacheado, más los fragmentos recuperados y el historial) y 300 de salida, más la llamada
+    del clasificador. Con los precios actuales eso da <strong>US$ 0.00889 por mensaje</strong>:
+    US$ 0.0084 los pone la generación y el resto la clasificación. Una conversación completa de seis
+    mensajes ronda los cinco centavos y medio, y el gasto mensual a 6.000 mensajes es de unos
+    53 dólares.
+  </p>
+
+  <h3>Claude — precios por millón de tokens (julio 2026)</h3>
+  <div class="tw">
+    <table>
+      <thead><tr><th>Modelo</th><th>Entrada</th><th>Caché escritura 5 min</th><th>Caché lectura</th><th>Salida</th><th>Batch (in/out)</th></tr></thead>
+      <tbody>
+        <tr class="hi"><td><strong>Sonnet 4.5</strong> — genera hoy</td><td class="num">$3.00</td><td class="num">$3.75</td><td class="num">$0.30</td><td class="num">$15.00</td><td class="num">$1.50 / $7.50</td></tr>
+        <tr class="hi"><td><strong>Haiku 4.5</strong> — clasifica hoy</td><td class="num">$1.00</td><td class="num">$1.25</td><td class="num">$0.10</td><td class="num">$5.00</td><td class="num">$0.50 / $2.50</td></tr>
+        <tr><td>Sonnet 5 <em>(hasta 31 ago)</em></td><td class="num">$2.00</td><td class="num">$2.50</td><td class="num">$0.20</td><td class="num">$10.00</td><td class="num">$1.00 / $5.00</td></tr>
+        <tr><td>Sonnet 5 <em>(desde 1 sep)</em></td><td class="num">$3.00</td><td class="num">$3.75</td><td class="num">$0.30</td><td class="num">$15.00</td><td class="num">$1.50 / $7.50</td></tr>
+        <tr><td>Opus 5</td><td class="num">$5.00</td><td class="num">$6.25</td><td class="num">$0.50</td><td class="num">$25.00</td><td class="num">$2.50 / $12.50</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <p class="cap">Leer del caché cuesta el 10% de la entrada. Escribirlo cuesta 1,25× (dura 5 min) o 2× (dura 1 hora): se paga solo desde la primera lectura. El batch (50% de descuento) no aplica a un chatbot — es para trabajo diferido.</p>
+
+  <h3>Gemini — precios por millón de tokens (julio 2026)</h3>
+  <div class="tw">
+    <table>
+      <thead><tr><th>Modelo</th><th>Entrada</th><th>Caché contexto</th><th>Salida</th><th>Batch (in/out)</th><th>Nota</th></tr></thead>
+      <tbody>
+        <tr><td>3.6 Flash</td><td class="num">$1.50</td><td class="num">$0.15 + $1/h</td><td class="num">$7.50</td><td class="num">$0.75 / $3.75</td><td>El Flash más nuevo</td></tr>
+        <tr><td>3.5 Flash</td><td class="num">$1.50</td><td class="num">$0.15 + $1/h</td><td class="num">$9.00</td><td class="num">$0.75 / $4.50</td><td></td></tr>
+        <tr><td>3.5 Flash-Lite</td><td class="num">$0.30</td><td class="num">$0.03 + $1/h</td><td class="num">$2.50</td><td class="num">$0.15 / $1.25</td><td>Candidato para clasificar</td></tr>
+        <tr><td>3.1 Flash-Lite</td><td class="num">$0.25</td><td class="num">$0.025 + $1/h</td><td class="num">$1.50</td><td class="num">$0.125 / $0.75</td><td>Audio a $0.50 entrada</td></tr>
+        <tr><td>2.5 Flash-Lite</td><td class="num">$0.10</td><td class="num">—</td><td class="num">$0.40</td><td class="num">$0.05 / $0.20</td><td>El más barato del mercado</td></tr>
+        <tr><td>2.5 Pro</td><td class="num">$1.25</td><td class="num">—</td><td class="num">$10.00</td><td class="num">—</td><td>Sube a $2.50/$15 sobre 200k tokens</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <p class="cap">La salida de Gemini incluye los tokens de razonamiento, que en los modelos 3.x pueden ser varias veces el texto visible — el precio de lista subestima la factura real. El caché suma renta por hora ($1 por millón de tokens almacenados), a diferencia de Claude donde solo se paga al escribir y leer.</p>
+
+  <h3>La misma carga en cada opción</h3>
+  <p>
+    Para que la comparación sea justa se costea <strong>exactamente el mismo mensaje</strong> en
+    todas las opciones: 3.100 tokens de entrada para generar la respuesta (de los cuales 2.000 son
+    el prompt del sistema, que es fijo y por tanto cacheable), 300 tokens de respuesta, más la
+    llamada del clasificador (1.200 de entrada, 20 de salida). Es el perfil real del bot, no un
+    promedio de manual.
+  </p>
+
+  <div class="tw">
+    <table>
+      <thead><tr><th>Combinación</th><th>Sin caché</th><th>Con caché</th><th>6.000 msj</th><th>30.000 msj</th><th>100.000 msj</th></tr></thead>
+      <tbody>
+        <tr class="hi">
+          <td><strong>Sonnet 4.5 + Haiku 4.5</strong> <em>— hoy</em></td>
+          <td class="num">$0.01510</td><td class="num">$0.00889</td>
+          <td class="num">$53</td><td class="num">$267</td><td class="num">$889</td>
+        </tr>
+        <tr>
+          <td>Sonnet 5 intro + Haiku 4.5</td>
+          <td class="num">$0.01050</td><td class="num">$0.00609</td>
+          <td class="num">$37</td><td class="num">$183</td><td class="num">$609</td>
+        </tr>
+        <tr>
+          <td>Sonnet 5 desde septiembre + Haiku 4.5</td>
+          <td class="num">$0.01510</td><td class="num">$0.00889</td>
+          <td class="num">$53</td><td class="num">$267</td><td class="num">$889</td>
+        </tr>
+        <tr>
+          <td><strong>Gemini 3.6 Flash + 3.5 Flash-Lite</strong></td>
+          <td class="num">$0.00731</td><td class="num">$0.00437</td>
+          <td class="num">$26</td><td class="num">$131</td><td class="num">$437</td>
+        </tr>
+        <tr>
+          <td>Gemini 3.6 Flash + 3.1 Flash-Lite</td>
+          <td class="num">$0.00714</td><td class="num">$0.00433</td>
+          <td class="num">$26</td><td class="num">$130</td><td class="num">$433</td>
+        </tr>
+        <tr>
+          <td>Gemini 3.5 Flash-Lite en ambos roles</td>
+          <td class="num">$0.00209</td><td class="num">$0.00131</td>
+          <td class="num">$8</td><td class="num">$39</td><td class="num">$131</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  <p class="cap">Costos mensuales calculados con caché activo. El caché de Gemini suma además una renta de almacenamiento — con nuestro bloque de ~2.900 tokens, unos $2 al mes si se mantiene encendido todo el tiempo; en Anthropic no hay renta, solo se paga escribir y leer.</p>
+
+  <h3>Qué dicen los números</h3>
+  <p>
+    Sin adornos: <strong>Gemini cuesta la mitad</strong>. La combinación 3.6 Flash + 3.5 Flash-Lite
+    sale en $26 mensuales contra los $53 de hoy — no es un ahorro marginal, es la factura dividida
+    en dos. Y si además el clasificador y la generación se hicieran con Flash-Lite, el costo cae a
+    $8 al mes, una sexta parte de lo actual. Al volumen de hoy son 27 dólares; si el bot escala a
+    100.000 mensajes mensuales, la diferencia es de <strong>452 dólares al mes</strong>, y ahí ya
+    no es una discusión de café.
+  </p>
+  <p>
+    Dos matices que hay que sostener con honestidad, ninguno de los cuales anula lo anterior. El
+    primero: en los modelos Gemini 3.x la facturación de salida incluye los tokens de razonamiento,
+    que no siempre son visibles en la respuesta — el costo real puede ser algo mayor que el de
+    lista, y solo se sabe midiendo con tráfico propio. El segundo: la renta del caché de Gemini se
+    paga por hora esté o no en uso, lo que penaliza los horarios muertos; con nuestro volumen son
+    dos dólares al mes, irrelevante, pero conviene tenerlo presente.
+  </p>
+  <p>
+    Del otro lado, lo que cuesta la migración: el bot tiene instrucciones calibradas para tono
+    peruano y cumplimiento legal, un set de evaluación que solo se ha corrido contra un proveedor,
+    y varias piezas escritas contra la API de Anthropic — la forma de cachear, el formato del
+    clasificador, el manejo de reintentos. Es trabajo de portar y recalibrar, del orden de dos a
+    tres semanas. <strong>A 6.000 mensajes ese trabajo se paga solo en unos 20 meses; a 30.000 se
+    paga en cuatro; a 100.000, en menos de tres semanas.</strong> El cálculo depende enteramente
+    del volumen que se espere, no de preferencias.
+  </p>
+
+  <div class="callout">
+    <span class="lbl">Recomendación</span>
+    <p>
+      <strong>Sonnet 5 a precio de introducción ahora</strong> — mejor modelo que el actual por un
+      tercio menos, y el cambio es de una línea. Sirve mientras dure el precio intro.
+      <strong>Y evaluar Gemini en serio en la etapa 6</strong>, con el set de evaluación corriendo
+      contra ambos: si la calidad en español peruano se sostiene, el ahorro justifica la migración
+      — sobre todo si el volumen va a crecer. La condición no es de proveedor: es no cambiar la
+      pieza más crítica del sistema sin poder medir el resultado.
+    </p>
+  </div>
+
+  <h3>Qué pasaría si el volumen crece</h3>
+  <p>
+    El punto donde la decisión cambia de signo está a la vista en la tabla. Por debajo de unos
+    15.000 mensajes al mes, la diferencia entre proveedores es de decenas de dólares y no compensa
+    interrumpir el trabajo de consolidación. Por encima de 50.000, el ahorro anual de Gemini pasa
+    de los 2.700 dólares y la migración se vuelve la decisión obvia. Como el objetivo del proyecto
+    es justamente que el bot atienda a todos los leads, <strong>el escenario de volumen alto no es
+    hipotético</strong> — conviene tener la evaluación lista antes de llegar ahí, no después.
+  </p>
+
+  <h3>¿Y un modelo propio en un VPS para gastar menos?</h3>
+  <p>
+    Aquí la cuenta no cierra, y por mucho. Un servidor con GPU capaz de correr un modelo abierto
+    decente cuesta entre 300 y 800 dólares mensuales — solo el fierro, sin contar que alguien tiene
+    que mantenerlo, parcharlo y responder cuando se caiga a las 2 a.m. Nuestro gasto actual de API
+    está entre 50 y 170 dólares. Estaríamos pagando cinco veces más por un modelo peor en español
+    peruano, sin caché gestionado, y asumiendo una operación de infraestructura que hoy no tenemos.
+    El punto de equilibrio recién aparece con un gasto de API sostenido por encima de $500–800 al
+    mes, y aun ahí habría que descontar la pérdida de calidad. La forma real de gastar menos no es
+    cambiar de motor: es dejar de pagar dos veces por lo mismo.
+  </p>
+
+  <h3>¿Y mover el stack a AWS?</h3>
+  <p>
+    Casi todo tiene equivalente, pero solo conviene si hay una razón de negocio para estar en AWS
+    — facturación consolidada, política de la empresa, o que el resto de la infraestructura de VMC
+    ya viva ahí.
+  </p>
+  <div class="tw">
+    <table>
+      <thead><tr><th>Pieza actual</th><th>Equivalente en AWS</th><th>¿Conviene?</th></tr></thead>
+      <tbody>
+        <tr><td>El modelo, vía API directa</td><td>Bedrock — los mismos modelos, precios de token idénticos</td><td><span class="pill p-warn">Solo por factura unificada — no ahorra nada</span></td></tr>
+        <tr><td>Redis (historial, saldo)</td><td>DynamoDB</td><td><span class="pill p-ok">Sí — arregla de paso un bug de concurrencia</span></td></tr>
+        <tr><td>Tokens en variables de entorno</td><td>Secrets Manager</td><td><span class="pill p-ok">Sí — resuelve la rotación</span></td></tr>
+        <tr><td>Logs que se pierden al morir el proceso</td><td>CloudWatch Logs</td><td><span class="pill p-ok">Sí — hoy no se puede investigar un incidente de ayer</span></td></tr>
+        <tr><td>Hosting en Vercel</td><td>Lambda o App Runner</td><td><span class="pill p-warn">Lambda no arregla nada: misma arquitectura sin estado</span></td></tr>
+        <tr><td>Pinecone (base vectorial)</td><td>OpenSearch, pgvector</td><td><span class="pill p-crit">No — Pinecone genera los embeddings por nosotros</span></td></tr>
+        <tr><td>Firecrawl (scraping)</td><td>Lambda + navegador propio</td><td><span class="pill p-crit">No — construir para ahorrar poco</span></td></tr>
+      </tbody>
+    </table>
+  </div>
+  <p>
+    Un punto que conviene aclarar porque suele confundirse: <strong>mover el modelo a Bedrock no
+    baja el costo por token</strong> — los precios son los mismos que en la API directa, y el
+    descuento por caché también. Lo que cambia es dónde llega la factura y cómo se gestionan las
+    credenciales. Si el objetivo es gastar menos, la palanca es la de la tabla de arriba, no la
+    nube donde se hospeda.
+  </p>
+  <p>
+    Si aun así la decisión de ir a AWS está tomada por otra razón, el orden sensato es: Secrets
+    Manager y CloudWatch primero, porque no rompen nada y resuelven problemas reales; DynamoDB
+    después; el modelo al final y solo si la factura consolidada lo justifica. Pinecone se queda
+    donde está.
+  </p>
+
+  <!-- ============ QA ============ -->
+  <h2><span class="n">4</span> Control de calidad: cómo sabemos que funciona</h2>
+  <p class="subhead">Cinco niveles, del más barato al más caro. Cada uno atrapa lo que el anterior deja pasar.</p>
+
+  <div class="tw">
+    <table>
+      <thead><tr><th>Nivel</th><th>Qué es</th><th>Cuándo corre</th><th>Qué atrapa</th></tr></thead>
+      <tbody>
+        <tr>
+          <td><strong>1. Análisis estático</strong></td>
+          <td>Linter (Ruff) en pre-commit</td>
+          <td>En cada commit, automático</td>
+          <td>Duplicaciones, imports rotos, código muerto. El bug B1 no habría llegado a producción.</td>
+        </tr>
+        <tr>
+          <td><strong>2. Tests unitarios</strong></td>
+          <td>Pruebas sobre las piezas frágiles: el clasificador de intención (con dataset de peruanismos), la extracción de marca/modelo, el guardrail de cifras</td>
+          <td>En cada push</td>
+          <td>Regresiones puntuales — cada bug pasado se convierte en un test que impide que vuelva.</td>
+        </tr>
+        <tr>
+          <td><strong>3. Set de evaluación como puerta</strong></td>
+          <td>Las 50 preguntas con respuesta esperada (ya existen) corren contra el pipeline completo. Umbral: 4.0/5. Una alucinación financiera bloquea el deploy, sin excepción.</td>
+          <td>Antes de cada despliegue</td>
+          <td>Degradación de calidad de punta a punta: un cambio de instrucciones que empeora respuestas, contenido mal cargado, un modelo que se comporta distinto. Es también la vara que decide si la base de conocimiento nueva entra a producción.</td>
+        </tr>
+        <tr>
+          <td><strong>4. Revisión humana</strong></td>
+          <td>Muestra semanal de 30–50 conversaciones reales, revisadas por una persona: ¿la respuesta fue correcta? ¿el tono fue Subastin? ¿debió escalar y no escaló?</td>
+          <td>Semanal</td>
+          <td>Lo que las máquinas no ven: contexto, matices, clientes molestos que el clasificador dejó pasar.</td>
+        </tr>
+        <tr>
+          <td><strong>5. Monitoreo continuo</strong></td>
+          <td>Latencia p95, tasa de escalación, preguntas sin respuesta (huecos de conocimiento), costo por conversación</td>
+          <td>Siempre</td>
+          <td>Tendencias: si la tasa de escalación sube, algo se rompió o falta contenido.</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <p>
+    El despliegue a clientes reales va escalonado: primero el equipo interno lo usa una semana,
+    después un grupo chico de clientes de confianza, recién ahí el público. Cada etapa tiene que
+    mantener el umbral del set de evaluación para pasar a la siguiente. Lo importante es que casi todo
+    el material ya existe — el dataset, el evaluador, los umbrales están definidos. Lo que falta es
+    conectarlo para que corra solo y tenga poder de veto sobre el deploy. Eso es una semana de
+    trabajo, no un proyecto.
+  </p>
+
+  <!-- ============ FLUJO BOT-HUMANO ============ -->
+  <!-- ============ MIGRACIÓN DEL CENTRO DE AYUDA ============ -->
+  <h2><span class="n">5</span> La base de conocimiento nueva</h2>
+  <p class="subhead">La extracción ya está hecha: 126 fragmentos limpios sobre los 21 artículos del centro de ayuda web. Falta validar que responde mejor y publicarla.</p>
+
+  <p>
+    La base original se construyó cuando el centro de ayuda tenía <strong>casi todo su contenido
+    dentro de imágenes</strong> — infografías legibles para el ojo humano e inútiles para un
+    programa. Hubo que descargar los PNG, extraerles el texto y armar los fragmentos a mano. Ese
+    origen explica su estado: 81 fragmentos, de los cuales <strong>41 quedaron sin clasificar por
+    tema</strong>, apuntando a URLs que ya cambiaron.
+  </p>
+  <p>
+    El centro de ayuda nuevo está en texto real, con títulos jerárquicos, categorías limpias y
+    fecha de actualización por artículo. <strong>La extracción ya se hizo</strong> y el resultado
+    es notoriamente mejor que la base actual — no por el proceso, sino porque el contenido de
+    origen por fin tiene la forma que un buscador necesita.
+  </p>
+
+  <div class="ba">
+    <div class="ba-c now">
+      <h4>Base actual — en producción</h4>
+      <ul>
+        <li>81 fragmentos, <strong>41 sin tema asignado</strong> (la mitad)</li>
+        <li>Texto extraído de imágenes: cortes raros, orden alterado</li>
+        <li>39 enlaces al dominio antiguo — el cliente que los siga se pierde</li>
+        <li>Sin fecha: no se sabe si un dato sigue vigente</li>
+        <li>Actualizar exige rehacer el proceso a mano</li>
+      </ul>
+    </div>
+    <div class="ba-c next">
+      <h4>Base nueva — ya extraída</h4>
+      <ul>
+        <li><strong>126 fragmentos, todos con su tema real</strong> — cero «General»</li>
+        <li>Corte por sección: cada fragmento es una idea completa</li>
+        <li>21 enlaces vigentes que el bot puede citar</li>
+        <li><strong>69 fragmentos con cifras marcadas</strong>, listos para el control anti-invención</li>
+        <li>Reproducible con un comando sobre el sitio web</li>
+      </ul>
+    </div>
+  </div>
+  <p class="cap">La base nueva tiene 55% más fragmentos sobre 21 artículos, contra 81 fragmentos dispersos en 39 URLs de la anterior. Más fragmentos no es peor: significa que cada uno cubre una pregunta puntual en lugar de mezclar temas.</p>
+
+  <h3>Lo que falta: validar y publicar</h3>
+  <p>
+    El contenido está extraído y verificado, pero <strong>todavía no responde a ningún cliente</strong>.
+    Publicarlo sin medir sería cambiar a ciegas la pieza que más afecta la calidad de las
+    respuestas. Quedan tres pasos, y el primero es el que decide.
+  </p>
+  <div class="steps">
+    <div class="stp">
+      <div class="stp-n">1</div>
+      <div class="stp-b">
+        <div class="stp-t">Probar las respuestas contra la base nueva</div>
+        <p>
+          Cargarla en un espacio separado, sin tocar producción, y correr las 50 preguntas de
+          evaluación contra ambas bases. Se comparan lado a lado: qué preguntas mejoran, cuáles
+          empeoran, y si alguna respuesta con cifras queda sin respaldo. <strong>Solo si la nueva
+          gana se publica</strong>; si empata o pierde en algún tema, se ajusta el corte de esos
+          artículos y se vuelve a medir.
+        </p>
+        <div class="stp-meta">Un día · es el paso que autoriza todo lo demás</div>
+      </div>
+    </div>
+    <div class="stp">
+      <div class="stp-n">2</div>
+      <div class="stp-b">
+        <div class="stp-t">Publicar y retirar la base vieja</div>
+        <p>
+          El cambio es reversible en minutos: si algo sale mal en producción, se vuelve a la base
+          anterior sin perder nada. Conviene dejar unos días de convivencia antes de retirar
+          definitivamente la vieja.
+        </p>
+        <div class="stp-meta">Medio día · con vuelta atrás inmediata</div>
+      </div>
+    </div>
+    <div class="stp">
+      <div class="stp-n">3</div>
+      <div class="stp-b">
+        <div class="stp-t">Automatizar la actualización</div>
+        <p>
+          Una tarea programada revisa la fecha de cada artículo y solo reprocesa los que cambiaron.
+          Cuando el equipo edita el centro de ayuda, el bot se entera sin que nadie tenga que
+          acordarse — que es la diferencia entre una base que se mantiene sola y una que envejece.
+        </p>
+        <div class="stp-meta">Un día · elimina el mantenimiento manual</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="callout">
+    <span class="lbl">Qué desbloquea</span>
+    <p>
+      Publicar esta base mejora <em>todas</em> las respuestas a la vez — ninguna optimización de
+      modelo o de búsqueda da un salto comparable. Además destraba dos cosas: el control que impide
+      inventar cifras necesita fragmentos marcados, y ya hay 69; y el registro de preguntas sin
+      respuesta solo tiene sentido cuando la base está completa. Mientras tanto, cada día que pasa
+      el bot sigue citando enlaces que ya no existen.
+    </p>
+  </div>
+
+  <h3>El detalle que hay que cuidar</h3>
+  <p>
+    El sitio nuevo todavía apoya algunos pasos en capturas de pantalla («haz clic en el botón que
+    aparece aquí»). Esas imágenes son útiles para el cliente, pero el bot no puede describirlas. La
+    solución es simple: cuando un fragmento dependa de una imagen, la respuesta enlaza al artículo
+    en lugar de intentar explicarlo — «te dejo el paso a paso con capturas acá». Es más honesto y
+    más útil que una descripción a ciegas.
+  </p>
+
+  <h2><span class="n">6</span> El circuito: bot primero, humano cuando importa</h2>
+  <p class="subhead">Cómo convive el bot con los asesores. Qué ya funciona y qué falta cerrar.</p>
+
+  <p>
+    La idea es exactamente la que planteas: el bot responde primero, siempre. Resuelve lo
+    repetitivo al instante y a cualquier hora. Cuando detecta que la conversación necesita una
+    persona — porque el cliente la pide, porque está molesto, porque amenaza con Indecopi o porque
+    está por abandonar la compra — le pasa el caso a un asesor con todo el contexto. El asesor no
+    empieza de cero: entra a Intercom y ve los últimos mensajes y el motivo de la escalación.
+  </p>
+
+  <div class="states">
+    <div class="state bot">
+      <div class="state-n">1</div>
+      <div class="state-b">
+        <div class="state-t">Bot activo</div>
+        <p>Subastin responde: preguntas frecuentes con la base de conocimiento, búsquedas de vehículos contra el catálogo en vivo.</p>
+      </div>
+      <div class="voice v-bot">Habla el bot</div>
+    </div>
+
+    <div class="arrow">
+      <div class="mark">↓</div>
+      <div class="why">El cliente pide asesor, se frustra, menciona un tema legal o está por abandonar</div>
+    </div>
+
+    <div class="state bot">
+      <div class="state-n">2</div>
+      <div class="state-b">
+        <div class="state-t">Escalado</div>
+        <p>Se crea el ticket con los últimos mensajes, se avisa al equipo, y el cliente recibe un mensaje de espera acorde al motivo — no es lo mismo una duda que una urgencia en subasta.</p>
+      </div>
+      <div class="voice v-bot">Mensaje de espera</div>
+    </div>
+
+    <div class="arrow">
+      <div class="mark">↓</div>
+      <div class="why">Un asesor abre el caso</div>
+    </div>
+
+    <div class="state human">
+      <div class="state-n">3</div>
+      <div class="state-b">
+        <div class="state-t">Humano atendiendo</div>
+        <p>El bot se calla para esa conversación. El cliente recibe una confirmación de que ya lo atiende una persona, con su nombre.</p>
+      </div>
+      <div class="voice v-human">Habla el asesor</div>
+    </div>
+
+    <div class="arrow">
+      <div class="mark">↓</div>
+      <div class="why">El asesor cierra el caso</div>
+    </div>
+
+    <div class="state bot">
+      <div class="state-n">4</div>
+      <div class="state-b">
+        <div class="state-t">Cierre y retorno</div>
+        <p>El bot retoma la conversación y queda disponible para lo siguiente que el cliente necesite.</p>
+      </div>
+      <div class="voice v-bot">Habla el bot</div>
+    </div>
+  </div>
+
+  <div class="tw">
+    <table>
+      <thead><tr><th>Pieza del circuito</th><th>Estado</th></tr></thead>
+      <tbody>
+        <tr><td>Detección de que hace falta un humano (3 capas, jerga peruana incluida)</td><td><span class="pill p-warn">Funciona a medias — bug B1 tiene media capa muerta</span></td></tr>
+        <tr><td>Mensaje de espera según el motivo (9 variantes: urgencia, legal, abandono…)</td><td><span class="pill p-ok">Construido</span></td></tr>
+        <tr><td>Ticket en Intercom con contexto</td><td><span class="pill p-ok">Construido</span></td></tr>
+        <tr><td>Aviso al equipo (webhook a Slack u otro)</td><td><span class="pill p-ok">Construido</span></td></tr>
+        <tr><td>Silencio del bot mientras el asesor atiende</td><td><span class="pill p-crit">Falta — hoy las dos voces pueden chocar</span></td></tr>
+        <tr><td>Confirmación al cliente de que un humano tomó el caso</td><td><span class="pill p-crit">Falta</span></td></tr>
+        <tr><td>Retorno del bot al cerrar el ticket</td><td><span class="pill p-crit">Falta</span></td></tr>
+        <tr><td>Manejo de horario (fuera de horario, avisar cuándo contactarán)</td><td><span class="pill p-crit">Falta</span></td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <p>
+    Las piezas que faltan comparten una sola solución técnica: una bandera de estado por conversación
+    en Redis, que se activa cuando el asesor responde en Intercom (Intercom avisa por webhook) y se
+    limpia cuando cierra el ticket o vence el plazo. Con esa bandera, el bot revisa antes de cada
+    respuesta si le toca hablar. Es la pieza clave (keystone) del plan porque es lo que convierte
+    dos sistemas que funcionan por separado en un solo canal de atención.
+  </p>
+
+  <!-- ============ PLAN ============ -->
+  <!-- ============ PANEL DE ADMINISTRACIÓN ============ -->
+  <h2><span class="n">7</span> Panel de administración</h2>
+  <p class="subhead">Hoy operar el bot obliga a mirar el celular. Un panel web resuelve eso y hace visible lo que ahora no se ve.</p>
+
+  <p>
+    Hay una asimetría incómoda en el estado actual: el bot atiende clientes en producción, pero
+    para saber qué está pasando hay que abrir WhatsApp en un teléfono, o pedirle a alguien que
+    revise archivos de registro en el servidor. No hay forma de ver las conversaciones del día,
+    cuántos casos se escalaron, si un asesor los tomó, ni cuánto se gastó — todo eso existe en los
+    datos, pero no tiene dónde mostrarse.
+  </p>
+  <p>
+    El panel es una aplicación web con acceso restringido al equipo de VMC. No agrega
+    funcionalidad al bot: <strong>expone la que ya tiene</strong>. Casi toda la información que
+    necesita mostrar ya se está registrando; lo que falta es la pantalla.
+  </p>
+
+  <h3>Qué debe mostrar</h3>
+  <div class="tw">
+    <table>
+      <thead><tr><th>Vista</th><th>Para qué sirve</th><th>De dónde salen los datos</th></tr></thead>
+      <tbody>
+        <tr>
+          <td><strong>Conversaciones</strong></td>
+          <td>Ver los chats del día completos, buscar por número o por texto, y leer qué respondió el bot en cada caso. Es la vista que hoy obliga a usar el celular.</td>
+          <td><span class="pill p-warn">Parcial — el historial se guarda 24 h; hay que extenderlo</span></td>
+        </tr>
+        <tr>
+          <td><strong>Casos escalados</strong></td>
+          <td>Quién pidió un asesor, por qué motivo, si ya lo tomaron y cuánto tardó. Hoy esa cola existe pero solo como archivo.</td>
+          <td><span class="pill p-ok">Ya se registra</span></td>
+        </tr>
+        <tr>
+          <td><strong>Métricas</strong></td>
+          <td>Mensajes por día, tasa de escalación, tiempo de respuesta, costo del día y del mes contra el presupuesto.</td>
+          <td><span class="pill p-ok">Ya se registra</span></td>
+        </tr>
+        <tr>
+          <td><strong>Preguntas sin respuesta</strong></td>
+          <td>Qué preguntó la gente que el bot no supo contestar — es la lista de qué contenido falta en el centro de ayuda.</td>
+          <td><span class="pill p-crit">Falta — depende del umbral de confianza (etapa 2)</span></td>
+        </tr>
+        <tr>
+          <td><strong>Probador</strong></td>
+          <td>Escribir una pregunta y ver la respuesta con su detalle: qué intención detectó, qué fragmentos usó, cuánto costó. Sirve para validar cambios antes de que los vea un cliente.</td>
+          <td><span class="pill p-ok">Ya existe como interfaz de debug</span></td>
+        </tr>
+        <tr>
+          <td><strong>Controles</strong></td>
+          <td>Recargar saldo, silenciar el bot en una conversación puntual, y forzar una actualización de la base de conocimiento.</td>
+          <td><span class="pill p-warn">Los endpoints existen; falta la pantalla y la autenticación</span></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h3>Cómo se construye</h3>
+  <p>
+    La pieza que ya existe es el probador — la interfaz de debug que se usa para desarrollo tiene
+    justamente esa forma. El panel la absorbe y le agrega el resto de las vistas. Lo que hay que
+    construir de cero es la autenticación (hoy no hay ninguna), la persistencia de conversaciones
+    más allá de las 24 horas actuales, y la agregación de métricas para los gráficos.
+  </p>
+  <p>
+    <strong>Estimación: dos a tres semanas.</strong> Es una aplicación de lectura sobre datos que
+    ya se guardan, no un sistema nuevo. Va después de que el circuito bot-humano esté cerrado,
+    porque la vista de casos escalados solo tiene sentido cuando el circuito completo funciona —
+    mostrar tickets sin saber si el asesor los tomó sería un panel a medias.
+  </p>
+
+  <div class="callout">
+    <span class="lbl">Por qué importa más de lo que parece</span>
+    <p>
+      Sin panel, todo lo que este plan mide — costo, tasa de escalación, preguntas sin respuesta,
+      calidad — vive en archivos que solo alguien técnico puede leer. El panel es lo que convierte
+      esas métricas en decisiones que el equipo de VMC puede tomar por su cuenta: qué contenido
+      falta, cuándo hace falta otro asesor, si el gasto se está yendo de rango. Es la diferencia
+      entre un bot que alguien opera y un bot que el negocio administra.
+    </p>
+  </div>
+
+  <h2><span class="n">8</span> Plan a futuro</h2>
+  <p class="subhead">Seis etapas. Ninguna arranca sin cerrar la anterior — mismo criterio de fases bloqueadas que Voyager.</p>
+
+  <div class="tw">
+    <table>
+      <thead><tr><th>Etapa</th><th>Contenido</th><th>Plazo</th><th>Sale cuando</th></tr></thead>
+      <tbody>
+        <tr>
+          <td><strong>1 · Blindar</strong></td>
+          <td>Seguridad (firma del webhook, endpoints cerrados), el bug del clasificador, y las piezas alineadas con la plataforma</td>
+          <td class="num">1 semana</td>
+          <td>Nadie externo puede falsificar mensajes ni tocar el saldo</td>
+        </tr>
+        <tr>
+          <td><strong>2 · Medir</strong></td>
+          <td>Control de calidad automatizado con poder de veto, umbral de confianza en la búsqueda, control anti-cifras-inventadas, cachés que bajan el costo ~30%</td>
+          <td class="num">2–4 semanas</td>
+          <td>El set de evaluación corre solo y el costo por conversación está a la vista</td>
+        </tr>
+        <tr class="hi">
+          <td><strong>3 · Publicar la base nueva</strong></td>
+          <td>Ya está extraída. Se prueba contra el set de evaluación, se publica solo si gana, y se automatiza su actualización. Va <em>después</em> de la etapa 2 justamente para poder comparar con datos, no con impresiones</td>
+          <td class="num">3 días</td>
+          <td>El set de evaluación puntúa mejor con la base nueva que con la que está en producción</td>
+        </tr>
+        <tr>
+          <td><strong>4 · Cerrar el circuito</strong></td>
+          <td>Estados bot/humano completos: silencio, confirmación, retorno, horario. Piloto escalonado con clientes reales</td>
+          <td class="num">3–4 semanas</td>
+          <td>Una conversación real pasa de bot a asesor y de vuelta sin fricción</td>
+        </tr>
+        <tr class="hi">
+          <td><strong>5 · Panel de administración</strong></td>
+          <td>Aplicación web para el equipo: conversaciones, casos escalados, métricas, preguntas sin respuesta y controles. Va después del circuito porque la vista de tickets necesita que el circuito completo funcione</td>
+          <td class="num">2–3 semanas</td>
+          <td>El equipo de VMC opera el bot sin abrir WhatsApp ni pedir ayuda técnica</td>
+        </tr>
+        <tr>
+          <td><strong>6 · Crecer</strong></td>
+          <td><strong>Evaluación Gemini contra Sonnet 5 con datos propios</strong> — cuesta la mitad y la ventaja crece con el volumen, así que la comparación es prioritaria dentro de esta etapa. Además: notas de voz (los audios son masivos en WhatsApp Perú), extracción de vehículos con herramientas del modelo, y métricas de negocio</td>
+          <td class="num">continuo</td>
+          <td>Las decisiones de producto se toman con las métricas de las etapas 2, 4 y 5</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  <p class="cap">La recarga va tercera y no primera por una razón: recién con el control de calidad funcionando se puede demostrar que la base nueva es mejor. Hacerlo al revés sería cambiar la base de conocimiento a ciegas.</p>
+
+  <p>
+    Qué se decidió posponer, a propósito. El cambio de proveedor de IA no se decide ahora sino en
+    la etapa 6, y no por preferencia: <strong>Gemini cuesta la mitad y esa ventaja crece con el
+    volumen</strong>, así que la comparación hay que hacerla en serio — pero con el set de
+    evaluación funcionando, no antes. Cambiar el motor de respuestas sin poder medir el resultado
+    es exactamente el tipo de decisión a ciegas que este plan busca eliminar. Tampoco se monta
+    infraestructura propia de modelos, no se adoptan frameworks (la ausencia de LangChain es una
+    fortaleza del código, no una carencia), y no se migra a AWS sin una razón de negocio — mover el
+    modelo a Bedrock no ahorra un centavo.
+  </p>
+
+  <!-- ============ VALIDACIÓN ============ -->
+  <h2><span class="n">§</span> Validación</h2>
+  <div class="checks">
+    <div class="check">
+      <div class="tick">✓</div>
+      <div class="what">La ruta es ejecutable</div>
+      <div class="how">Cada etapa tiene entregables concretos y plazo</div>
+    </div>
+    <div class="check">
+      <div class="tick">✓</div>
+      <div class="what">Las responsabilidades resuelven</div>
+      <div class="how">Una protege la calidad, la otra la atención</div>
+    </div>
+    <div class="check">
+      <div class="tick">✓</div>
+      <div class="what">El propósito refuerza la hipótesis</div>
+      <div class="how">Atención inmediata a costo que no escala</div>
+    </div>
+    <div class="check">
+      <div class="tick">✓</div>
+      <div class="what">La estructura no deja vacíos</div>
+      <div class="how">Los siete desafíos cubren todos los hallazgos</div>
+    </div>
+    <div class="check">
+      <div class="tick">✓</div>
+      <div class="what">Se entiende sin contexto previo</div>
+      <div class="how">Números y flujos explicados aquí mismo</div>
+    </div>
+    <div class="check">
+      <div class="tick">✓</div>
+      <div class="what">Es eficiente, sin redundancias</div>
+      <div class="how">Cada sección responde una pregunta distinta</div>
+    </div>
+  </div>
+
+  <footer>
+    Precios verificados en julio 2026 contra las páginas oficiales de
+    <a href="https://platform.claude.com/docs/en/about-claude/pricing">Anthropic</a> y
+    <a href="https://ai.google.dev/gemini-api/docs/pricing">Google</a>. Los estimados de costo por
+    mensaje salen del perfil real de tokens del bot, no de promedios genéricos. Formato Intention
+    Builder, siguiendo el estándar del proyecto.
+  </footer>
+
+</div>
+</body>
+</html>

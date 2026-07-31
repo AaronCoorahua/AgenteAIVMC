@@ -1,0 +1,375 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Subastin — Resumen en una página</title>
+<meta name="description" content="Resumen ejecutivo del análisis técnico del chatbot de VMC Subastas: estado, riesgos y plan.">
+
+<style>
+  *, *::before, *::after { box-sizing: border-box; }
+  body { margin: 0; }
+
+  :root {
+    --ink: #0F1620; --ink-2: #26313F; --muted: #5A6675; --faint: #8C97A5;
+    --ground: #FBFAF8; --panel: #FFFFFF; --line: #E2E0DA; --line-soft: #EDEBE5;
+    --accent: #B0730A; --accent-bg: #FBF3E2;
+    --crit: #A33224; --crit-bg: #FBEDEA;
+    --warn: #9A6B08; --warn-bg: #FAF2E0;
+    --ok: #3F6B4A; --ok-bg: #EDF3EE;
+    --serif: "Newsreader", "Iowan Old Style", "Palatino Linotype", Palatino, Georgia, serif;
+    --sans: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+    --mono: ui-monospace, "Cascadia Mono", Consolas, monospace;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --ink: #E8E9EA; --ink-2: #C4C8CD; --muted: #949CA6; --faint: #6D757F;
+      --ground: #10151B; --panel: #171D25; --line: #2A323C; --line-soft: #212932;
+      --accent: #E0A63C; --accent-bg: #241C0D;
+      --crit: #E08578; --crit-bg: #2A1815;
+      --warn: #DBA63F; --warn-bg: #261D0E;
+      --ok: #86B593; --ok-bg: #16211A;
+    }
+  }
+  :root[data-theme="light"] {
+    --ink: #0F1620; --ink-2: #26313F; --muted: #5A6675; --faint: #8C97A5;
+    --ground: #FBFAF8; --panel: #FFFFFF; --line: #E2E0DA; --line-soft: #EDEBE5;
+    --accent: #B0730A; --accent-bg: #FBF3E2;
+    --crit: #A33224; --crit-bg: #FBEDEA; --warn: #9A6B08; --warn-bg: #FAF2E0;
+    --ok: #3F6B4A; --ok-bg: #EDF3EE;
+  }
+  :root[data-theme="dark"] {
+    --ink: #E8E9EA; --ink-2: #C4C8CD; --muted: #949CA6; --faint: #6D757F;
+    --ground: #10151B; --panel: #171D25; --line: #2A323C; --line-soft: #212932;
+    --accent: #E0A63C; --accent-bg: #241C0D;
+    --crit: #E08578; --crit-bg: #2A1815; --warn: #DBA63F; --warn-bg: #261D0E;
+    --ok: #86B593; --ok-bg: #16211A;
+  }
+
+  body {
+    background: var(--ground); color: var(--ink);
+    font-family: var(--sans); font-size: 15.5px; line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+  }
+  .page { max-width: 880px; margin: 0 auto; padding: 44px 28px 90px; }
+
+  header { border-bottom: 2px solid var(--ink); padding-bottom: 24px; margin-bottom: 30px; }
+  .eyebrow {
+    font-family: var(--mono); font-size: 10.5px; letter-spacing: .13em;
+    text-transform: uppercase; color: var(--accent); margin-bottom: 12px;
+  }
+  h1 {
+    font-family: var(--serif); font-size: clamp(30px, 4.6vw, 42px);
+    line-height: 1.1; letter-spacing: -0.02em; font-weight: 600; margin: 0 0 12px;
+    text-wrap: balance;
+  }
+  .lede { color: var(--ink-2); font-size: 16.5px; max-width: 62ch; margin: 0; }
+
+  .kpis { display: flex; flex-wrap: wrap; gap: 0; margin: 22px 0 0; padding: 0; }
+  .kpi { padding-right: 26px; margin-right: 26px; border-right: 1px solid var(--line); }
+  .kpi:last-child { border-right: 0; }
+  .kpi dt { font-family: var(--mono); font-size: 10px; letter-spacing: .1em; text-transform: uppercase; color: var(--faint); margin-bottom: 4px; }
+  .kpi dd { margin: 0; font-size: 14.5px; font-weight: 600; font-variant-numeric: tabular-nums; }
+
+  h2 {
+    font-family: var(--serif); font-size: 22px; font-weight: 600;
+    letter-spacing: -0.014em; margin: 38px 0 12px;
+    display: flex; align-items: baseline; gap: 11px;
+  }
+  h2 .n { font-family: var(--mono); font-size: 11px; color: var(--accent); font-weight: 400; }
+
+  p { max-width: 68ch; margin: 0 0 13px; }
+  strong { font-weight: 600; }
+  code { font-family: var(--mono); font-size: .86em; background: var(--line-soft); padding: .1em .35em; border-radius: 3px; }
+
+  .tw { overflow-x: auto; border: 1px solid var(--line); border-radius: 5px; background: var(--panel); margin-bottom: 16px; }
+  table { border-collapse: collapse; width: 100%; font-size: 13.5px; min-width: 460px; }
+  th {
+    text-align: left; font-family: var(--mono); font-size: 9.5px; letter-spacing: .09em;
+    text-transform: uppercase; color: var(--faint); font-weight: 400;
+    padding: 9px 13px; border-bottom: 1px solid var(--line); background: var(--ground); white-space: nowrap;
+  }
+  td { padding: 9px 13px; border-bottom: 1px solid var(--line-soft); vertical-align: top; }
+  tbody tr:last-child td { border-bottom: 0; }
+
+  .pill {
+    display: inline-block; font-family: var(--mono); font-size: 9.5px;
+    letter-spacing: .05em; text-transform: uppercase; padding: 2px 6px;
+    border-radius: 3px; white-space: nowrap; font-weight: 500;
+  }
+  .p-crit { background: var(--crit-bg); color: var(--crit); }
+  .p-warn { background: var(--warn-bg); color: var(--warn); }
+  .p-ok { background: var(--ok-bg); color: var(--ok); }
+
+  /* pipeline visual */
+  .pipe { margin: 0 0 18px; }
+  .step {
+    background: var(--panel); border: 1px solid var(--line); border-radius: 5px;
+    padding: 12px 16px;
+  }
+  .step.accent { border-color: var(--accent); background: var(--accent-bg); }
+  .step-t { font-weight: 600; font-size: 14.5px; margin-bottom: 3px; }
+  .step-d { font-size: 13.5px; color: var(--ink-2); }
+  .down { text-align: center; color: var(--faint); font-size: 15px; line-height: 1; padding: 7px 0; }
+  .branches { display: grid; grid-template-columns: 1fr 1fr; gap: 9px; }
+  @media (max-width: 600px) { .branches { grid-template-columns: 1fr; } }
+  .br {
+    background: var(--panel); border: 1px solid var(--line);
+    border-top: 2px solid var(--accent); border-radius: 0 0 5px 5px; padding: 11px 14px;
+  }
+  .br-t { font-weight: 600; font-size: 13.5px; margin-bottom: 3px; }
+  .br-d { font-size: 13px; color: var(--muted); }
+
+  .cols { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 16px; }
+  @media (max-width: 640px) { .cols { grid-template-columns: 1fr; } }
+  .card {
+    background: var(--panel); border: 1px solid var(--line); border-radius: 5px;
+    padding: 15px 17px;
+  }
+  .card h3 {
+    font-size: 11px; letter-spacing: .08em; text-transform: uppercase;
+    font-weight: 600; color: var(--muted); margin: 0 0 9px;
+  }
+  .card ul { margin: 0; padding-left: 17px; font-size: 13.5px; }
+  .card li { margin-bottom: 5px; }
+  .card li:last-child { margin-bottom: 0; }
+
+  .callout {
+    background: var(--accent-bg); border: 1px solid color-mix(in srgb, var(--accent) 28%, transparent);
+    border-radius: 5px; padding: 14px 17px; margin: 0 0 16px; max-width: 68ch;
+  }
+  .callout p { margin: 0; font-size: 14px; }
+
+  footer { border-top: 1px solid var(--line); margin-top: 40px; padding-top: 16px; font-size: 12.5px; color: var(--faint); }
+  footer a { color: var(--accent); }
+
+  @media print {
+    .page { padding: 0; max-width: none; }
+    h2 { break-after: avoid; }
+    .tw, .card, .flow { break-inside: avoid; }
+  }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <header>
+    <div class="eyebrow">Resumen ejecutivo · 1 página</div>
+    <h1>Subastin: estado del bot y qué hacer primero</h1>
+    <p class="lede">
+      Chatbot con IA de VMC Subastas para WhatsApp. Responde preguntas frecuentes con la base de
+      conocimiento, consulta stock en vivo y deriva a un asesor humano cuando hace falta.
+      Esto es lo esencial del análisis completo (<code>analisis.html</code>).
+    </p>
+    <dl class="kpis">
+      <div class="kpi"><dt>Código</dt><dd>~5.400 líneas Python</dd></div>
+      <div class="kpi"><dt>Bugs verificados</dt><dd>12</dd></div>
+      <div class="kpi"><dt>Riesgos seguridad</dt><dd>7 (2 altos)</dd></div>
+      <div class="kpi"><dt>Tests</dt><dd>0</dd></div>
+      <div class="kpi"><dt>Costo por mensaje</dt><dd>US$ 0.0089</dd></div>
+    </dl>
+  </header>
+
+  <h2><span class="n">01</span> Cómo funciona</h2>
+  <div class="pipe">
+    <div class="step">
+      <div class="step-t">Entra el mensaje</div>
+      <div class="step-d">Por WhatsApp o por la web de prueba</div>
+    </div>
+    <div class="down">↓</div>
+    <div class="step accent">
+      <div class="step-t">El clasificador decide de qué se trata</div>
+      <div class="step-d">Tres capas: primero palabras clave (sin costo), y solo si hace falta, un modelo de IA barato</div>
+    </div>
+    <div class="down">↓</div>
+    <div class="branches">
+      <div class="br">
+        <div class="br-t">Pregunta frecuente</div>
+        <div class="br-d">Busca en la base de conocimiento y el modelo responde <em>únicamente</em> con lo que encontró</div>
+      </div>
+      <div class="br">
+        <div class="br-t">Busca un vehículo</div>
+        <div class="br-d">Consulta el catálogo en vivo; si falla, cae al inventario local y luego a la web</div>
+      </div>
+      <div class="br">
+        <div class="br-t">Quiere un asesor</div>
+        <div class="br-d">Crea el ticket con el contexto de la conversación y avisa al equipo</div>
+      </div>
+      <div class="br">
+        <div class="br-t">Otro tema</div>
+        <div class="br-d">Redirección cortés al dominio de VMC</div>
+      </div>
+    </div>
+  </div>
+  <p>
+    La regla de oro del diseño: <strong>el bot no inventa números</strong>. Precios, comisiones y
+    plazos solo salen de la base de conocimiento. Y siempre usa el recurso más barato que resuelva:
+    palabras clave antes que IA, el modelo chico antes que el grande.
+  </p>
+
+  <h2><span class="n">02</span> Lo que está bien</h2>
+  <p>
+    El manejo de errores es de nivel producción: si HERALD falla cae al inventario local, si eso
+    falla manda al catálogo web; nada revienta en la cara del cliente. Hay control de gasto real
+    (un contador de saldo que apaga la IA y avisa a un asesor al llegar a cero) y la localización
+    peruana es genuina — el router detecta "puro floro", "qué palta", "ya fue". Todo sin
+    frameworks pesados: piezas cortas y legibles.
+  </p>
+
+  <h2><span class="n">03</span> Los cinco problemas centrales</h2>
+  <div class="tw">
+    <table>
+      <thead><tr><th></th><th>Problema</th><th>Consecuencia</th><th>Arreglo</th></tr></thead>
+      <tbody>
+        <tr>
+          <td><span class="pill p-crit">S1</span></td>
+          <td>El webhook de WhatsApp no valida la firma de Meta</td>
+          <td>Cualquiera con la URL puede inyectar mensajes, quemar saldo y hacer que el bot escriba a números ajenos</td>
+          <td>~15 líneas</td>
+        </tr>
+        <tr>
+          <td><span class="pill p-crit">B1</span></td>
+          <td>Función duplicada en el router — media capa de detección de frustración está muerta</td>
+          <td>"Puro floro, ya no quiero" no escala a asesor: conversiones perdidas hoy</td>
+          <td>~30 min</td>
+        </tr>
+        <tr>
+          <td><span class="pill p-crit">S2</span></td>
+          <td>El endpoint de saldo queda abierto si falta una variable</td>
+          <td>Alguien puede apagar el bot o anular el fusible de gasto</td>
+          <td>~1 hora</td>
+        </tr>
+        <tr>
+          <td><span class="pill p-warn">B3·B4</span></td>
+          <td>Debounce, rate limit e historial asumen un servidor fijo, pero corren en Vercel (serverless)</td>
+          <td>El agrupado de mensajes puede no ejecutarse nunca; el límite de uso no limita nada</td>
+          <td>1–2 días</td>
+        </tr>
+        <tr>
+          <td><span class="pill p-warn">R1·R2</span></td>
+          <td>Sin umbral de confianza en la búsqueda y el guardrail de cifras está a medio construir</td>
+          <td>Fragmentos flojos llegan igual al modelo; nada verifica que los números vengan del contexto</td>
+          <td>2–3 días</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h2><span class="n">04</span> Lo que cuesta y las alternativas</h2>
+  <p>
+    Cada mensaje cuesta <strong>US$ 0.0089</strong> con el caché funcionando. La misma carga
+    costeada en cada opción, y cómo escala:
+  </p>
+  <div class="tw">
+    <table>
+      <thead><tr><th>Combinación</th><th>Por mensaje</th><th>6.000 msj</th><th>30.000 msj</th><th>100.000 msj</th></tr></thead>
+      <tbody>
+        <tr><td><strong>Sonnet 4.5 + Haiku</strong> <em>— hoy</em></td><td class="num">$0.00889</td><td class="num">$53</td><td class="num">$267</td><td class="num">$889</td></tr>
+        <tr><td>Sonnet 5 intro + Haiku</td><td class="num">$0.00609</td><td class="num">$37</td><td class="num">$183</td><td class="num">$609</td></tr>
+        <tr><td><strong>Gemini 3.6 Flash + Flash-Lite</strong></td><td class="num">$0.00437</td><td class="num">$26</td><td class="num">$131</td><td class="num">$437</td></tr>
+        <tr><td>Gemini Flash-Lite en ambos roles</td><td class="num">$0.00131</td><td class="num">$8</td><td class="num">$39</td><td class="num">$131</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <p>
+    <strong>Gemini cuesta la mitad</strong> — 27 dólares menos al mes hoy, 452 menos si el volumen
+    llega a 100.000 mensajes. La migración son dos o tres semanas de portar y recalibrar, así que
+    conviene medirla contra el set de evaluación antes de decidir. Mientras tanto hay dos fugas
+    propias que corregir sin cambiar de proveedor: el caché del clasificador está mal colocado y
+    paga un recargo sin acertar nunca, y las preguntas repetidas se procesan completas cada vez.
+    Corregir ambas baja la factura cerca de un 30%.
+  </p>
+  <p class="cap">Mover el modelo a AWS Bedrock no cambia nada: los precios de token son idénticos a la API directa.</p>
+
+  <h2><span class="n">05</span> Dos cosas que ya no son teoría</h2>
+  <div class="cols">
+    <div class="card">
+      <h3>La base de conocimiento nueva — ya extraída</h3>
+      <p style="font-size:13.5px;margin:0 0 9px">
+        El centro de ayuda pasó a estar en texto, y la extracción ya se hizo:
+        <strong>126 fragmentos sobre 21 artículos</strong>, todos con su tema real y 69 con cifras
+        marcadas. La base en producción tiene 81 fragmentos, de los cuales <strong>41 están sin
+        clasificar</strong> y enlazan a URLs que ya cambiaron.
+      </p>
+      <p style="font-size:13.5px;margin:0">
+        <strong>Falta probarla</strong> contra el set de 50 preguntas y publicarla solo si gana.
+        Tres días de trabajo que mejoran todas las respuestas a la vez.
+      </p>
+    </div>
+    <div class="card">
+      <h3>El panel de administración — por construir</h3>
+      <p style="font-size:13.5px;margin:0 0 9px">
+        Hoy para saber qué hace el bot hay que abrir WhatsApp en un celular o leer archivos en el
+        servidor. No hay dónde ver los chats del día, los casos escalados, si un asesor los tomó,
+        ni cuánto se gastó.
+      </p>
+      <p style="font-size:13.5px;margin:0">
+        Casi todos esos datos <strong>ya se registran</strong> — falta la pantalla. Dos o tres
+        semanas para que el equipo opere el bot sin depender de nadie técnico.
+      </p>
+    </div>
+  </div>
+
+  <h2><span class="n">06</span> El plan</h2>
+  <div class="tw">
+    <table>
+      <thead><tr><th>Etapa</th><th>Qué incluye</th><th>Plazo</th><th>Sale cuando</th></tr></thead>
+      <tbody>
+        <tr>
+          <td><strong>1 · Blindar</strong></td>
+          <td>Seguridad (firma del webhook, endpoints cerrados), el bug del clasificador, y las piezas alineadas con la plataforma</td>
+          <td class="num">1 semana</td>
+          <td>Nadie externo puede falsificar mensajes ni tocar el saldo</td>
+        </tr>
+        <tr>
+          <td><strong>2 · Medir</strong></td>
+          <td>Control de calidad automatizado con poder de veto, umbral de confianza en la búsqueda, control anti-cifras-inventadas, cachés que bajan el costo ~30%</td>
+          <td class="num">2–4 semanas</td>
+          <td>El set de evaluación corre solo y el costo por conversación está a la vista</td>
+        </tr>
+        <tr class="hi">
+          <td><strong>3 · Publicar la base nueva</strong></td>
+          <td>Ya está extraída. Se prueba contra el set de evaluación, se publica solo si gana, y se automatiza su actualización</td>
+          <td class="num">3 días</td>
+          <td>El set de evaluación puntúa mejor con la base nueva que con la que está en producción</td>
+        </tr>
+        <tr>
+          <td><strong>4 · Cerrar el circuito</strong></td>
+          <td>Estados bot/humano completos: silencio, confirmación, retorno, horario. Piloto escalonado con clientes reales</td>
+          <td class="num">3–4 semanas</td>
+          <td>Una conversación real pasa de bot a asesor y de vuelta sin fricción</td>
+        </tr>
+        <tr class="hi">
+          <td><strong>5 · Panel de administración</strong></td>
+          <td>Aplicación web para el equipo: conversaciones, casos escalados, métricas, preguntas sin respuesta y controles</td>
+          <td class="num">2–3 semanas</td>
+          <td>El equipo de VMC opera el bot sin abrir WhatsApp ni pedir ayuda técnica</td>
+        </tr>
+        <tr>
+          <td><strong>6 · Crecer</strong></td>
+          <td>Evaluación Gemini contra Sonnet 5 con datos propios, notas de voz, extracción de vehículos con herramientas del modelo, métricas de negocio</td>
+          <td class="num">continuo</td>
+          <td>Las decisiones de producto se toman con las métricas de las etapas 2, 4 y 5</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="callout">
+    <p>
+      <strong>La conclusión importa más que la lista:</strong> nada exige reescribir. Es una base
+      bien pensada con correcciones acotadas — siete arreglos de menos de un día cada uno cierran
+      lo crítico. Lo que sigue no es reparar: es publicar la base de conocimiento que ya está
+      lista, cerrar el circuito con los asesores, y darle al equipo una pantalla para administrarlo.
+    </p>
+  </div>
+
+  <footer>
+    Versión condensada del análisis técnico. El detalle completo — con archivo y línea de cada
+    hallazgo, arquitectura para diagramar, métricas objetivo y alternativas en AWS — está en
+    <a href="analisis.html">analisis.html</a>.
+  </footer>
+
+</div>
+</body>
+</html>

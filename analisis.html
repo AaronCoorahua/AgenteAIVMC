@@ -1,0 +1,1703 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>VMC-Bot — Análisis técnico</title>
+<meta name="description" content="Auditoría de arquitectura del chatbot RAG de VMC Subastas: componentes, 12 bugs verificados, 7 riesgos de seguridad y plan priorizado.">
+
+<style>
+  *, *::before, *::after { box-sizing: border-box; }
+  html { -webkit-text-size-adjust: 100%; }
+  body { margin: 0; }
+  img, svg { max-width: 100%; }
+
+  :root {
+    --ink:        #0F1620;
+    --ink-2:      #26313F;
+    --muted:      #5A6675;
+    --faint:      #8C97A5;
+    --ground:     #FBFAF8;
+    --panel:      #FFFFFF;
+    --line:       #E2E0DA;
+    --line-soft:  #EDEBE5;
+
+    --accent:     #B0730A;
+    --accent-lit: #C9820A;
+    --accent-bg:  #FBF3E2;
+
+    --crit:       #A33224;
+    --crit-bg:    #FBEDEA;
+    --warn:       #9A6B08;
+    --warn-bg:    #FAF2E0;
+    --ok:         #3F6B4A;
+    --ok-bg:      #EDF3EE;
+    --info:       #3A5A7A;
+    --info-bg:    #EBF1F7;
+
+    --serif: "Newsreader", "Iowan Old Style", "Palatino Linotype", Palatino, Georgia, serif;
+    --sans:  ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    --mono:  ui-monospace, "SFMono-Regular", "Cascadia Mono", "Consolas", "Liberation Mono", monospace;
+
+    --measure: 68ch;
+    --rail: 268px;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --ink:        #E8E9EA;
+      --ink-2:      #C4C8CD;
+      --muted:      #949CA6;
+      --faint:      #6D757F;
+      --ground:     #10151B;
+      --panel:      #171D25;
+      --line:       #2A323C;
+      --line-soft:  #212932;
+
+      --accent:     #E0A63C;
+      --accent-lit: #EFBB55;
+      --accent-bg:  #241C0D;
+
+      --crit:       #E08578;
+      --crit-bg:    #2A1815;
+      --warn:       #DBA63F;
+      --warn-bg:    #261D0E;
+      --ok:         #86B593;
+      --ok-bg:      #16211A;
+      --info:       #86AACD;
+      --info-bg:    #141D26;
+    }
+  }
+
+  :root[data-theme="light"] {
+    --ink: #0F1620; --ink-2: #26313F; --muted: #5A6675; --faint: #8C97A5;
+    --ground: #FBFAF8; --panel: #FFFFFF; --line: #E2E0DA; --line-soft: #EDEBE5;
+    --accent: #B0730A; --accent-lit: #C9820A; --accent-bg: #FBF3E2;
+    --crit: #A33224; --crit-bg: #FBEDEA; --warn: #9A6B08; --warn-bg: #FAF2E0;
+    --ok: #3F6B4A; --ok-bg: #EDF3EE; --info: #3A5A7A; --info-bg: #EBF1F7;
+  }
+  :root[data-theme="dark"] {
+    --ink: #E8E9EA; --ink-2: #C4C8CD; --muted: #949CA6; --faint: #6D757F;
+    --ground: #10151B; --panel: #171D25; --line: #2A323C; --line-soft: #212932;
+    --accent: #E0A63C; --accent-lit: #EFBB55; --accent-bg: #241C0D;
+    --crit: #E08578; --crit-bg: #2A1815; --warn: #DBA63F; --warn-bg: #261D0E;
+    --ok: #86B593; --ok-bg: #16211A; --info: #86AACD; --info-bg: #141D26;
+  }
+
+  * { box-sizing: border-box; }
+
+  body {
+    margin: 0;
+    background: var(--ground);
+    color: var(--ink);
+    font-family: var(--sans);
+    font-size: 16px;
+    line-height: 1.62;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* ---------- shell ---------- */
+  .shell {
+    display: grid;
+    grid-template-columns: var(--rail) minmax(0, 1fr);
+    gap: 0;
+    max-width: 1240px;
+    margin: 0 auto;
+  }
+
+  /* ---------- rail ---------- */
+  .rail {
+    border-right: 1px solid var(--line);
+    padding: 40px 28px 60px 24px;
+  }
+  .rail-inner {
+    position: sticky;
+    top: 40px;
+    display: flex;
+    flex-direction: column;
+    gap: 22px;
+  }
+  .brandmark {
+    font-family: var(--serif);
+    font-size: 19px;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+    line-height: 1.25;
+  }
+  .brandmark span { color: var(--accent); }
+  .rail-meta {
+    font-size: 11.5px;
+    color: var(--faint);
+    line-height: 1.7;
+    font-variant-numeric: tabular-nums;
+  }
+  nav.toc { display: flex; flex-direction: column; gap: 1px; }
+  nav.toc a {
+    display: flex;
+    gap: 10px;
+    align-items: baseline;
+    text-decoration: none;
+    color: var(--muted);
+    font-size: 13.5px;
+    padding: 5px 10px 5px 12px;
+    border-left: 2px solid transparent;
+    border-radius: 0 3px 3px 0;
+    transition: color .14s, background .14s, border-color .14s;
+  }
+  nav.toc a .n {
+    font-family: var(--mono);
+    font-size: 10.5px;
+    color: var(--faint);
+    min-width: 15px;
+    font-variant-numeric: tabular-nums;
+  }
+  nav.toc a:hover { color: var(--ink); background: var(--line-soft); }
+  nav.toc a.on {
+    color: var(--ink);
+    border-left-color: var(--accent);
+    background: var(--accent-bg);
+    font-weight: 500;
+  }
+  nav.toc a.on .n { color: var(--accent); }
+  nav.toc a:focus-visible { outline: 2px solid var(--accent); outline-offset: -2px; }
+
+  /* ---------- main ---------- */
+  main { padding: 40px 44px 120px; min-width: 0; }
+
+  .masthead { padding-bottom: 30px; border-bottom: 2px solid var(--ink); margin-bottom: 40px; }
+  .eyebrow {
+    font-family: var(--mono);
+    font-size: 10.5px;
+    letter-spacing: .13em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 16px;
+  }
+  h1 {
+    font-family: var(--serif);
+    font-size: clamp(34px, 5.2vw, 52px);
+    line-height: 1.06;
+    letter-spacing: -0.022em;
+    font-weight: 600;
+    margin: 0 0 16px;
+    text-wrap: balance;
+  }
+  .standfirst {
+    font-size: 17.5px;
+    color: var(--ink-2);
+    max-width: var(--measure);
+    margin: 0 0 26px;
+    line-height: 1.55;
+  }
+  .facts {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0;
+    border-top: 1px solid var(--line);
+    padding-top: 18px;
+  }
+  .fact { padding-right: 30px; margin-right: 30px; border-right: 1px solid var(--line); }
+  .fact:last-child { border-right: 0; margin-right: 0; padding-right: 0; }
+  .fact dt {
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: .1em;
+    text-transform: uppercase;
+    color: var(--faint);
+    margin-bottom: 5px;
+  }
+  .fact dd {
+    margin: 0;
+    font-size: 14.5px;
+    font-weight: 500;
+    font-variant-numeric: tabular-nums;
+  }
+
+  section { margin-bottom: 62px; scroll-margin-top: 24px; }
+
+  h2 {
+    font-family: var(--serif);
+    font-size: 28px;
+    letter-spacing: -0.017em;
+    font-weight: 600;
+    line-height: 1.2;
+    margin: 0 0 6px;
+    display: flex;
+    align-items: baseline;
+    gap: 13px;
+    text-wrap: balance;
+  }
+  h2 .hn {
+    font-family: var(--mono);
+    font-size: 12px;
+    color: var(--accent);
+    font-weight: 400;
+    letter-spacing: 0;
+  }
+  .subhead {
+    color: var(--muted);
+    font-size: 14.5px;
+    max-width: var(--measure);
+    margin: 0 0 26px;
+    padding-bottom: 14px;
+    border-bottom: 1px solid var(--line);
+  }
+
+  h3 {
+    font-family: var(--sans);
+    font-size: 12px;
+    letter-spacing: .085em;
+    text-transform: uppercase;
+    font-weight: 600;
+    color: var(--muted);
+    margin: 36px 0 14px;
+  }
+
+  p { max-width: var(--measure); margin: 0 0 15px; }
+  a { color: var(--accent); text-decoration-thickness: 1px; text-underline-offset: 2px; }
+  strong { font-weight: 600; color: var(--ink); }
+
+  code {
+    font-family: var(--mono);
+    font-size: .855em;
+    background: var(--line-soft);
+    padding: .11em .38em;
+    border-radius: 3px;
+    color: var(--ink-2);
+    word-break: break-word;
+  }
+
+  ul.plain { max-width: var(--measure); margin: 0 0 15px; padding-left: 19px; }
+  ul.plain li { margin-bottom: 7px; }
+
+  /* ---------- tables ---------- */
+  .tw { overflow-x: auto; margin: 0 0 20px; border: 1px solid var(--line); border-radius: 5px; background: var(--panel); }
+  table { border-collapse: collapse; width: 100%; font-size: 14px; min-width: 480px; }
+  th {
+    text-align: left;
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: .09em;
+    text-transform: uppercase;
+    color: var(--faint);
+    font-weight: 400;
+    padding: 11px 15px;
+    border-bottom: 1px solid var(--line);
+    white-space: nowrap;
+    background: var(--ground);
+  }
+  td { padding: 11px 15px; border-bottom: 1px solid var(--line-soft); vertical-align: top; }
+  tbody tr:last-child td { border-bottom: 0; }
+  td.num { font-variant-numeric: tabular-nums; white-space: nowrap; }
+  td.mono { font-family: var(--mono); font-size: 12.5px; white-space: nowrap; }
+
+  /* ---------- pills ---------- */
+  .pill {
+    display: inline-block;
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: .055em;
+    text-transform: uppercase;
+    padding: 2.5px 7px;
+    border-radius: 3px;
+    white-space: nowrap;
+    font-weight: 500;
+  }
+  .p-crit { background: var(--crit-bg); color: var(--crit); }
+  .p-warn { background: var(--warn-bg); color: var(--warn); }
+  .p-ok   { background: var(--ok-bg);   color: var(--ok); }
+  .p-info { background: var(--info-bg); color: var(--info); }
+  .p-neut { background: var(--line-soft); color: var(--muted); }
+
+  /* ---------- finding cards ---------- */
+  .findings { display: flex; flex-direction: column; gap: 9px; margin-bottom: 22px; }
+  .f {
+    display: grid;
+    grid-template-columns: 62px minmax(0, 1fr);
+    background: var(--panel);
+    border: 1px solid var(--line);
+    border-left: 3px solid var(--line);
+    border-radius: 0 5px 5px 0;
+  }
+  .f.sev-crit { border-left-color: var(--crit); }
+  .f.sev-warn { border-left-color: var(--warn); }
+  .f.sev-low  { border-left-color: var(--faint); }
+  .f-id {
+    font-family: var(--mono);
+    font-size: 12.5px;
+    font-weight: 600;
+    color: var(--faint);
+    padding: 15px 0 15px 15px;
+    letter-spacing: -0.01em;
+  }
+  .f.sev-crit .f-id { color: var(--crit); }
+  .f.sev-warn .f-id { color: var(--warn); }
+  .f-body { padding: 15px 17px 15px 3px; min-width: 0; }
+  .f-head {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 9px;
+    margin-bottom: 5px;
+  }
+  .f-title { font-weight: 600; font-size: 15px; letter-spacing: -0.008em; }
+  .f-body p { font-size: 14px; color: var(--ink-2); margin: 0 0 8px; max-width: 66ch; }
+  .f-body p:last-child { margin-bottom: 0; }
+  .f-loc {
+    font-family: var(--mono);
+    font-size: 11.5px;
+    color: var(--muted);
+    display: block;
+    margin-bottom: 7px;
+    word-break: break-word;
+  }
+  .f-fix {
+    font-size: 13.5px;
+    background: var(--ok-bg);
+    color: var(--ok);
+    border-radius: 4px;
+    padding: 7px 11px;
+    max-width: 66ch;
+  }
+  .f-fix b { font-weight: 600; }
+
+  /* ---------- callout ---------- */
+  .callout {
+    background: var(--accent-bg);
+    border: 1px solid color-mix(in srgb, var(--accent) 28%, transparent);
+    border-radius: 5px;
+    padding: 16px 19px;
+    margin: 0 0 22px;
+    max-width: var(--measure);
+  }
+  .callout p { margin: 0; font-size: 14.5px; color: var(--ink-2); }
+  .callout .lbl {
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: .1em;
+    text-transform: uppercase;
+    color: var(--accent);
+    display: block;
+    margin-bottom: 6px;
+  }
+
+  /* ---------- diagram / code ---------- */
+  .figure { margin: 0 0 24px; }
+  .figure .cap {
+    font-size: 12.5px;
+    color: var(--faint);
+    margin-top: 9px;
+    font-style: italic;
+  }
+  pre.flow {
+    background: var(--panel);
+    border: 1px solid var(--line);
+    border-radius: 5px;
+    padding: 18px 20px;
+    overflow-x: auto;
+    margin: 0;
+    font-family: var(--mono);
+    font-size: 12.5px;
+    line-height: 1.72;
+    color: var(--ink-2);
+  }
+
+  /* ---------- phase blocks ---------- */
+  .phase {
+    border: 1px solid var(--line);
+    border-radius: 5px;
+    background: var(--panel);
+    margin-bottom: 14px;
+    overflow: hidden;
+  }
+  .phase-h {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 11px;
+    padding: 13px 17px;
+    border-bottom: 1px solid var(--line);
+    background: var(--ground);
+  }
+  .phase-tag {
+    font-family: var(--mono);
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--accent);
+  }
+  .phase-name { font-weight: 600; font-size: 14.5px; }
+  .phase-when { font-size: 12.5px; color: var(--faint); margin-left: auto; }
+  .phase ol { margin: 0; padding: 13px 17px 15px 34px; }
+  .phase ol li { margin-bottom: 6px; font-size: 14px; }
+  .phase ol li:last-child { margin-bottom: 0; }
+  .phase ol li .ref {
+    font-family: var(--mono);
+    font-size: 10.5px;
+    color: var(--faint);
+    margin-left: 5px;
+  }
+
+  /* ---------- no-list ---------- */
+  .nolist { display: flex; flex-direction: column; gap: 7px; max-width: var(--measure); }
+  .nolist div {
+    font-size: 14px;
+    color: var(--ink-2);
+    padding-left: 24px;
+    position: relative;
+  }
+  .nolist div::before {
+    content: "✕";
+    position: absolute;
+    left: 0;
+    top: 0;
+    color: var(--crit);
+    font-size: 12px;
+  }
+
+  footer {
+    border-top: 1px solid var(--line);
+    padding-top: 22px;
+    margin-top: 20px;
+    font-size: 13px;
+    color: var(--faint);
+    max-width: var(--measure);
+  }
+
+  @media (max-width: 900px) {
+    .shell { grid-template-columns: 1fr; }
+    .rail {
+      border-right: 0;
+      border-bottom: 1px solid var(--line);
+      padding: 26px 22px 20px;
+    }
+    .rail-inner { position: static; }
+    nav.toc {
+      flex-direction: row;
+      flex-wrap: wrap;
+      gap: 5px;
+    }
+    nav.toc a {
+      border-left: 0;
+      border: 1px solid var(--line);
+      border-radius: 4px;
+      padding: 4px 9px;
+      font-size: 12.5px;
+    }
+    nav.toc a.on { border-color: var(--accent); }
+    nav.toc a .n { display: none; }
+    main { padding: 30px 22px 80px; }
+    .fact { padding-right: 20px; margin-right: 20px; }
+    .f { grid-template-columns: 50px minmax(0, 1fr); }
+    .f-id { padding-left: 12px; font-size: 11.5px; }
+  }
+
+  /* ---------- veredicto de migración ---------- */
+  .verdict { display: inline-flex; align-items: baseline; gap: 6px; white-space: nowrap; font-size: 13px; }
+  .verdict::before { font-size: 11px; font-weight: 700; }
+  .v-yes::before  { content: "SÍ";   color: var(--ok); }
+  .v-maybe::before{ content: "TAL VEZ"; color: var(--warn); }
+  .v-no::before   { content: "NO";   color: var(--crit); }
+  .verdict span { color: var(--muted); }
+
+  /* ---------- diagrama SVG ---------- */
+  .diagram {
+    background: var(--panel);
+    border: 1px solid var(--line);
+    border-radius: 5px;
+    padding: 20px;
+    overflow-x: auto;
+  }
+  .diagram svg { display: block; margin: 0 auto; min-width: 660px; }
+  .d-box   { fill: var(--panel); stroke: var(--line); stroke-width: 1.2; }
+  .d-group { fill: none; stroke: var(--line); stroke-width: 1; stroke-dasharray: 4 3; }
+  .d-acc   { fill: var(--accent-bg); stroke: var(--accent); stroke-width: 1.4; }
+  .d-store { fill: var(--info-bg); stroke: var(--info); stroke-width: 1.2; }
+  .d-t     { fill: var(--ink); font-family: var(--sans); font-size: 12px; text-anchor: middle; }
+  .d-t.sm  { font-size: 10.5px; fill: var(--muted); }
+  .d-lbl   { fill: var(--faint); font-family: var(--mono); font-size: 9.5px;
+             letter-spacing: .1em; text-transform: uppercase; }
+  .d-line  { stroke: var(--muted); stroke-width: 1.3; fill: none; }
+  .d-line.dash { stroke-dasharray: 4 3; stroke: var(--faint); }
+  .d-line.acc  { stroke: var(--accent); stroke-width: 1.6; }
+  .d-elbl  { fill: var(--muted); font-family: var(--mono); font-size: 9.5px; text-anchor: middle; }
+
+  @media print {
+    .rail { display: none; }
+    .shell { grid-template-columns: 1fr; }
+    main { padding: 0; }
+    section { break-inside: avoid; }
+    .f, .phase, .tw { break-inside: avoid; }
+  }
+</style>
+</head>
+<body>
+
+<div class="shell">
+
+  <aside class="rail">
+    <div class="rail-inner">
+      <div class="brandmark">VMC-Bot <span>·</span> Subastin<br>Análisis técnico</div>
+      <nav class="toc" id="toc">
+        <a href="#resumen"><span class="n">01</span> Resumen</a>
+        <a href="#negocio"><span class="n">02</span> Negocio y stack</a>
+        <a href="#arquitectura"><span class="n">03</span> Arquitectura</a>
+        <a href="#flujo"><span class="n">04</span> Flujo de un mensaje</a>
+        <a href="#ingesta"><span class="n">05</span> Ingesta y embeddings</a>
+        <a href="#rag"><span class="n">06</span> RAG vs buenas prácticas</a>
+        <a href="#bugs"><span class="n">07</span> Bugs verificados</a>
+        <a href="#seguridad"><span class="n">08</span> Seguridad</a>
+        <a href="#casos"><span class="n">09</span> Casos de uso</a>
+        <a href="#plan"><span class="n">10</span> Plan priorizado</a>
+        <a href="#metricas"><span class="n">11</span> Métricas</a>
+        <a href="#mapa"><span class="n">12</span> Mapa de archivos</a>
+        <a href="#aws"><span class="n">13</span> Alternativas en AWS</a>
+      </nav>
+      <div class="rail-meta">
+        30 jul 2026<br>
+        Repo <code style="font-size:10.5px">ChatbotAIVMC</code><br>
+        rama <code style="font-size:10.5px">main</code> · <code style="font-size:10.5px">736408b</code>
+      </div>
+    </div>
+  </aside>
+
+  <main>
+
+    <header class="masthead">
+      <div class="eyebrow">Auditoría de arquitectura · Handoff</div>
+      <h1>Subastin: qué se construyó, qué está roto y qué arreglar primero</h1>
+      <p class="standfirst">
+        Revisión completa del chatbot RAG de VMC Subastas — código, datos y documentación — contrastada
+        con prácticas de industria. Base para diagramar la arquitectura, priorizar correcciones
+        y discutir casos de uso.
+      </p>
+      <dl class="facts">
+        <div class="fact"><dt>Código Python</dt><dd>~5.400 líneas</dd></div>
+        <div class="fact"><dt>Bugs verificados</dt><dd>12</dd></div>
+        <div class="fact"><dt>Riesgos de seguridad</dt><dd>7 · <span class="pill p-crit">2 altos</span></dd></div>
+        <div class="fact"><dt>Cobertura de tests</dt><dd>0 %</dd></div>
+      </dl>
+    </header>
+
+    <!-- 01 -->
+    <section id="resumen">
+      <h2><span class="hn">01</span> Resumen ejecutivo</h2>
+      <p class="subhead">Qué es, en qué estado está, y cuál es el veredicto.</p>
+
+      <p>
+        Subastin es un chatbot RAG para <strong>VMC Subastas</strong> (subastas de vehículos usados en Perú)
+        que opera por WhatsApp Cloud API y una web local de prueba. Clasifica cada mensaje en cuatro
+        intenciones y responde por caminos distintos:
+      </p>
+      <ul class="plain">
+        <li><strong>FAQ</strong> → retrieval en Pinecone (Centro de Ayuda) + generación con Claude Sonnet 4.5.</li>
+        <li><strong>Stock</strong> → consulta en vivo a HERALD Feed API, con fallback a JSON local.</li>
+        <li><strong>Soporte humano</strong> → ticket en Intercom + webhook + mensaje de espera contextual.</li>
+        <li><strong>Fuera de dominio</strong> → rechazo cortés.</li>
+      </ul>
+
+      <div class="callout">
+        <span class="lbl">Veredicto</span>
+        <p>
+          La base es sólida: manejo de errores de nivel producción, control de costos real,
+          localización peruana genuina y cero dependencia de frameworks. Los problemas son concretos
+          y acotados — no hay que reescribir nada.
+        </p>
+      </div>
+
+      <h3>Los cinco problemas centrales</h3>
+      <div class="tw">
+        <table>
+          <thead><tr><th>#</th><th>Problema</th><th>Consecuencia</th><th>Ref</th></tr></thead>
+          <tbody>
+            <tr><td class="num">1</td><td>Función duplicada mata media capa del router</td><td>Detección de frustración escrita y nunca ejecutada</td><td class="mono">B1</td></tr>
+            <tr><td class="num">2</td><td>Parser regex de HERALD estructuralmente frágil</td><td>3 hotfixes seguidos en git; seguirán</td><td class="mono">P2·16</td></tr>
+            <tr><td class="num">3</td><td>Webhook sin verificación de firma</td><td>Inyección de mensajes, quema de saldo</td><td class="mono">S1</td></tr>
+            <tr><td class="num">4</td><td>Cero tests automatizados</td><td>Nada detiene una regresión antes del deploy</td><td class="mono">6·e</td></tr>
+            <tr><td class="num">5</td><td>Piezas que asumen servidor persistente en serverless</td><td>Debounce y rate limit no funcionan en Vercel</td><td class="mono">B3 · B4</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- 02 -->
+    <section id="negocio">
+      <h2><span class="hn">02</span> Contexto de negocio y stack</h2>
+      <p class="subhead">Por qué existe el bot y con qué está hecho.</p>
+
+      <div class="tw">
+        <table>
+          <thead><tr><th>Aspecto</th><th>Detalle</th></tr></thead>
+          <tbody>
+            <tr><td><strong>Usuario final</strong></td><td>Compradores potenciales, mayormente por WhatsApp, español peruano informal</td></tr>
+            <tr><td><strong>Problema</strong></td><td>Volumen de consultas repetitivas (registro, comisiones, consignación, SubasCoins) + consultas de stock</td></tr>
+            <tr><td><strong>Restricción crítica</strong></td><td><strong>Cero alucinación financiera.</strong> Comisiones, precios y plazos solo pueden salir del contexto RAG — riesgo legal e Indecopi</td></tr>
+            <tr><td><strong>Marco legal</strong></td><td>Ley N.º 31814 (Perú) + EU AI Act Art. 50: identificarse como IA, nunca negarlo, redirigir derechos ARCO a humanos</td></tr>
+            <tr><td><strong>Persona</strong></td><td>«Subastin» — cercano, peruano, máx. 3 oraciones por mensaje, formato WhatsApp estricto</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h3>Stack</h3>
+      <div class="tw">
+        <table>
+          <thead><tr><th>Componente</th><th>Tecnología</th><th>Nota</th></tr></thead>
+          <tbody>
+            <tr><td>LLM generación</td><td class="mono">claude-sonnet-4-5</td><td>max_tokens 300, prompt caching en system</td></tr>
+            <tr><td>LLM router · multi-query</td><td class="mono">claude-haiku-4-5</td><td>tareas baratas al modelo barato</td></tr>
+            <tr><td>Embeddings</td><td class="mono">multilingual-e5-large</td><td>1024 dim, integrado en Pinecone</td></tr>
+            <tr><td>Vector DB</td><td>Pinecone Starter</td><td>índice <code>vmc-bot-rag</code>, ns <code>helpcenter</code></td></tr>
+            <tr><td>Stock en vivo</td><td>HERALD Feed API</td><td>Bearer JWT · lots + market AVT</td></tr>
+            <tr><td>Scraping</td><td>Firecrawl</td><td>helpcenter + página SubasPass en vivo</td></tr>
+            <tr><td>Estado</td><td>Upstash Redis (REST)</td><td>historial, debounce, saldo · fallback en memoria</td></tr>
+            <tr><td>Escalación</td><td>Intercom + webhooks</td><td>tickets con contexto de 4 mensajes</td></tr>
+            <tr><td>Servidor · hosting</td><td>FastAPI · Vercel</td><td>serverless: disco read-only, sin RAM persistente</td></tr>
+            <tr><td>Canal</td><td>WhatsApp Cloud API</td><td>graph v20.0 · botones vía marcador <code>[QR:]</code></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- 03 -->
+    <section id="arquitectura">
+      <h2><span class="hn">03</span> Arquitectura</h2>
+      <p class="subhead">Diagrama de componentes — base para tu versión en la herramienta que uses.</p>
+
+      <div class="figure">
+        <div class="diagram">
+          <svg viewBox="0 0 900 620" role="img" aria-label="Diagrama de componentes: los canales WhatsApp y web entran a FastAPI en Vercel, el router de intención de tres capas deriva a uno de cuatro pipelines — FAQ con Pinecone y Sonnet, stock con HERALD, soporte humano con Intercom, o mensaje fijo — con Redis como almacén de estado transversal.">
+            <defs>
+              <marker id="ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+                <path d="M 0 0 L 10 5 L 0 10 z" fill="var(--muted)"></path>
+              </marker>
+              <marker id="ar-a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+                <path d="M 0 0 L 10 5 L 0 10 z" fill="var(--accent)"></path>
+              </marker>
+              <marker id="ar-f" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+                <path d="M 0 0 L 10 5 L 0 10 z" fill="var(--faint)"></path>
+              </marker>
+            </defs>
+
+            <!-- CANALES -->
+            <text class="d-lbl" x="20" y="24">Canales</text>
+            <rect class="d-box" x="20" y="34" width="150" height="44" rx="4"></rect>
+            <text class="d-t" x="95" y="61">WhatsApp Cloud API</text>
+
+            <rect class="d-box" x="196" y="34" width="150" height="44" rx="4"></rect>
+            <text class="d-t" x="271" y="55">Web de prueba</text>
+            <text class="d-t sm" x="271" y="69">static/index.html</text>
+
+            <!-- VERCEL -->
+            <rect class="d-group" x="8" y="98" width="350" height="182" rx="6"></rect>
+            <text class="d-lbl" x="20" y="116">Vercel · FastAPI · src/server/app.py</text>
+
+            <rect class="d-box" x="20" y="126" width="150" height="46" rx="4"></rect>
+            <text class="d-t" x="95" y="147">Webhook</text>
+            <text class="d-t sm" x="95" y="161">/api/webhook · debounce</text>
+
+            <rect class="d-box" x="196" y="126" width="150" height="46" rx="4"></rect>
+            <text class="d-t" x="271" y="147">POST /api/ask</text>
+            <text class="d-t sm" x="271" y="161">rate limit · saldo</text>
+
+            <rect class="d-acc" x="60" y="204" width="246" height="52" rx="4"></rect>
+            <text class="d-t" x="183" y="225" style="font-weight:600">Router de intención</text>
+            <text class="d-t sm" x="183" y="240">3 capas · keywords → Haiku 4.5</text>
+
+            <!-- canales -> vercel -->
+            <path class="d-line" d="M 95 78 L 95 126" marker-end="url(#ar)"></path>
+            <path class="d-line" d="M 271 78 L 271 126" marker-end="url(#ar)"></path>
+            <path class="d-line" d="M 95 172 L 95 190 L 150 190 L 150 204" marker-end="url(#ar)"></path>
+            <path class="d-line" d="M 271 172 L 271 190 L 216 190 L 216 204" marker-end="url(#ar)"></path>
+
+            <!-- REDIS -->
+            <rect class="d-store" x="20" y="306" width="150" height="58" rx="4"></rect>
+            <text class="d-t" x="95" y="326" style="font-weight:600">Upstash Redis</text>
+            <text class="d-t sm" x="95" y="341">historial 6 turnos · TTL 24 h</text>
+            <text class="d-t sm" x="95" y="354">debounce · saldo</text>
+            <path class="d-line dash" d="M 95 172 L 95 306" marker-end="url(#ar-f)" marker-start="url(#ar-f)"></path>
+
+            <!-- PIPELINE FAQ -->
+            <rect class="d-group" x="396" y="16" width="492" height="128" rx="6"></rect>
+            <text class="d-lbl" x="408" y="34">Pipeline FAQ · intent faq</text>
+
+            <rect class="d-box" x="408" y="44" width="106" height="46" rx="4"></rect>
+            <text class="d-t" x="461" y="65">Multi-query</text>
+            <text class="d-t sm" x="461" y="79">Haiku · ≤5 palabras</text>
+
+            <rect class="d-store" x="534" y="44" width="106" height="46" rx="4"></rect>
+            <text class="d-t" x="587" y="65">Pinecone</text>
+            <text class="d-t sm" x="587" y="79">e5-large · 1024d</text>
+
+            <rect class="d-box" x="660" y="44" width="88" height="46" rx="4"></rect>
+            <text class="d-t" x="704" y="65">Fusión</text>
+            <text class="d-t sm" x="704" y="79">RRF k=60</text>
+
+            <rect class="d-acc" x="768" y="44" width="108" height="46" rx="4"></rect>
+            <text class="d-t" x="822" y="65" style="font-weight:600">Sonnet 4.5</text>
+            <text class="d-t sm" x="822" y="79">prompt v2.2</text>
+
+            <path class="d-line" d="M 514 67 L 534 67" marker-end="url(#ar)"></path>
+            <path class="d-line" d="M 640 67 L 660 67" marker-end="url(#ar)"></path>
+            <path class="d-line" d="M 748 67 L 768 67" marker-end="url(#ar)"></path>
+
+            <rect class="d-box" x="768" y="112" width="108" height="26" rx="4"></rect>
+            <text class="d-t sm" x="822" y="129">Firecrawl · SubasPass</text>
+            <path class="d-line dash" d="M 822 90 L 822 112" marker-end="url(#ar-f)"></path>
+
+            <!-- PIPELINE STOCK -->
+            <rect class="d-group" x="396" y="164" width="492" height="96" rx="6"></rect>
+            <text class="d-lbl" x="408" y="182">Pipeline stock · intent stock_search</text>
+
+            <rect class="d-box" x="408" y="192" width="150" height="46" rx="4"></rect>
+            <text class="d-t" x="483" y="213">HERALD Feed API</text>
+            <text class="d-t sm" x="483" y="227">lots + market AVT</text>
+
+            <rect class="d-box" x="586" y="192" width="140" height="46" rx="4"></rect>
+            <text class="d-t" x="656" y="213">Fallback local</text>
+            <text class="d-t sm" x="656" y="227">inventory.json</text>
+
+            <rect class="d-box" x="754" y="192" width="122" height="46" rx="4"></rect>
+            <text class="d-t" x="815" y="213">Link a la web</text>
+            <text class="d-t sm" x="815" y="227">último recurso</text>
+
+            <path class="d-line dash" d="M 558 215 L 586 215" marker-end="url(#ar-f)"></path>
+            <text class="d-elbl" x="572" y="207">falla</text>
+            <path class="d-line dash" d="M 726 215 L 754 215" marker-end="url(#ar-f)"></path>
+
+            <!-- PIPELINE HUMANO -->
+            <rect class="d-group" x="396" y="280" width="492" height="96" rx="6"></rect>
+            <text class="d-lbl" x="408" y="298">Pipeline soporte humano</text>
+
+            <rect class="d-box" x="408" y="308" width="150" height="46" rx="4"></rect>
+            <text class="d-t" x="483" y="329">Subtipo escalación</text>
+            <text class="d-t sm" x="483" y="343">9 variantes de espera</text>
+
+            <rect class="d-box" x="586" y="308" width="140" height="46" rx="4"></rect>
+            <text class="d-t" x="656" y="329">Ticket Intercom</text>
+            <text class="d-t sm" x="656" y="343">últimos 4 mensajes</text>
+
+            <rect class="d-box" x="754" y="308" width="122" height="46" rx="4"></rect>
+            <text class="d-t" x="815" y="329">Webhook</text>
+            <text class="d-t sm" x="815" y="343">aviso al equipo</text>
+
+            <path class="d-line" d="M 558 331 L 586 331" marker-end="url(#ar)"></path>
+            <path class="d-line" d="M 726 331 L 754 331" marker-end="url(#ar)"></path>
+
+            <!-- FUERA DE DOMINIO -->
+            <rect class="d-box" x="408" y="396" width="220" height="40" rx="4"></rect>
+            <text class="d-t" x="518" y="414">Mensaje fijo de redirección</text>
+            <text class="d-t sm" x="518" y="428">sin costo de modelo</text>
+
+            <!-- ROUTER -> pipelines -->
+            <path class="d-line acc" d="M 306 216 L 352 216 L 352 67 L 408 67" marker-end="url(#ar-a)"></path>
+            <text class="d-elbl" x="374" y="60" style="fill:var(--accent)">faq</text>
+
+            <path class="d-line acc" d="M 306 224 L 372 224 L 372 215 L 408 215" marker-end="url(#ar-a)"></path>
+            <text class="d-elbl" x="378" y="207" style="fill:var(--accent)">stock</text>
+
+            <path class="d-line acc" d="M 306 236 L 352 236 L 352 331 L 408 331" marker-end="url(#ar-a)"></path>
+            <text class="d-elbl" x="376" y="324" style="fill:var(--accent)">humano</text>
+
+            <path class="d-line acc" d="M 306 246 L 332 246 L 332 416 L 408 416" marker-end="url(#ar-a)"></path>
+            <text class="d-elbl" x="364" y="409" style="fill:var(--accent)">fuera</text>
+
+            <!-- LEYENDA -->
+            <text class="d-lbl" x="20" y="470">Leyenda</text>
+            <rect class="d-acc" x="20" y="480" width="22" height="14" rx="3"></rect>
+            <text class="d-t sm" x="52" y="491" style="text-anchor:start">Decisión · generación con modelo</text>
+            <rect class="d-store" x="20" y="502" width="22" height="14" rx="3"></rect>
+            <text class="d-t sm" x="52" y="513" style="text-anchor:start">Almacén de datos</text>
+            <rect class="d-box" x="20" y="524" width="22" height="14" rx="3"></rect>
+            <text class="d-t sm" x="52" y="535" style="text-anchor:start">Servicio o paso de proceso</text>
+            <path class="d-line dash" d="M 20 553 L 42 553" marker-end="url(#ar-f)"></path>
+            <text class="d-t sm" x="52" y="557" style="text-anchor:start">Camino de fallback o lectura de estado</text>
+          </svg>
+        </div>
+        <p class="cap">Componentes y flujo de datos. Los cuatro caminos del router son mutuamente excluyentes: un mensaje toma exactamente uno.</p>
+      </div>
+
+      <h3>Entrypoints de deploy</h3>
+      <p>
+        Solo <code>src/api/main.py</code> está ruteado en <code>vercel.json</code>.
+        <code>api/index.py</code> y <code>src/index.py</code> son duplicados residuales de pelear
+        con la autodetección de Vercel — los tres hacen la misma línea de import. Borrar dos.
+      </p>
+    </section>
+
+    <!-- 04 -->
+    <section id="flujo">
+      <h2><span class="hn">04</span> Flujo de un mensaje</h2>
+      <p class="subhead">Secuencia real, paso a paso, desde que entra hasta que sale.</p>
+
+      <div class="figure">
+        <pre class="flow">1.  Entra mensaje (webhook WhatsApp o POST /api/ask)
+2.  [solo WhatsApp] Debounce: acumula 5s en Redis; el último procesa todos juntos
+3.  Chequeo de saldo: si ≤ 0 → mensaje "te atenderá un asesor" + cola handoff. FIN.
+4.  Rate limit por IP (solo /api/ask)
+5.  ROUTER · src/rag/router.py
+      Capa 1 — keywords alta confianza (gratis) → soporte_humano / stock_search
+      Capa 2 — keywords media confianza → flag de frustración para Haiku
+      Capa 3 — Haiku 4.5 con prompt XML + few-shots peruanos → intent
+
+6a. faq
+      top_k dinámico (3 corta · 5 larga o de proceso)
+      multi-query solo si ≤5 palabras → Haiku genera 1 variación peruana
+      búsqueda(s) en Pinecone → fusión RRF (k=60)
+      si pregunta por SubasPass → scrape en vivo, se antepone al contexto
+      build_context (máx ~3.000 tokens) → Sonnet con system prompt cacheado
+      trim al límite de WhatsApp sin cortar oraciones
+
+6b. stock_search
+      parseo regex de marca/modelo/año/lote → 1 de 7 rutas HERALD
+      cascada de fallbacks: HERALD → inventory.json → link a la web
+
+6c. soporte_humano
+      subtipo de escalación → 1 de 9 mensajes de espera
+      + ticket Intercom con últimos 4 mensajes + webhook aviso
+
+6d. fuera_dominio → mensaje fijo de redirección
+
+7.  Se descuenta el costo real del saldo (Redis)
+8.  Se persiste historial user + assistant (Redis, 6 turnos, TTL 24h)
+9.  Respuesta al canal ([QR: a|b|c] → botones o lista en WhatsApp)</pre>
+        <p class="cap">El paso 3 es un fusible de gasto: corta el consumo de API pero deja al cliente en cola de asesor, nunca abandonado.</p>
+      </div>
+
+      <h3>El router, en detalle</h3>
+      <p>
+        Es la pieza más inteligente del diseño y sigue un principio que se repite en todo el repo:
+        <strong>usa el recurso más barato que resuelva el problema</strong>. La capa 1 detecta jerga
+        peruana real — <em>puro floro</em>, <em>qué palta</em>, <em>estoy asado</em>, <em>al toque</em> —
+        sin gastar un centavo. Solo si nada coincide se llama a Haiku.
+      </p>
+    </section>
+
+    <!-- 05 -->
+    <section id="ingesta">
+      <h2><span class="hn">05</span> Ingesta y embeddings</h2>
+      <p class="subhead">Cómo se llenó la base de conocimiento, y el riesgo silencioso que tiene.</p>
+
+      <p>
+        El obstáculo original está documentado en <code>DECISIONS.md</code>:
+        <strong>~95 % del Centro de Ayuda estaba en imágenes e infografías</strong>, ilegibles para un
+        programa. El pipeline resuelve eso en cuatro pasos, y se corre a mano.
+      </p>
+
+      <div class="figure">
+        <pre class="flow">ayuda.vmcsubastas.com  (~95% imágenes)
+   │  Firecrawl crawl                  src/ingest/crawl_helpcenter.py
+   ▼
+data/raw/  (markdown + ~100 PNGs)
+   │  extracción de texto de imágenes  src/ingest/extract_images.py
+   │  taxonomía por slug → topic       src/ingest/taxonomy.py
+   ▼
+   │  limpieza + chunking semántico    src/rag/chunks.py
+   │  corta por ## / ###, máx 1200 chars, marca has_numeric_data
+   ▼
+data/processed/chunks.json
+   │  upsert_records, batch 96         src/rag/embed.py
+   ▼
+Pinecone · embedding integrado e5-large
+   campos: text · topic · source_url · has_numeric_data</pre>
+        <p class="cap">Pipeline offline. Los chunks ya procesados viven en el repo; el índice vive en la nube.</p>
+      </div>
+
+      <h3>Evaluación de la capa de embeddings</h3>
+
+      <div class="findings">
+        <div class="f sev-low">
+          <div class="f-id">E1</div>
+          <div class="f-body">
+            <div class="f-head"><span class="f-title">El modelo elegido es correcto</span><span class="pill p-ok">Sin acción</span></div>
+            <p>
+              <code>multilingual-e5-large</code> es de los recomendados para español. El modo integrado
+              de Pinecone además maneja los prefijos <code>query:</code> / <code>passage:</code> que e5
+              exige — hacerlo a mano es una fuente clásica de bugs que aquí se evita gratis.
+              <strong>No migrar de modelo sin una razón medida.</strong>
+            </p>
+          </div>
+        </div>
+
+        <div class="f sev-warn">
+          <div class="f-id">E2</div>
+          <div class="f-body">
+            <div class="f-head"><span class="f-title">Riesgo de desincronización corpus ↔ índice</span><span class="pill p-warn">Medio</span></div>
+            <p>
+              La ingesta es manual y no hay registro de qué versión de <code>chunks.json</code> está
+              realmente en Pinecone. Si alguien re-chunkea y sube solo una parte, quedan mezclas
+              silenciosas: respuestas construidas sobre contenido a medias.
+            </p>
+            <div class="f-fix"><b>Fix barato:</b> un <code>ingest_manifest.json</code> con hash + fecha + total subido, y que <code>verify_helpcenter_content.py</code> compare conteos índice vs archivo.</div>
+          </div>
+        </div>
+
+        <div class="f sev-low">
+          <div class="f-id">E3</div>
+          <div class="f-body">
+            <div class="f-head"><span class="f-title">Cambiar de modelo obliga a reindexar todo</span><span class="pill p-info">Documentar</span></div>
+            <p>
+              Los vectores de modelos distintos no son comparables entre sí. Dejarlo escrito para que
+              nadie «pruebe otro modelo» sobre el índice existente y obtenga resultados sin sentido.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <p>
+        Sobre el <strong>overlap entre chunks</strong> (la práctica estándar recomienda 50–100 tokens):
+        aquí el corte por sección lo hace menos crítico, porque las secciones ya son unidades semánticas
+        completas. <strong>No es urgente.</strong> Lo que sí falta y es barato: guardar
+        <code>ingested_at</code> en cada chunk para poder auditar la frescura del contenido que
+        respalda una respuesta.
+      </p>
+    </section>
+
+    <!-- 06 -->
+    <section id="rag">
+      <h2><span class="hn">06</span> El RAG frente a buenas prácticas</h2>
+      <p class="subhead">Qué ya está bien resuelto, qué falta, y qué explícitamente no hay que hacer.</p>
+
+      <h3>Ya está bien — no tocar</h3>
+      <div class="tw">
+        <table>
+          <thead><tr><th>Práctica</th><th>Implementación</th><th></th></tr></thead>
+          <tbody>
+            <tr><td>Chunking semántico por headers</td><td class="mono">src/rag/chunks.py</td><td><span class="pill p-ok">OK</span></td></tr>
+            <tr><td>Grounding estricto en el prompt</td><td>«usa SOLO el contexto» + regla de números</td><td><span class="pill p-ok">OK</span></td></tr>
+            <tr><td>Multi-query para jerga local</td><td>Haiku con sinónimos peruanos</td><td><span class="pill p-ok">OK</span></td></tr>
+            <tr><td>Fusión RRF</td><td class="mono">src/rag/rrf.py · k=60</td><td><span class="pill p-ok">OK</span></td></tr>
+            <tr><td>Top-k adaptativo</td><td>3 definición · 5 proceso</td><td><span class="pill p-ok">OK</span></td></tr>
+            <tr><td>Modelo barato para tarea barata</td><td>Haiku router · Sonnet generación</td><td><span class="pill p-ok">OK</span></td></tr>
+            <tr><td>Datos volátiles fuera del vector DB</td><td>stock por API, no indexado</td><td><span class="pill p-ok">OK</span></td></tr>
+            <tr><td>Golden dataset</td><td>50 preguntas + evaluador de 5 criterios</td><td><span class="pill p-warn">Sin automatizar</span></td></tr>
+            <tr><td>Sin framework (no LangChain)</td><td>piezas de 40–100 líneas legibles</td><td><span class="pill p-ok">Mantener</span></td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h3>Brechas, por retorno sobre esfuerzo</h3>
+      <div class="findings">
+
+        <div class="f sev-crit">
+          <div class="f-id">R1</div>
+          <div class="f-body">
+            <div class="f-head"><span class="f-title">Sin umbral de confianza en retrieval</span><span class="pill p-crit">Gap principal</span></div>
+            <p>
+              Si Pinecone devuelve fragmentos con score bajísimo, se le pasan igual a Sonnet y este
+              intenta responder. Es la puerta principal a respuestas plausibles pero flojas.
+            </p>
+            <div class="f-fix"><b>Fix:</b> si el mejor score cae bajo el umbral (calibrar con el golden dataset), responder «no tengo ese dato» u ofrecer asesor en vez de generar. <b>Esfuerzo bajo · impacto alto.</b></div>
+          </div>
+        </div>
+
+        <div class="f sev-crit">
+          <div class="f-id">R2</div>
+          <div class="f-body">
+            <div class="f-head"><span class="f-title">El guardrail numérico está a medio construir</span><span class="pill p-crit">Riesgo de negocio</span></div>
+            <p>
+              Cada chunk se sube con la bandera <code>has_numeric_data</code>, pero <strong>nadie la
+              usa al responder</strong>. El círculo se cierra así: si la respuesta generada contiene
+              cifras, verificar que al menos un chunk del contexto tenga la bandera activa; si no,
+              es señal de alucinación numérica.
+            </p>
+            <div class="f-fix"><b>Fix:</b> validación post-generación. Ataca directamente el riesgo número uno del negocio con infraestructura que ya existe.</div>
+          </div>
+        </div>
+
+        <div class="f sev-warn">
+          <div class="f-id">R3</div>
+          <div class="f-body">
+            <div class="f-head"><span class="f-title">Metadata subida pero nunca usada en búsqueda</span><span class="pill p-warn">Medio</span></div>
+            <p>
+              <code>topic</code> viaja a Pinecone y ninguna consulta filtra por él. Si el router ya
+              detectó el tema, filtrar o dar boost reduce ruido sin costo adicional.
+            </p>
+          </div>
+        </div>
+
+        <div class="f sev-warn">
+          <div class="f-id">R4</div>
+          <div class="f-body">
+            <div class="f-head"><span class="f-title">Mensaje técnico crudo al usuario final</span><span class="pill p-warn">Medio</span></div>
+            <p>
+              «No se encontraron fragmentos relevantes.» llega tal cual al cliente. Debe ser un mensaje
+              con tono Subastin, oferta de asesor, y registrarse como <em>knowledge gap</em> — hoy los
+              huecos de conocimiento no se acumulan en ningún lado consultable.
+            </p>
+          </div>
+        </div>
+
+        <div class="f sev-warn">
+          <div class="f-id">R5</div>
+          <div class="f-body">
+            <div class="f-head"><span class="f-title">Evaluación manual y sin separar retrieval de generación</span><span class="pill p-warn">Medio</span></div>
+            <p>
+              Existe todo el material (dataset, evaluador, umbrales) pero se corre a mano y solo mide
+              la respuesta final. Cuando falla, no sabes si el problema fue el retrieval o la generación.
+            </p>
+            <div class="f-fix"><b>Fix:</b> separar <em>precision@k</em> de <em>answer accuracy</em>, y correr el dataset como gate antes de deploy — basta un script que salga con código ≠ 0 bajo umbral.</div>
+          </div>
+        </div>
+
+        <div class="f sev-low">
+          <div class="f-id">R6</div>
+          <div class="f-body">
+            <div class="f-head"><span class="f-title">Caché de respuestas frecuentes</span><span class="pill p-info">Oportunidad</span></div>
+            <p>
+              Cerca de un tercio de las consultas se repiten. Versión mínima: caché en Redis por hash
+              de pregunta normalizada, TTL 24 h, <strong>solo para FAQ sin historial</strong> — así no
+              se cachean respuestas que dependen del contexto de la conversación.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <h3>Explícitamente no hacer ahora</h3>
+      <div class="nolist">
+        <div><strong>Hybrid search / BM25</strong> — corpus pequeño; el multi-query ya cubre el desajuste de vocabulario. Reevaluar solo con datos del eval.</div>
+        <div><strong>Reranker (cross-encoder / Cohere)</strong> — más latencia y un proveedor más para ganancia marginal a esta escala.</div>
+        <div><strong>Cambiar el modelo de embeddings</strong> — funciona; cambiarlo obliga a reindexar todo sin ganancia demostrada.</div>
+        <div><strong>Adoptar LangChain</strong> — la ausencia de framework es una fortaleza de este repo, no una carencia.</div>
+        <div><strong>Microservicios o colas</strong> — un monolito FastAPI modular es correcto para este volumen.</div>
+        <div><strong>Fine-tuning</strong> — el system prompt más RAG resuelven el caso; añadiría un costo de mantenimiento enorme.</div>
+      </div>
+    </section>
+
+    <!-- 07 -->
+    <section id="bugs">
+      <h2><span class="hn">07</span> Bugs verificados</h2>
+      <p class="subhead">Doce defectos con ubicación exacta en el código. Ordenados por severidad.</p>
+
+      <div class="findings">
+
+        <div class="f sev-crit">
+          <div class="f-id">B1</div>
+          <div class="f-body">
+            <div class="f-head"><span class="f-title">Función duplicada deja media capa del router muerta</span><span class="pill p-crit">Alto</span></div>
+            <span class="f-loc">src/rag/router.py:74 · y de nuevo en :157</span>
+            <p>
+              Python se queda con la segunda definición. <strong>Toda la lista
+              <code>_HIGH_CONFIDENCE_HUMAN</code> (líneas 30–58) y sus patrones regex son código
+              muerto</strong> — incluye «puro floro», «me estás floreando», «da igual», «ya fue»,
+              el patrón de MAYÚSCULAS y el de «!!!». Además la función se llama dos veces seguidas
+              en las líneas 369 y 377.
+            </p>
+            <div class="f-fix"><b>Fix:</b> fusionar ambas definiciones uniendo las listas, borrar la llamada duplicada. ~30 min y recupera funcionalidad ya escrita.</div>
+          </div>
+        </div>
+
+        <div class="f sev-crit">
+          <div class="f-id">B2</div>
+          <div class="f-body">
+            <div class="f-head"><span class="f-title">Prompt caching mal aplicado: paga el premium y nunca acierta</span><span class="pill p-crit">Alto · costo</span></div>
+            <span class="f-loc">src/rag/router.py:474-487</span>
+            <p>
+              El <code>cache_control</code> está sobre un bloque que termina con el mensaje variable
+              del usuario. El caché funciona por prefijo exacto: al variar el final,
+              <strong>casi nunca hay acierto y cada llamada paga el 25 % extra de escritura</strong>.
+              Lo contrario de lo que se buscaba.
+            </p>
+            <div class="f-fix"><b>Fix:</b> mover la parte estática (rol, definiciones, ejemplos) a <code>system</code> con caché, y dejar el input variable fuera. El mismo patrón ya está bien resuelto en <code>query_rag.py:232</code>.</div>
+          </div>
+        </div>
+
+        <div class="f sev-crit">
+          <div class="f-id">B3</div>
+          <div class="f-body">
+            <div class="f-head"><span class="f-title">Debounce incompatible con serverless</span><span class="pill p-crit">Alto</span></div>
+            <span class="f-loc">src/server/app.py:626-676</span>
+            <p>
+              Hace <code>time.sleep(5)</code> dentro de una tarea en segundo plano. En Vercel la
+              ejecución posterior a la respuesta <strong>no está garantizada</strong>: el mensaje puede
+              no procesarse nunca, o el sleep alarga la facturación de la función.
+            </p>
+            <div class="f-fix"><b>Fix pragmático:</b> desactivar debounce en Vercel, o esperar dentro del request antes de responder al webhook (Meta tolera ~20 s). No construir infra nueva si el volumen aún es bajo.</div>
+          </div>
+        </div>
+
+        <div class="f sev-crit">
+          <div class="f-id">B4</div>
+          <div class="f-body">
+            <div class="f-head"><span class="f-title">Rate limit inútil, más espera activa que factura</span><span class="pill p-crit">Alto</span></div>
+            <span class="f-loc">src/server/rate_limit.py · app.py:805</span>
+            <p>
+              Los contadores viven en memoria del proceso: en Vercel cada instancia tiene el suyo, así
+              que el límite real es 6 × N instancias — es decir, ninguno. Peor: ante un bloqueo hace
+              <code>await asyncio.sleep()</code> en bucle, manteniendo la función viva y facturando
+              hasta 300 s en lugar de devolver un 429.
+            </p>
+            <div class="f-fix"><b>Fix:</b> contador en Redis con INCR + TTL (~15 líneas) y responder HTTP 429 con <code>Retry-After</code>.</div>
+          </div>
+        </div>
+
+        <div class="f sev-warn">
+          <div class="f-id">B5</div>
+          <div class="f-body">
+            <div class="f-head"><span class="f-title">Historial con condición de carrera</span><span class="pill p-warn">Medio</span></div>
+            <span class="f-loc">src/server/app.py:450-462</span>
+            <p>
+              <code>_append_history</code> lee de Redis, modifica en Python y reescribe el array
+              completo. Dos requests concurrentes de la misma sesión se pisan y pierden turnos —
+              y con el debounce roto, WhatsApp puede procesar dos mensajes en paralelo.
+            </p>
+            <div class="f-fix"><b>Fix:</b> <code>RPUSH</code> + <code>LTRIM</code> + <code>EXPIRE</code>, que son atómicos por elemento.</div>
+          </div>
+        </div>
+
+        <div class="f sev-warn">
+          <div class="f-id">B6</div>
+          <div class="f-body">
+            <div class="f-head"><span class="f-title">Todo el pipeline implementado dos veces</span><span class="pill p-warn">Medio · deuda</span></div>
+            <span class="f-loc">src/rag/query_rag.py:448 y :529</span>
+            <p>
+              <code>ask_with_router</code> y <code>ask_with_router_debug</code> son copias casi idénticas
+              (igual que las variantes de búsqueda y generación). <strong>Ya divergen</strong>: usan
+              lógicas distintas de top-k. Cada arreglo hay que hacerlo dos veces.
+            </p>
+            <div class="f-fix"><b>Fix:</b> una sola función con parámetro <code>collect_debug</code>; el costo de llenar el dict siempre es despreciable.</div>
+          </div>
+        </div>
+
+        <div class="f sev-warn">
+          <div class="f-id">B7</div>
+          <div class="f-body">
+            <div class="f-head"><span class="f-title">Dos lógicas distintas de top-k</span><span class="pill p-warn">Medio</span></div>
+            <span class="f-loc">query_rag.py:169 (keywords) · router.py:327 (nº palabras)</span>
+            <p>La misma decisión con criterios diferentes según el camino de código. Dejar una — la de keywords está mejor razonada.</p>
+          </div>
+        </div>
+
+        <div class="f sev-warn">
+          <div class="f-id">B8</div>
+          <div class="f-body">
+            <div class="f-head"><span class="f-title">Cadena de error técnica visible al cliente</span><span class="pill p-warn">Medio</span></div>
+            <span class="f-loc">query_rag.py:420 y :687</span>
+            <p>Ver R4 — sin tono, sin escalación, sin registro de hueco de conocimiento.</p>
+          </div>
+        </div>
+
+        <div class="f sev-warn">
+          <div class="f-id">B9</div>
+          <div class="f-body">
+            <div class="f-head"><span class="f-title">Scrape en vivo sin caché</span><span class="pill p-warn">Medio · costo</span></div>
+            <span class="f-loc">src/rag/live_source.py</span>
+            <p>Cada pregunta sobre SubasPass dispara un scrape completo con Firecrawl: segundos de latencia y créditos quemados.</p>
+            <div class="f-fix"><b>Fix:</b> caché en Redis del markdown con TTL de 1 a 6 horas.</div>
+          </div>
+        </div>
+
+        <div class="f sev-low">
+          <div class="f-id">B10</div>
+          <div class="f-body">
+            <div class="f-head"><span class="f-title">Tres entrypoints, uno activo</span><span class="pill p-neut">Bajo</span></div>
+            <span class="f-loc">api/index.py · src/index.py · src/api/main.py</span>
+            <p>Confunden y sugieren rutas de deploy que no existen. Borrar dos.</p>
+          </div>
+        </div>
+
+        <div class="f sev-low">
+          <div class="f-id">B11</div>
+          <div class="f-body">
+            <div class="f-head"><span class="f-title">app.py con 993 líneas multi-responsabilidad</span><span class="pill p-neut">Deuda</span></div>
+            <span class="f-loc">src/server/app.py</span>
+            <p>WhatsApp, Intercom, saldo, historial, debounce, rate limit y HTML embebido en un archivo. Partir en routers de FastAPI <strong>cuando se toque esa zona</strong>, no como reescritura de golpe.</p>
+          </div>
+        </div>
+
+        <div class="f sev-low">
+          <div class="f-id">B12</div>
+          <div class="f-body">
+            <div class="f-head"><span class="f-title">Documentación que miente sobre el estado</span><span class="pill p-neut">Bajo · trampa</span></div>
+            <span class="f-loc">agents/AGENTS.md · docs/ESTRUCTURA_PROYECTO.md · docs/AHORA.md</span>
+            <p>
+              <code>AGENTS.md</code> marca como «pendientes» cuatro agentes que existen y tienen cientos
+              de líneas; <code>ESTRUCTURA_PROYECTO.md</code> describe archivos con nombres que ya no
+              existen; <code>AHORA.md</code> está congelado en el día 1.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <div class="callout">
+        <span class="lbl">Regla al heredar el sistema</span>
+        <p>
+          Cuando la documentación y el código se contradicen, <strong>gana el código</strong>.
+          Los documentos sirven para entender la <em>intención</em> de quien construyó — nunca para
+          verificar el <em>estado</em> actual.
+        </p>
+      </div>
+    </section>
+
+    <!-- 08 -->
+    <section id="seguridad">
+      <h2><span class="hn">08</span> Seguridad</h2>
+      <p class="subhead">Siete riesgos, ordenados por probabilidad por impacto real.</p>
+
+      <div class="findings">
+
+        <div class="f sev-crit">
+          <div class="f-id">S1</div>
+          <div class="f-body">
+            <div class="f-head"><span class="f-title">Webhook de WhatsApp sin verificación de firma</span><span class="pill p-crit">Alto · prioridad 1</span></div>
+            <span class="f-loc">src/server/app.py:679-737</span>
+            <p>
+              El endpoint acepta cualquier JSON con la forma correcta. Meta firma cada payload con
+              <code>X-Hub-Signature-256</code> y <strong>no se valida</strong>. Quien descubra la URL puede
+              inyectar mensajes falsos como si fueran de un cliente, quemar el saldo de API,
+              <strong>hacer que el bot envíe WhatsApps a números arbitrarios</strong> — el remitente lo
+              controla el atacante — y contaminar historiales.
+            </p>
+            <div class="f-fix"><b>Fix:</b> ~15 líneas. HMAC-SHA256 del body crudo con el App Secret, comparado con <code>hmac.compare_digest</code>. Es el arreglo de seguridad número uno del repo.</div>
+          </div>
+        </div>
+
+        <div class="f sev-crit">
+          <div class="f-id">S2</div>
+          <div class="f-body">
+            <div class="f-head"><span class="f-title">Endpoint de saldo abierto por defecto</span><span class="pill p-crit">Alto</span></div>
+            <span class="f-loc">src/server/app.py:519-535</span>
+            <p>
+              Si <code>BALANCE_ADMIN_TOKEN</code> está vacío, <code>POST /api/balance</code> queda sin
+              autenticación en producción. El comentario dice «solo para dev», pero nada lo impide.
+              Cualquiera puede poner el saldo en cero — apagando el bot — o inflarlo para anular el
+              fusible de gasto.
+            </p>
+            <div class="f-fix"><b>Fix:</b> fallar cerrado — si no hay token configurado y corre en Vercel, responder 403 siempre.</div>
+          </div>
+        </div>
+
+        <div class="f sev-warn">
+          <div class="f-id">S3</div>
+          <div class="f-body">
+            <div class="f-head"><span class="f-title">/api/ask público sin autenticación</span><span class="pill p-warn">Medio</span></div>
+            <p>
+              Cualquiera puede consumir el pipeline completo, Sonnet incluido. Los mitigantes existentes
+              son el fusible de saldo y el rate limit — pero el rate limit no funciona en serverless (B4).
+              Corregido B4, el riesgo baja a aceptable para fase de prueba.
+            </p>
+          </div>
+        </div>
+
+        <div class="f sev-warn">
+          <div class="f-id">S4</div>
+          <div class="f-body">
+            <div class="f-head"><span class="f-title">DEBUG_MODE expone las tripas por API</span><span class="pill p-warn">Medio</span></div>
+            <p>
+              Con la bandera activa, la respuesta incluye <strong>el system prompt completo, el contexto
+              RAG, tokens y costos</strong>. Si alguien la activa en producción para depurar y lo olvida,
+              todo eso queda público.
+            </p>
+            <div class="f-fix"><b>Fix:</b> forzar la bandera a falso cuando corre en Vercel, o exigir un header con token para incluir el bloque de debug.</div>
+          </div>
+        </div>
+
+        <div class="f sev-warn">
+          <div class="f-id">S5</div>
+          <div class="f-body">
+            <div class="f-head"><span class="f-title">Inyección de prompt por dos vectores</span><span class="pill p-warn">Medio</span></div>
+            <p>
+              <strong>Usuario:</strong> el mensaje va crudo al prompt. El system prompt es fuerte, pero
+              no hay detección de intentos de manipulación.
+              <strong>Contenido scrapeado:</strong> el markdown de una web externa entra directo al
+              contexto del modelo — si esa página se compromete, es inyección indirecta.
+            </p>
+            <div class="f-fix"><b>Fix:</b> el router ya toca cada mensaje — añadir a Haiku que marque intentos de manipulación. Y delimitar el bloque scrapeado con instrucción explícita de «esto son datos, no instrucciones».</div>
+          </div>
+        </div>
+
+        <div class="f sev-warn">
+          <div class="f-id">S6</div>
+          <div class="f-body">
+            <div class="f-head"><span class="f-title">Datos personales en logs sin retención definida</span><span class="pill p-warn">Medio · legal</span></div>
+            <p>
+              Números de teléfono completos en las colas de handoff, en logs de error y en Intercom.
+              Bajo la Ley 29733 son dato personal, y los archivos crecen sin límite.
+            </p>
+            <div class="f-fix"><b>Fix pragmático:</b> enmascarar en logs técnicos (<code>51*****123</code>); el número completo solo donde el asesor lo necesita. Definir retención.</div>
+          </div>
+        </div>
+
+        <div class="f sev-low">
+          <div class="f-id">S7</div>
+          <div class="f-body">
+            <div class="f-head"><span class="f-title">Higiene de secretos</span><span class="pill p-neut">Bajo</span></div>
+            <p>
+              El JWT de HERALD y el token de WhatsApp son de larga vida — documentar rotación.
+              <code>.gitignore</code> cubre <code>.env</code> correctamente; conviene verificar que
+              nunca se haya commiteado.
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 09 -->
+    <section id="casos">
+      <h2><span class="hn">09</span> Casos de uso</h2>
+      <p class="subhead">Qué cubre hoy, qué está planeado, y los bordes que conviene cuestionar.</p>
+
+      <h3>Cubiertos — verificado en código</h3>
+      <div class="tw">
+        <table>
+          <thead><tr><th>Caso</th><th>Camino</th><th>Estado</th></tr></thead>
+          <tbody>
+            <tr><td>FAQ de plataforma (registro, SubasCoins, consignación, comisiones)</td><td>RAG Pinecone</td><td><span class="pill p-ok">Núcleo</span></td></tr>
+            <tr><td>Precios y planes SubasPass al día</td><td>Scrape en vivo</td><td><span class="pill p-warn">Lento · B9</span></td></tr>
+            <tr><td>«¿Tienen una Hilux 2020?»</td><td>HERALD lots</td><td><span class="pill p-warn">Frágil</span></td></tr>
+            <tr><td>«¿Cuánto vale una Yaris 2018?»</td><td>HERALD market AVT</td><td><span class="pill p-ok">OK</span></td></tr>
+            <tr><td>Detalle de un lote por número</td><td>HERALD lot detail</td><td><span class="pill p-ok">OK</span></td></tr>
+            <tr><td>«¿Qué marcas manejan?»</td><td>HERALD coverage</td><td><span class="pill p-ok">OK</span></td></tr>
+            <tr><td>Pedir asesor · frustración · jerga peruana</td><td>Router → Intercom</td><td><span class="pill p-crit">Media capa muerta · B1</span></td></tr>
+            <tr><td>Amenaza legal (Indecopi, libro de reclamaciones)</td><td>Escalación legal_threat</td><td><span class="pill p-ok">OK</span></td></tr>
+            <tr><td>Rescate de abandono («ya no quiero, olvídalo»)</td><td>Escalación pre_abandonment</td><td><span class="pill p-crit">Keywords muertas · B1</span></td></tr>
+            <tr><td>Urgencia en subasta en vivo</td><td>Escalación live_auction</td><td><span class="pill p-ok">OK</span></td></tr>
+            <tr><td>Consulta B2B o de flota</td><td>Escalación b2b</td><td><span class="pill p-ok">OK</span></td></tr>
+            <tr><td>Respuesta corta del usuario («sí», «dale»)</td><td>Router usa el turno anterior del bot</td><td><span class="pill p-ok">Buen detalle</span></td></tr>
+            <tr><td>Mensajes en ráfaga de WhatsApp</td><td>Debounce 5 s</td><td><span class="pill p-crit">Roto · B3</span></td></tr>
+            <tr><td>Sin créditos de API</td><td>Fusible + cola de handoff</td><td><span class="pill p-ok">OK</span></td></tr>
+            <tr><td>Botones interactivos</td><td>Marcador <code>[QR:]</code></td><td><span class="pill p-warn">Poco usado</span></td></tr>
+            <tr><td>Cumplimiento de identificación como IA</td><td>System prompt v2.2</td><td><span class="pill p-ok">OK</span></td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h3>Planeados, sin construir</h3>
+      <ul class="plain">
+        <li><strong>Notas de voz</strong> — figuran en el stack (Gemini para transcripción, ElevenLabs para voz) pero no hay código. En WhatsApp Perú los audios son masivos: probablemente el mayor hueco de producto.</li>
+        <li><strong>Refinador de prompts</strong> — el único agente realmente pendiente de los cinco documentados.</li>
+        <li><strong>Seguimiento post-escalación</strong> — el ticket se crea y el bot se desentiende; no hay un «un asesor ya tomó tu caso».</li>
+      </ul>
+
+      <h3>Bordes a cuestionar en tu sesión de diagramación</h3>
+      <div class="tw">
+        <table>
+          <thead><tr><th>#</th><th>Situación</th><th>Comportamiento actual</th></tr></thead>
+          <tbody>
+            <tr><td class="num">1</td><td>El usuario manda una imagen o un audio</td><td>Se ignora en silencio. ¿Debería al menos decir «por ahora solo leo texto»?</td></tr>
+            <tr><td class="num">2</td><td>Marca fuera de la lista conocida (Changhe, JMC)</td><td>Cae al catálogo general o da una valoración incorrecta</td></tr>
+            <tr><td class="num">3</td><td>Dos preguntas en un mensaje</td><td>El router elige una intención; la segunda pregunta se pierde</td></tr>
+            <tr><td class="num">4</td><td>Mensaje en inglés u otro idioma</td><td>Sin manejo. El retrieval algo hará (e5 es multilingüe) pero el prompt asume español</td></tr>
+            <tr><td class="num">5</td><td>Conversación larga, más de 6 turnos</td><td>El bot «olvida» el inicio — incluido el estado del usuario que el prompt manda inferir</td></tr>
+            <tr><td class="num">6</td><td>Dos personas desde el mismo número</td><td>Una sola sesión, historial mezclado</td></tr>
+            <tr><td class="num">7</td><td>HERALD responde datos desactualizados</td><td>Se presentan como verdad; no todos los formatos incluyen aviso de verificar en la web</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- 10 -->
+    <section id="plan">
+      <h2><span class="hn">10</span> Plan priorizado</h2>
+      <p class="subhead">Primero corregir lo construido, después cerrar seguridad, después mejorar. Nada de infra nueva mientras el volumen no lo pida.</p>
+
+      <div class="phase">
+        <div class="phase-h">
+          <span class="phase-tag">P0</span>
+          <span class="phase-name">Bugs y seguridad crítica</span>
+          <span class="phase-when">esta semana · menos de 1 día cada uno</span>
+        </div>
+        <ol>
+          <li>Validar la firma <code>X-Hub-Signature-256</code> en el webhook de WhatsApp <span class="ref">S1</span></li>
+          <li>Fusionar la función duplicada del router y revivir las keywords muertas <span class="ref">B1</span></li>
+          <li>Fallar cerrado en <code>/api/balance</code> cuando no hay token <span class="ref">S2</span></li>
+          <li>Mover el rate limit a Redis y devolver 429 en vez de dormir <span class="ref">B4</span></li>
+          <li>Decidir el debounce: desactivarlo en Vercel o esperar dentro del request <span class="ref">B3</span></li>
+          <li>Forzar <code>DEBUG_MODE</code> apagado en producción <span class="ref">S4</span></li>
+          <li>Borrar los dos entrypoints duplicados <span class="ref">B10</span></li>
+        </ol>
+      </div>
+
+      <div class="phase">
+        <div class="phase-h">
+          <span class="phase-tag">P1</span>
+          <span class="phase-name">Calidad del RAG y robustez</span>
+          <span class="phase-when">próximas 2 a 4 semanas</span>
+        </div>
+        <ol start="8">
+          <li>Umbral de score mínimo en retrieval, con registro de huecos de conocimiento <span class="ref">R1 · R4</span></li>
+          <li>Cerrar el guardrail numérico usando <code>has_numeric_data</code> <span class="ref">R2</span></li>
+          <li>Golden dataset como gate automatizado, más tests del parser HERALD y del router <span class="ref">R5</span></li>
+          <li>Unificar el camino normal y el de debug; una sola lógica de top-k <span class="ref">B6 · B7</span></li>
+          <li>Corregir el caching del router moviendo lo estático a system <span class="ref">B2</span></li>
+          <li>Historial con operaciones atómicas de Redis <span class="ref">B5</span></li>
+          <li>Caché de FAQ frecuentes y del markdown de SubasPass <span class="ref">R6 · B9</span></li>
+          <li>Actualizar la documentación al estado real <span class="ref">B12</span></li>
+        </ol>
+      </div>
+
+      <div class="phase">
+        <div class="phase-h">
+          <span class="phase-tag">P2</span>
+          <span class="phase-name">Evolución de producto</span>
+          <span class="phase-when">cuando P0 y P1 estén estables</span>
+        </div>
+        <ol start="16">
+          <li><strong>Migrar la extracción de marca, modelo y año a <em>tool use</em> de Claude</strong> — el router ya paga una llamada a Haiku; que devuelva los campos estructurados. Elimina la clase entera de bugs del parser regex, la zona con más hotfixes del repo</li>
+          <li>Partir <code>app.py</code> en routers por dominio <span class="ref">B11</span></li>
+          <li>Notas de voz — transcripción y respuesta hablada</li>
+          <li>Enmascarar datos personales en logs y definir retención <span class="ref">S6</span></li>
+          <li>Detección de inyección de prompt en el router <span class="ref">S5</span></li>
+        </ol>
+      </div>
+    </section>
+
+    <!-- 11 -->
+    <section id="metricas">
+      <h2><span class="hn">11</span> Métricas objetivo</h2>
+      <p class="subhead">Qué instrumentar para saber si las mejoras funcionan.</p>
+
+      <div class="tw">
+        <table>
+          <thead><tr><th>Métrica</th><th>Definición</th><th>Objetivo</th><th>Cómo medirla aquí</th></tr></thead>
+          <tbody>
+            <tr><td><strong>Precisión de retrieval @5</strong></td><td>Fragmentos recuperados que son relevantes</td><td class="num">≥ 80 %</td><td>Anotar el chunk esperado por pregunta y comparar ids</td></tr>
+            <tr><td><strong>Exactitud de respuesta</strong></td><td>Coincide con la respuesta esperada</td><td class="num">≥ 90 %</td><td><code>eval_golden.py</code> + muestreo humano semanal</td></tr>
+            <tr><td><strong>Fundamentación</strong></td><td>Respuestas sin afirmaciones fuera del contexto</td><td class="num">≥ 95 %</td><td>Evaluador existente. Alucinación financiera = bloqueante</td></tr>
+            <tr><td><strong>Acierto del router</strong></td><td>Intención correcta</td><td class="num">≥ 95 %</td><td>Dataset etiquetado, incluyendo peruanismos</td></tr>
+            <tr><td><strong>Latencia p50 · p95</strong></td><td>Extremo a extremo en FAQ</td><td class="num">&lt; 3 s · &lt; 6 s</td><td>Ya se registra; solo falta agregar percentiles</td></tr>
+            <tr><td><strong>Costo por conversación</strong></td><td>USD</td><td class="num">vs. $168 / mes</td><td>Monitor de costos existente</td></tr>
+            <tr><td><strong>Tasa de escalación</strong></td><td>% de mensajes que van a humano</td><td class="num">Tendencia</td><td>Al alza indica huecos o frustración</td></tr>
+            <tr><td><strong>Huecos de conocimiento</strong></td><td>Preguntas sin retrieval útil</td><td class="num">Tendencia ↓</td><td>Requiere implementar R1 primero</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- 12 -->
+    <section id="mapa">
+      <h2><span class="hn">12</span> Mapa de archivos y decisiones heredadas</h2>
+      <p class="subhead">Dónde vive cada cosa, y qué principios respetar al modificar.</p>
+
+      <div class="tw">
+        <table>
+          <thead><tr><th>Archivo</th><th>Rol</th><th>Líneas</th></tr></thead>
+          <tbody>
+            <tr><td class="mono">src/server/app.py</td><td>FastAPI: endpoints, WhatsApp, Intercom, saldo, historial</td><td class="num">993</td></tr>
+            <tr><td class="mono">src/rag/query_rag.py</td><td>Orquestador RAG: retrieval, contexto, generación</td><td class="num">736</td></tr>
+            <tr><td class="mono">src/rag/herald_source.py</td><td>Parseo lenguaje natural → HERALD, 7 rutas</td><td class="num">615</td></tr>
+            <tr><td class="mono">src/rag/router.py</td><td>Clasificación de intención + subtipo de escalación</td><td class="num">501</td></tr>
+            <tr><td class="mono">prompts/system_prompt_v1.md</td><td>System prompt v2.2 — persona, reglas, legal</td><td class="num">363</td></tr>
+            <tr><td class="mono">src/rag/inventory.py</td><td>Fallback de stock local</td><td class="num">333</td></tr>
+            <tr><td class="mono">src/rag/chunks.py</td><td>Limpieza y chunking semántico</td><td class="num">197</td></tr>
+            <tr><td class="mono">src/core/resilience.py</td><td>Reintentos con backoff + error fatal por saldo</td><td class="num">181</td></tr>
+            <tr><td class="mono">src/core/herald_client.py</td><td>Cliente HTTP de HERALD</td><td class="num">140</td></tr>
+            <tr><td class="mono">src/rag/multi_query.py</td><td>Variaciones de pregunta con sinónimos peruanos</td><td class="num">106</td></tr>
+            <tr><td class="mono">src/rag/embed.py</td><td>Carga de chunks a Pinecone</td><td class="num">94</td></tr>
+            <tr><td class="mono">src/server/cost_estimate.py</td><td>Cálculo de costos por tokens</td><td class="num">87</td></tr>
+            <tr><td class="mono">src/server/rate_limit.py</td><td>Rate limit — ver B4</td><td class="num">50</td></tr>
+            <tr><td class="mono">src/rag/rrf.py</td><td>Fusión de rankings</td><td class="num">38</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h3>Decisiones heredadas — respetarlas al modificar</h3>
+      <ul class="plain">
+        <li><strong>Sin LangChain.</strong> Piezas escritas a mano, legibles de una sentada. Mantener.</li>
+        <li><strong>Los números nunca los inventa el modelo</strong> — siempre de RAG o de datos scrapeados. Innegociable por razones legales.</li>
+        <li><strong>Chunking semántico por tema</strong>, no por tamaño fijo.</li>
+        <li><strong>El recurso más barato primero</strong>: heurística antes que Haiku, Haiku antes que Sonnet.</li>
+        <li><strong>Nunca romper en la cara del usuario</strong>: toda falla externa tiene fallback y mensaje amable.</li>
+        <li><strong>Identificación como IA obligatoria</strong> (Ley 31814 y EU AI Act Art. 50) — no debilitar al editar el prompt.</li>
+      </ul>
+
+    </section>
+
+    <!-- 13 -->
+    <section id="aws">
+      <h2><span class="hn">13</span> Alternativas en AWS</h2>
+      <p class="subhead">Qué equivalente tiene cada pieza del stack, y cuáles conviene mover realmente.</p>
+
+      <p>
+        Casi todo el stack tiene equivalente en AWS, pero <strong>solo dos o tres piezas justifican
+        la migración</strong>. El resto funciona bien donde está, y moverlo consume semanas que hoy
+        hacen falta para cerrar los riesgos de seguridad.
+      </p>
+
+      <div class="tw">
+        <table>
+          <thead><tr><th>Pieza actual</th><th>Equivalente AWS</th><th>¿Migrar?</th></tr></thead>
+          <tbody>
+            <tr>
+              <td>Claude vía API directa</td>
+              <td><strong>Bedrock</strong> — los mismos modelos</td>
+              <td><span class="verdict v-yes"><span>si buscas facturación unificada</span></span></td>
+            </tr>
+            <tr>
+              <td>Upstash Redis — historial, saldo</td>
+              <td><strong>DynamoDB</strong> o ElastiCache Serverless</td>
+              <td><span class="verdict v-yes"><span>DynamoDB encaja mejor</span></span></td>
+            </tr>
+            <tr>
+              <td>Logs en <code>/tmp</code></td>
+              <td><strong>CloudWatch Logs</strong></td>
+              <td><span class="verdict v-yes"><span>arregla una pérdida real</span></span></td>
+            </tr>
+            <tr>
+              <td>Tokens en variables de entorno</td>
+              <td><strong>Secrets Manager</strong></td>
+              <td><span class="verdict v-yes"><span>resuelve la rotación · S7</span></span></td>
+            </tr>
+            <tr>
+              <td>Vercel — hosting serverless</td>
+              <td>Lambda + API Gateway, o App Runner</td>
+              <td><span class="verdict v-maybe"><span>solo si ya estás en AWS</span></span></td>
+            </tr>
+            <tr>
+              <td>Pinecone — vector DB</td>
+              <td>OpenSearch Serverless, S3 Vectors, Aurora pgvector</td>
+              <td><span class="verdict v-maybe"><span>solo por costo a escala</span></span></td>
+            </tr>
+            <tr>
+              <td>Firecrawl — scraping</td>
+              <td>Lambda + Playwright</td>
+              <td><span class="verdict v-no"><span>construir para ahorrar poco</span></span></td>
+            </tr>
+            <tr>
+              <td>Intercom — tickets</td>
+              <td>Amazon Connect</td>
+              <td><span class="verdict v-no"><span>decisión de negocio, no técnica</span></span></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h3>Las que sí conviene</h3>
+      <div class="findings">
+
+        <div class="f sev-low">
+          <div class="f-id">A1</div>
+          <div class="f-body">
+            <div class="f-head"><span class="f-title">Bedrock en lugar de la API directa de Anthropic</span><span class="pill p-ok">Cambio limpio</span></div>
+            <p>
+              Son <strong>los mismos modelos Claude</strong>, con la misma calidad. Solo cambia el
+              cliente y el identificador del modelo; los prompts y la lógica de reintentos quedan
+              intactos. Ganas facturación consolidada, credenciales por rol en vez de una clave de
+              larga vida, y registro de invocaciones integrado.
+            </p>
+            <div class="f-fix"><b>Verificar antes:</b> el <em>prompt caching</em> a veces llega a Bedrock con retraso respecto a la API directa. Como el costo del bot depende de él, confirmarlo es requisito previo.</div>
+          </div>
+        </div>
+
+        <div class="f sev-low">
+          <div class="f-id">A2</div>
+          <div class="f-body">
+            <div class="f-head"><span class="f-title">DynamoDB en lugar de Upstash Redis</span><span class="pill p-ok">Arregla un bug de paso</span></div>
+            <p>
+              Es la que mejor encaja, y no solo por estar en AWS: <strong>resuelve el bug B5 de raíz</strong>.
+              Una fila por mensaje con clave de partición por sesión, expiración automática por TTL nativo,
+              y escrituras que no se pisan — se acaba el ciclo de leer, modificar y reescribir el historial
+              completo. El saldo se lleva con actualización atómica, que arregla otra condición de carrera.
+            </p>
+            <div class="f-fix"><b>Costo:</b> más barato que Redis para este patrón — escrituras esporádicas, no miles por segundo. En modo bajo demanda son centavos.</div>
+          </div>
+        </div>
+
+        <div class="f sev-low">
+          <div class="f-id">A3</div>
+          <div class="f-body">
+            <div class="f-head"><span class="f-title">Secrets Manager y CloudWatch</span><span class="pill p-ok">Aditivos, no rompen nada</span></div>
+            <p>
+              Los tokens de HERALD y WhatsApp son de larga vida sin proceso de rotación — es el riesgo S7.
+              Secrets Manager rota y audita quién accedió. Y los logs, que hoy van a <code>/tmp</code>,
+              <strong>se pierden cuando la función muere</strong>: hoy no se puede investigar un incidente
+              de ayer. CloudWatch los persiste y permite consultarlos.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <h3>Las dudosas</h3>
+
+      <div class="findings">
+        <div class="f sev-warn">
+          <div class="f-id">A4</div>
+          <div class="f-body">
+            <div class="f-head"><span class="f-title">Pinecone hacia OpenSearch o pgvector</span><span class="pill p-warn">Se pierde algo concreto</span></div>
+            <p>
+              Pinecone <strong>genera los embeddings por nosotros</strong>, incluyendo el manejo de los
+              prefijos que el modelo e5 exige. En AWS habría que generar los vectores aparte y manejar
+              esos detalles a mano — fuente clásica de errores sutiles. Además cambiar de modelo de
+              embedding obliga a reindexar todo el corpus.
+            </p>
+            <p>
+              El argumento a favor sería el costo, pero OpenSearch Serverless tiene un mínimo mensual
+              alto que no compensa para nuestro corpus. Con decenas de artículos, Pinecone Starter sale
+              gratis o casi.
+            </p>
+            <div class="f-fix"><b>Recomendación:</b> quedarse en Pinecone hasta que el corpus crezca diez veces.</div>
+          </div>
+        </div>
+
+        <div class="f sev-warn">
+          <div class="f-id">A5</div>
+          <div class="f-body">
+            <div class="f-head"><span class="f-title">Vercel hacia Lambda o App Runner</span><span class="pill p-warn">No arregla lo que parece</span></div>
+            <p>
+              Migrar a Lambda <strong>no resuelve los problemas B3 y B4</strong>: también es sin estado
+              y también mata el proceso al responder. El debounce y el límite de consultas hay que
+              arreglarlos igual.
+            </p>
+            <p>
+              App Runner sí cambiaría el panorama — mantiene un contenedor vivo, así que ambas piezas
+              volverían a funcionar como fueron diseñadas. Es un argumento real, pero se paga por tiempo
+              encendido en lugar de por uso.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <div class="callout">
+        <span class="lbl">Recomendación</span>
+        <p>
+          <strong>Si no hay una razón de negocio para estar en AWS, no migrar nada ahora.</strong>
+          El stack actual es coherente y barato, y ninguna de estas migraciones aparece en el plan
+          de veinte acciones. Si la decisión ya está tomada, el orden es: Secrets Manager y CloudWatch
+          primero por ser aditivos, DynamoDB después porque arregla un bug de paso, Bedrock cuando se
+          confirme el caching, el cómputo al final, y Pinecone donde está.
+        </p>
+      </div>
+
+      <footer>
+        Análisis basado en la lectura completa del repositorio al commit <code>736408b</code>.
+        Cada hallazgo cita archivo y línea verificados en código, no en documentación.
+        El código es la fuente de verdad.
+      </footer>
+    </section>
+
+  </main>
+</div>
+
+<script>
+  (function () {
+    var links = Array.prototype.slice.call(document.querySelectorAll('nav.toc a'));
+    var sections = links
+      .map(function (a) { return document.getElementById(a.getAttribute('href').slice(1)); })
+      .filter(Boolean);
+
+    if (!('IntersectionObserver' in window) || !sections.length) return;
+
+    var visible = new Map();
+
+    var obs = new IntersectionObserver(function (entries) {
+      entries.forEach(function (e) {
+        if (e.isIntersecting) visible.set(e.target.id, e.intersectionRatio);
+        else visible.delete(e.target.id);
+      });
+
+      var best = null;
+      if (visible.size) {
+        best = sections
+          .map(function (s) { return s.id; })
+          .filter(function (id) { return visible.has(id); })[0];
+      }
+      if (!best) return;
+
+      links.forEach(function (a) {
+        a.classList.toggle('on', a.getAttribute('href') === '#' + best);
+      });
+    }, { rootMargin: '-10% 0px -70% 0px', threshold: [0, 0.25, 1] });
+
+    sections.forEach(function (s) { obs.observe(s); });
+  })();
+</script>
+</body>
+</html>

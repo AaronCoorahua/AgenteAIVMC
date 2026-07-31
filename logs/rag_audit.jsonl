@@ -2301,3 +2301,16 @@
 {"ts": "2026-03-04T06:21:23.277400+00:00", "type": "anthropic_llamada", "attempt": 1, "model": "claude-sonnet-4-20250514", "caching": true}
 {"ts": "2026-03-04T06:21:26.250387+00:00", "type": "anthropic_exito", "attempt": 1, "model": "claude-sonnet-4-20250514"}
 {"ts": "2026-03-04T06:21:26.253700+00:00", "type": "rag_response", "response_preview": "¡Sí puedes! Si perdiste tu DNI, puedes usar otro documento donde se vean tus datos completos para que el inspector valide tu identidad.\n\nPuedes usar: licencia de conducir, pasaporte, carnet de extranj", "model": "claude-sonnet-4-20250514"}
+{"ts": "2026-07-30T18:13:32.738383+00:00", "type": "rag_topk", "query": "Hola", "top_k": 3}
+{"ts": "2026-07-30T18:30:06.886144+00:00", "type": "rag_topk", "query": "Hola", "top_k": 3}
+{"ts": "2026-07-30T18:30:10.751868+00:00", "type": "rag_query", "query": "Hola", "intent": "faq", "chunks_used": 0, "tokens_in": 0, "tokens_out": 0, "latency_ms": 3870.7}
+{"ts": "2026-07-30T19:10:50.519614+00:00", "type": "rag_topk", "query": "Precio del carro", "top_k": 3}
+{"ts": "2026-07-30T19:10:53.533919+00:00", "type": "rag_query", "query": "Precio del carro", "intent": "faq", "chunks_used": 0, "tokens_in": 0, "tokens_out": 0, "latency_ms": 3011.1}
+{"ts": "2026-07-30T19:38:05.028327+00:00", "type": "rag_topk", "query": "¿Qué son los SubasCoins?", "top_k": 3}
+{"ts": "2026-07-30T19:38:39.735920+00:00", "type": "rag_topk", "query": "precio", "top_k": 3}
+{"ts": "2026-07-30T19:39:35.335251+00:00", "type": "rag_topk", "query": "precio", "top_k": 3}
+{"ts": "2026-07-30T19:43:44.344470+00:00", "type": "rag_topk", "query": "precio", "top_k": 3}
+{"ts": "2026-07-30T19:44:12.518031+00:00", "type": "rag_topk", "query": "precio", "top_k": 3}
+{"ts": "2026-07-30T19:44:38.270990+00:00", "type": "rag_topk", "query": "precio", "top_k": 3}
+{"ts": "2026-07-30T19:44:53.685443+00:00", "type": "rag_topk", "query": "precio", "top_k": 3}
+{"ts": "2026-07-30T19:46:18.536996+00:00", "type": "rag_topk", "query": "precio", "top_k": 3}

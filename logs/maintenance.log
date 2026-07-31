@@ -312,3 +312,5 @@ refresh+eval+audit cada 168h, inventory cada 12h).
 [2026-03-03T23:23:08.080000+00:00] START parse_inventory: ['python', '-m', 'src.ingest.parse_inventory']
 [2026-03-03T23:23:08.184650+00:00] END parse_inventory: returncode=0
 [2026-03-03T23:23:08.187640+00:00] END parse_inventory: returncode=0
+[2026-07-30T18:05:45.706810+00:00] AUTO_MAINTENANCE=false, no se iniciará hilo de mantenimiento.
+[2026-07-30T18:30:03.301725+00:00] AUTO_MAINTENANCE=false, no se iniciará hilo de mantenimiento.
